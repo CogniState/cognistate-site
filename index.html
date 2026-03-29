@@ -530,7 +530,7 @@
   <div class="ri">
     <button class="bb2" onclick="abortTest()">← Avbryt</button>
     <div id="run-level" style="display:none">
-      <div class="tr2"><span class="tl2">Oppgave <span id="lqn">1</span> av 20</span><span class="tv" id="lqt">2:30</span></div>
+      <div class="tr2"><span class="tl2">Oppgave <span id="lqn">1</span> av <span id="lq-total-el">20</span></span><span class="tv" id="lqt">2:30</span></div>
       <div class="pb"><div class="pf" id="lqp" style="width:2%"></div></div>
       <div id="lqd"></div>
       <div class="qb"><div class="qt" id="lqq"></div></div>
@@ -638,8 +638,16 @@ window.submitAuth=async()=>{
   const btn=document.getElementById('asb');
   btn.textContent=am==='login'?'Logger inn...':'Oppretter...';btn.disabled=true;
   try{
-    if(am==='login'){await auth.signInWithEmailAndPassword(email,pw);}
-    else{const name=document.getElementById('an').value.trim();const c=await auth.createUserWithEmailAndPassword(email,pw);if(name)await c.user.updateProfile({displayName:name});await ensureUser(c.user,name);}
+    if(am==='login'){
+      await auth.signInWithEmailAndPassword(email,pw);
+      // onAuthStateChanged will handle redirect
+    }else{
+      const name=document.getElementById('an').value.trim();
+      const c=await auth.createUserWithEmailAndPassword(email,pw);
+      if(name)await c.user.updateProfile({displayName:name});
+      await ensureUser(c.user,name);
+      // onAuthStateChanged will handle redirect
+    }
   }catch(e){showErr(fe(e.code));btn.textContent=am==='login'?'Logg inn':'Opprett konto';btn.disabled=false;}
 };
 window.logout=async()=>await auth.signOut();
@@ -847,12 +855,22 @@ auth.onAuthStateChanged(async user=>{
     document.getElementById('navlinks').style.display='flex';
     const init=(user.displayName||user.email||'?')[0].toUpperCase();
     document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span style="font-size:13px">${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
-    await loadDash();
-    goTo('page-dashboard');
+    // Always go to dashboard when logged in, regardless of current page
+    const activePage=document.querySelector('.page.active')?.id;
+    if(activePage==='page-home'||activePage==='page-auth'||!activePage){
+      await loadDash();
+      goTo('page-dashboard');
+    } else {
+      await loadDash();
+    }
   }else{
     document.getElementById('navlinks').style.display='none';
     document.getElementById('nr2').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
-    if(document.querySelector('.page.active')?.id !== 'page-auth'){
+    // If on protected page, redirect to home
+    const activePage=document.querySelector('.page.active')?.id;
+    if(activePage==='page-dashboard'||activePage==='page-insights'||activePage==='page-results'){
+      goTo('page-home');
+    } else if(activePage!=='page-auth'){
       goTo('page-home');
     }
   }
@@ -930,7 +948,7 @@ function rotOpt(shape, deg){
 }
 
 /* ===== NIVÅ-TEST ===== */
-const LQ=[
+const LQ_STATIC=[
   // --- LOGIKK ---
   {cat:'logic',diff:1,q:"Alle fugler har vinger.\nSpurven er en fugl.\nHar spurven vinger?",opts:["Ja","Nei","Vet ikke","Muligens"],ans:0,hint:"Grunnleggende syllogisme: premiss → konklusjon"},
   {cat:'logic',diff:1,q:"ABBA : BAAB\nCDDC : ?",opts:["DCCD","CDDC","DCDC","CCDD"],ans:0,hint:"Ytterste og innerste tegn byttes"},
@@ -992,19 +1010,82 @@ const LQ=[
    optSVGs:[rotOpt('step',270),rotOpt('step',90),rotOpt('step',180),`<svg viewBox="0 0 90 90" width="80" height="80" xmlns="http://www.w3.org/2000/svg"><g transform="scale(-1,1) translate(-90,0)"><polyline points="15,50 15,30 30,30 30,15 50,15" fill="none" stroke="#94f5ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`],
    opts:["","","",""],ans:0,hint:"90° mot klokken: toppen peker til venstre"},
 ];
-let lqI=0,lqS=0,lqT=[],lqDS={logic:0,number:0,spatial:0,abstract:0},lqDT={logic:0,number:0,spatial:0,abstract:0},lqTmr=null,lqTL=150,lqA=false,lqSt=0;
+let LQ_ACTIVE=[...LQ_STATIC];let lqI=0,lqS=0,lqT=[],lqQR=[],lqDS={logic:0,number:0,spatial:0,abstract:0},lqDT={logic:0,number:0,spatial:0,abstract:0},lqTmr=null,lqTL=150,lqA=false,lqSt=0;
 
-window.startLevelTest=()=>{
-  lqI=0;lqS=0;lqT=[];lqDS={logic:0,number:0,spatial:0,abstract:0};lqDT={logic:0,number:0,spatial:0,abstract:0};
+window.startLevelTest=async()=>{
+  lqI=0;lqS=0;lqT=[];lqQR=[];lqDS={logic:0,number:0,spatial:0,abstract:0};lqDT={logic:0,number:0,spatial:0,abstract:0};
   ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-level').style.display='block';
-  goTo('page-run');showLQ();
-};
-function showLQ(){
-  lqA=false;const q=LQ[lqI];
-  document.getElementById('lqn').textContent=lqI+1;
+  goTo('page-run');
+
+  // Show loading state while AI generates questions
+  document.getElementById('lqd').innerHTML='';
+  document.getElementById('lqq').textContent='';
+  document.getElementById('lqo').innerHTML='';
   document.getElementById('lqh').textContent='';
-  document.getElementById('lqp').style.width=Math.max(2,Math.round((lqI/LQ.length)*100))+'%';
+  document.getElementById('lqp').style.width='2%';
+  document.getElementById('lqn').textContent='–';
+  document.getElementById('lqt').textContent='–:––';
+  document.getElementById('lqq').innerHTML='<div style="text-align:center;padding:1rem"><div class="ai-loading" style="justify-content:center;margin-bottom:.75rem"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div><div style="font-size:13px;color:var(--muted)">Genererer oppgaver...</div></div>';
+
+  // Generate AI questions, fallback to static if it fails
+  await generateAIQuestions();
+  showLQ();
+};
+
+async function generateAIQuestions(){
+  const prompt=`Generer 12 kognitive testspørsmål på norsk. Returner KUN gyldig JSON, ingen annen tekst.
+
+Format (array med 12 objekter):
+[
+  {"cat":"logic","diff":1,"q":"Spørsmålstekst","opts":["A","B","C","D"],"ans":0,"hint":"Kort hint"},
+  ...
+]
+
+Regler:
+- cat: "logic", "number", eller "abstract" (4 av hver)
+- diff: 1=lett, 2=middels, 3=krevende (4 av hver)
+- opts: alltid 4 alternativer
+- ans: indeks (0-3) for riktig svar
+- hint: kort forklaring av løsningen
+- Varier spørsmålstyper: syllogismer, tallrekker, analogi, kode/mønster, matematisk resonnering
+- Aldri de samme spørsmålene to ganger — vær kreativ
+- Spørsmål skal passe for studenter og bedriftsansatte`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:2000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'';
+    const clean=text.replace(/```json|```/g,'').trim();
+    const generated=JSON.parse(clean);
+    if(Array.isArray(generated)&&generated.length>=10){
+      // Combine: AI questions + static spatial questions
+      const spatialQs=LQ_STATIC.filter(q=>q.cat==='spatial');
+      // Shuffle AI questions
+      const shuffled=generated.sort(()=>Math.random()-.5);
+      LQ_ACTIVE=[...shuffled,...spatialQs].sort(()=>Math.random()-.5);
+      console.log('AI questions generated successfully');
+      return;
+    }
+  }catch(e){
+    console.log('AI generation failed, using static questions:', e);
+  }
+  // Fallback: use static questions shuffled
+  LQ_ACTIVE=[...LQ_STATIC].sort(()=>Math.random()-.5);
+}
+function showLQ(){
+  lqA=false;const q=LQ_ACTIVE[lqI];
+  document.getElementById('lqn').textContent=lqI+1;document.getElementById('lq-total-el').textContent=LQ_ACTIVE.length;
+  document.getElementById('lqh').textContent='';
+  document.getElementById('lqp').style.width=Math.max(2,Math.round((lqI/LQ_ACTIVE.length)*100))+'%';
   document.getElementById('lqd').innerHTML=q.diff===1?'<span class="db de">Lett</span>':q.diff===2?'<span class="db dm">Middels</span>':'<span class="db dh">Krevende</span>';
 
   if(q.svg){
@@ -1037,21 +1118,58 @@ function updLQT(){const m=Math.floor(lqTL/60),s=lqTL%60;const el=document.getEle
 function ansLQ(i,btn){
   if(lqA)return;lqA=true;clearInterval(lqTmr);
   lqT.push((Date.now()-lqSt)/1000);
-  const q=LQ[lqI];lqDT[q.cat]=(lqDT[q.cat]||0)+1;
+  const q=LQ_ACTIVE[lqI];lqDT[q.cat]=(lqDT[q.cat]||0)+1;
   document.querySelectorAll('.ob').forEach(b=>b.disabled=true);
-  if(i===q.ans){lqS++;lqDS[q.cat]=(lqDS[q.cat]||0)+1;btn.classList.add('correct');}
+  const correct=(i===q.ans);
+  lqQR[lqI]=correct;
+  if(correct){lqS++;lqDS[q.cat]=(lqDS[q.cat]||0)+1;btn.classList.add('correct');}
   else{btn.classList.add('wrong');document.querySelectorAll('.ob')[q.ans].classList.add('correct');}
   document.getElementById('lqh').textContent=q.hint;setTimeout(nxtLQ,1400);
 }
-function nxtLQ(){lqI++;if(lqI>=LQ.length)showLvlRes();else showLQ();}
+function nxtLQ(){lqI++;if(lqI>=LQ_ACTIVE.length)showLvlRes();else showLQ();}
 
 async function showLvlRes(){
-  const pct=Math.round((lqS/LQ.length)*100);
   const avg=lqT.length?Math.round(lqT.reduce((a,b)=>a+b,0)/lqT.length):0;
-  const iq=pct>=95?'~130+':pct>=85?'~120–130':pct>=70?'~110–120':pct>=55?'~100–110':pct>=40?'~90–100':'~under 90';
+  const total=LQ_ACTIVE.length;
+
+  // IRT-inspired weighted domain scoring
+  // Points: diff1=1, diff2=2, diff3=3. Score = earned/possible per domain (0-100)
   const cats={logic:'Logikk',number:'Tallresonnering',spatial:'Romlig',abstract:'Abstrakt'};
   const colors={logic:'#94f5ff',number:'#4ade80',spatial:'#a78bfa',abstract:'#facc15'};
   let dh='',dbr='',domains={};
+
+  // Calculate weighted domain scores
+  const domainEarned={logic:0,number:0,spatial:0,abstract:0};
+  const domainPossible={logic:0,number:0,spatial:0,abstract:0};
+  const domainByDiff={logic:{1:{e:0,p:0},2:{e:0,p:0},3:{e:0,p:0}},number:{1:{e:0,p:0},2:{e:0,p:0},3:{e:0,p:0}},spatial:{1:{e:0,p:0},2:{e:0,p:0},3:{e:0,p:0}},abstract:{1:{e:0,p:0},2:{e:0,p:0},3:{e:0,p:0}}};
+
+  LQ_ACTIVE.forEach((q,i)=>{
+    const w=q.diff; // weight = difficulty
+    domainPossible[q.cat]=(domainPossible[q.cat]||0)+w;
+    domainByDiff[q.cat][q.diff].p+=w;
+    if(lqDS[q.cat]>0&&i<lqI){ // answered correctly
+      // We need to track per-question correctness, not just totals
+    }
+  });
+
+  // Use per-question tracking instead
+  const qResults=LQ_ACTIVE.slice(0,lqI).map((q,i)=>({cat:q.cat,diff:q.diff,correct:lqQR[i]||false}));
+  qResults.forEach(r=>{
+    const w=r.diff;
+    domainPossible[r.cat]=(domainPossible[r.cat]||0)+w;
+    if(r.correct) domainEarned[r.cat]=(domainEarned[r.cat]||0)+w;
+  });
+
+  // Normalize to 0-100
+  Object.keys(cats).forEach(k=>{
+    domains[k]=domainPossible[k]>0?Math.round((domainEarned[k]/domainPossible[k])*100):0;
+  });
+
+  // Overall weighted score
+  const totalEarned=Object.values(domainEarned).reduce((a,b)=>a+b,0);
+  const totalPossible=Object.values(domainPossible).reduce((a,b)=>a+b,0);
+  const pct=totalPossible>0?Math.round((totalEarned/totalPossible)*100):0;
+  const iq=pct>=95?'~130+':pct>=85?'~120–130':pct>=70?'~110–120':pct>=55?'~100–110':pct>=40?'~90–100':'~under 90';
   Object.entries(cats).forEach(([k,l])=>{
     if(!lqDT[k])return;
     const dp=Math.round((lqDS[k]/lqDT[k])*100);domains[k]=dp;
@@ -1060,7 +1178,7 @@ async function showLvlRes(){
     dbr+=rBar(l+' — '+dl,dp,colors[k]);
   });
 
-  const resultData={pct,avg,score:lqS,total:LQ.length,iq,domains};
+  const resultData={pct,avg,score:lqS,total:LQ_ACTIVE.length,iq,domains};
   await saveResult('level',resultData);
 
   const snap=cu?await getDoc(db.collection('users').doc(cu.uid)):null;
