@@ -483,10 +483,10 @@
 <footer>
   <a href="https://instagram.com/cognistate" target="_blank" rel="noopener">@cognistate</a>
   <span style="color:var(--b1)">•</span>
-  <a href="mailto:contact[at]cognistate.io" onclick="this.href='mailto:contact@cognistate.io'">contact@cognistate.io</a>
+  <a href="/cdn-cgi/l/email-protection#ff9c90918b9e9c8ba49e8ba29c909891968c8b9e8b9ad19690" onclick="this.href='mailto:contact@cognistate.io'"><span class="__cf_email__" data-cfemail="5e3d31302a3f3d2a1e3d313930372d2a3f2a3b703731">[email&#160;protected]</span></a>
 </footer>
 
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -981,16 +981,22 @@ async function showLvlRes(){
 
 /* ===== DAGSFORM-TEST ===== */
 let rtT=[],rtR=0,rtRdy=false,rtTO=null,rtSt=0;
-let mLv=3,mSeq=[],mInp=[],mPh='idle',mSc=0,mTot=0,mMax=3;
-let stC=0,stTot=12,stI=0,stD=[];
+// Memory: mPhase tracks 'forward' or 'backward', mFwdSc/mBwdSc separate scores
+let mLv=5,mSeq=[],mInp=[],mPh='idle',mFwdSc=0,mFwdTot=0,mBwdSc=0,mBwdTot=0,mMax=5,mRound=0,mMode='forward';
+// Stroop: track RT per item, congruent vs incongruent
+let stC=0,stTot=12,stI=0,stD=[],stItemStart=0,stCongrRT=[],stIncongrRT=[];
 const SW=[{word:'Rød',color:'#f87171',label:'Rød'},{word:'Blå',color:'#60a5fa',label:'Blå'},{word:'Grønn',color:'#4ade80',label:'Grønn'},{word:'Gul',color:'#facc15',label:'Gul'},{word:'Lilla',color:'#c084fc',label:'Lilla'},{word:'Oransje',color:'#fb923c',label:'Oransje'}];
 
 window.startNowTest=()=>{
-  rtT=[];rtR=0;rtRdy=false;mLv=3;mSeq=[];mInp=[];mSc=0;mTot=0;mPh='idle';mMax=3;stC=0;stI=0;stD=[];
+  rtT=[];rtR=0;rtRdy=false;
+  mLv=5;mSeq=[];mInp=[];mFwdSc=0;mFwdTot=0;mBwdSc=0;mBwdTot=0;mMax=5;mRound=0;mMode='forward';
+  stC=0;stI=0;stD=[];stCongrRT=[];stIncongrRT=[];
   ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-reaction').style.display='block';
   goTo('page-run');startRT();
 };
+
+/* --- Reaksjonstid --- */
 function startRT(){document.getElementById('rts').textContent='Klar — vent på grønn sirkel';document.getElementById('rtp').innerHTML='';schedRT();}
 function schedRT(){const t=document.getElementById('rtc');t.className='rtc';t.textContent='Vent...';rtRdy=false;rtTO=setTimeout(()=>{t.className='rtc ready';t.textContent='NÅ!';rtRdy=true;rtSt=Date.now();},1000+Math.random()*3000);}
 window.handleReaction=function(){
@@ -1003,32 +1009,68 @@ window.handleReaction=function(){
   if(rtR>=5){setTimeout(startMem,1200);return;}
   setTimeout(schedRT,800);
 };
+
+/* --- Arbeidsminne: 4 fremover (start nivå 5) + 2 baklengs --- */
 function startMem(){
   document.getElementById('run-reaction').style.display='none';document.getElementById('run-memory').style.display='block';
-  mLv=3;mPh='idle';mMax=3;document.getElementById('mb').textContent='Start';
-  document.getElementById('mi').textContent='Se tallene — husk rekkefølgen nøyaktig.';
-  document.getElementById('mlb').textContent='Nivå 3';
+  mLv=5;mPh='idle';mMax=5;mRound=0;mMode='forward';
+  document.getElementById('mb').textContent='Start';
+  document.getElementById('mi').textContent='Se tallene og husk rekkefølgen fremover.';
+  document.getElementById('mlb').textContent='Fremover · Nivå 5';
   renderMD([]);document.getElementById('mins').style.display='none';
 }
 window.memNext=function(){
+  // Determine total rounds: 4 forward + 2 backward = 6 total
+  const totalRounds=6;
   if(mPh==='idle'||mPh==='correct'||mPh==='wrong'){
-    if(mTot>=5){document.getElementById('mb').style.display='none';setTimeout(startStroop,800);return;}
-    mTot++;mSeq=Array.from({length:mLv},()=>Math.floor(Math.random()*9)+1);mPh='show';
+    if(mRound>=totalRounds){document.getElementById('mb').style.display='none';setTimeout(startStroop,800);return;}
+    // Switch to backward after round 4
+    if(mRound===4&&mMode==='forward'){
+      mMode='backward';mLv=Math.max(3,mMax-1);// backward slightly easier than fwd max
+    }
+    mRound++;
+    mSeq=Array.from({length:mLv},()=>Math.floor(Math.random()*9)+1);
+    mPh='show';
     document.getElementById('mb').style.display='none';document.getElementById('mins').style.display='none';
-    document.getElementById('mi').textContent='Husk tallene...';
-    document.getElementById('mlb').textContent='Nivå '+mLv+' · '+mLv+' tall';
+    const modeLabel=mMode==='forward'?'Fremover':'Baklengs';
+    document.getElementById('mi').textContent=mMode==='forward'?'Husk tallene i vist rekkefølge...':'Husk tallene — skriv dem inn BAKLENGS...';
+    document.getElementById('mlb').textContent=modeLabel+' · Nivå '+mLv+' · Runde '+mRound+'/'+totalRounds;
     renderMD(Array(mLv).fill(''));
     let i=0;
-    function sn(){document.querySelectorAll('.sdot').forEach(d=>{d.classList.remove('lit');d.textContent='';});if(i<mSeq.length){const dots=document.querySelectorAll('.sdot');if(dots[i]){dots[i].classList.add('lit');dots[i].textContent=mSeq[i];}i++;setTimeout(sn,650);}else{setTimeout(()=>{mPh='recall';mInp=[];document.getElementById('mi').textContent='Skriv inn rekkefølgen:';renderMD(Array(mLv).fill('_'));renderMIB();document.getElementById('mb').textContent='Bekreft';document.getElementById('mb').style.display='';},400);}}
+    function sn(){
+      document.querySelectorAll('.sdot').forEach(d=>{d.classList.remove('lit');d.textContent='';});
+      if(i<mSeq.length){
+        const dots=document.querySelectorAll('.sdot');
+        if(dots[i]){dots[i].classList.add('lit');dots[i].textContent=mSeq[i];}
+        i++;setTimeout(sn,600);
+      }else{
+        setTimeout(()=>{
+          mPh='recall';mInp=[];
+          document.getElementById('mi').textContent=mMode==='forward'?'Skriv inn rekkefølgen:':'Skriv inn rekkefølgen BAKLENGS:';
+          renderMD(Array(mLv).fill('_'));
+          renderMIB();
+          document.getElementById('mb').textContent='Bekreft';
+          document.getElementById('mb').style.display='';
+        },350);
+      }
+    }
     sn();
   }else if(mPh==='recall'){
-    const ok=mInp.join(',')===mSeq.join(',');
+    const correct=mMode==='forward'?mSeq:[...mSeq].reverse();
+    const ok=mInp.join(',')===correct.join(',');
     const dots=document.querySelectorAll('.sdot');
-    mSeq.forEach((v,i)=>{if(dots[i]){dots[i].textContent=v;dots[i].classList.remove('lit');dots[i].classList.add(ok?'cd':'wd');}});
-    if(ok){mSc++;mPh='correct';mLv=Math.min(mLv+1,9);mMax=Math.max(mMax,mLv-1);document.getElementById('mi').textContent='Riktig! '+(mTot<5?'Neste...':'Ferdig!');}
-    else{mPh='wrong';mLv=Math.max(3,mLv-1);document.getElementById('mi').textContent='Feil. Riktig: '+mSeq.join(' → ');}
+    correct.forEach((v,i)=>{if(dots[i]){dots[i].textContent=v;dots[i].classList.remove('lit');dots[i].classList.add(ok?'cd':'wd');}});
+    if(mMode==='forward'){
+      mFwdTot++;
+      if(ok){mFwdSc++;mPh='correct';mLv=Math.min(mLv+1,9);mMax=Math.max(mMax,mLv-1);document.getElementById('mi').textContent='Riktig!';}
+      else{mPh='wrong';mLv=Math.max(4,mLv-1);document.getElementById('mi').textContent='Feil. Riktig: '+mSeq.join(' → ');}
+    }else{
+      mBwdTot++;
+      if(ok){mBwdSc++;mPh='correct';mLv=Math.min(mLv+1,8);document.getElementById('mi').textContent='Riktig!';}
+      else{mPh='wrong';mLv=Math.max(3,mLv-1);document.getElementById('mi').textContent='Feil. Baklengs: '+[...mSeq].reverse().join(' → ');}
+    }
     document.getElementById('mins').style.display='none';
-    if(mTot>=5){document.getElementById('mb').style.display='none';setTimeout(startStroop,1500);}
+    if(mRound>=totalRounds){document.getElementById('mb').style.display='none';setTimeout(startStroop,1500);}
     else document.getElementById('mb').textContent='Neste';
   }
 };
@@ -1036,43 +1078,94 @@ function renderMD(arr){document.getElementById('mds').innerHTML=arr.map(v=>`<div
 function renderMIB(){const d=document.getElementById('mins');d.style.display='flex';d.innerHTML=Array.from({length:9},(_,i)=>`<button class="sb2" onclick="addM(${i+1})">${i+1}</button>`).join('')+`<button class="sb2" style="font-size:12px" onclick="clrM()">↩</button>`;}
 window.addM=n=>{if(mInp.length>=mSeq.length)return;mInp.push(n);const dots=document.querySelectorAll('.sdot');if(dots[mInp.length-1]){dots[mInp.length-1].textContent=n;dots[mInp.length-1].classList.add('lit');}};
 window.clrM=()=>{mInp=[];renderMD(Array(mSeq.length).fill('_'));};
+
+/* --- Stroop med reaksjonstidsmåling --- */
 function startStroop(){
   document.getElementById('run-memory').style.display='none';document.getElementById('run-stroop').style.display='block';
-  stC=0;stI=0;
-  stD=Array.from({length:stTot},(_, i)=>{const w=SW[Math.floor(Math.random()*SW.length)];let ink=i%2===0?SW.filter(s=>s.label!==w.word)[Math.floor(Math.random()*(SW.length-1))]:w;return{word:w.word,ink:ink.color,inkLabel:ink.label};});
+  stC=0;stI=0;stCongrRT=[];stIncongrRT=[];
+  // Build 12 items: 6 incongruent + 6 congruent, randomized
+  const items=[];
+  SW.slice(0,4).forEach(w=>{
+    // 1 congruent
+    items.push({word:w.word,ink:w.color,inkLabel:w.label,congruent:true});
+    // 2 incongruent
+    const others=SW.filter(s=>s.label!==w.label);
+    const ink=others[Math.floor(Math.random()*others.length)];
+    items.push({word:w.word,ink:ink.color,inkLabel:ink.label,congruent:false});
+    const ink2=others[Math.floor(Math.random()*others.length)];
+    items.push({word:w.word,ink:ink2.color,inkLabel:ink2.label,congruent:false});
+  });
+  // Shuffle
+  stD=items.sort(()=>Math.random()-.5).slice(0,12);
   showStrp();
 }
 function showStrp(){
   if(stI>=stTot){showNowRes();return;}
   document.getElementById('stp').style.width=Math.round((stI/stTot)*100)+'%';
   document.getElementById('stc').textContent='Runde '+(stI+1)+' av '+stTot;
-  const s=stD[stI];const el=document.getElementById('stw');el.textContent=s.word;el.style.color=s.ink;
+  const s=stD[stI];
+  const el=document.getElementById('stw');el.textContent=s.word;el.style.color=s.ink;
+  // Show 4 color options, always include correct
   const shown=SW.slice().sort(()=>Math.random()-.5).slice(0,4);
   if(!shown.find(x=>x.label===s.inkLabel))shown[3]=SW.find(x=>x.label===s.inkLabel);
   document.getElementById('sto').innerHTML=shown.map(sw=>`<button class="ob" onclick="ansStrp('${sw.label}')">${sw.label}</button>`).join('');
+  stItemStart=Date.now();
 }
 window.ansStrp=label=>{
-  const s=stD[stI];const btns=document.querySelectorAll('#sto .ob');btns.forEach(b=>b.disabled=true);
+  const rt=Date.now()-stItemStart;
+  const s=stD[stI];
+  const btns=document.querySelectorAll('#sto .ob');btns.forEach(b=>b.disabled=true);
   const lbls=Array.from(btns).map(b=>b.textContent);
-  if(label===s.inkLabel){stC++;btns[lbls.indexOf(label)]?.classList.add('correct');}
-  else{btns[lbls.indexOf(label)]?.classList.add('wrong');btns[lbls.indexOf(s.inkLabel)]?.classList.add('correct');}
-  stI++;setTimeout(showStrp,500);
+  if(label===s.inkLabel){
+    stC++;
+    btns[lbls.indexOf(label)]?.classList.add('correct');
+    if(s.congruent)stCongrRT.push(rt);else stIncongrRT.push(rt);
+  }else{
+    btns[lbls.indexOf(label)]?.classList.add('wrong');
+    btns[lbls.indexOf(s.inkLabel)]?.classList.add('correct');
+    // Still record RT for analysis even if wrong
+    if(s.congruent)stCongrRT.push(rt*1.5);else stIncongrRT.push(rt*1.5);
+  }
+  stI++;setTimeout(showStrp,400);
 };
 
 async function showNowRes(){
-  const sorted=[...rtT].sort((a,b)=>a-b);const trimmed=sorted.slice(1,-1);
+  // Reaksjonstid: trimmed mean + variabilitet
+  const sorted=[...rtT].sort((a,b)=>a-b);
+  const trimmed=sorted.slice(1,-1);
   const avgRT=Math.round(trimmed.reduce((a,b)=>a+b,0)/trimmed.length);
   const minRT=Math.min(...rtT);
-  const memSpan=mMax,memPct=Math.round((mSc/mTot)*100),stroopPct=Math.round((stC/stTot)*100);
+  const rtVar=Math.round(Math.sqrt(trimmed.map(x=>(x-avgRT)**2).reduce((a,b)=>a+b,0)/trimmed.length));
+
+  // Arbeidsminne: fremover + baklengs separat
+  const fwdPct=mFwdTot>0?Math.round((mFwdSc/mFwdTot)*100):0;
+  const bwdPct=mBwdTot>0?Math.round((mBwdSc/mBwdTot)*100):0;
+  const memSpan=mMax;
+  // Weighted: forward 60%, backward 40% (backward is harder, more diagnostic)
+  const memCombined=Math.round(fwdPct*0.6+bwdPct*0.4);
+
+  // Stroop: nøyaktighet + interferens (RT inkongruent - RT kongruent)
+  const stroopPct=Math.round((stC/stTot)*100);
+  const avgCongrRT=stCongrRT.length>0?Math.round(stCongrRT.reduce((a,b)=>a+b,0)/stCongrRT.length):500;
+  const avgIncongrRT=stIncongrRT.length>0?Math.round(stIncongrRT.reduce((a,b)=>a+b,0)/stIncongrRT.length):700;
+  const stroopInterference=avgIncongrRT-avgCongrRT; // ms — høyere = mer interferens
+  // Interferens-score: lavere interferens = bedre impulskontroll
+  const interfScore=stroopInterference<50?95:stroopInterference<100?85:stroopInterference<150?70:stroopInterference<200?55:40;
+  // Combined Stroop score: accuracy 60% + interference 40%
+  const stSc=Math.round((stroopPct/100)*60+interfScore*0.4);
+
+  // Normaliserte scores
   const rtSc=avgRT<180?98:avgRT<220?90:avgRT<270?75:avgRT<330?60:avgRT<400?45:30;
   const mSc2=memSpan>=7?95:memSpan>=6?82:memSpan>=5?68:memSpan>=4?52:35;
-  const stSc=stroopPct>=92?95:stroopPct>=83?80:stroopPct>=75?65:stroopPct>=58?50:35;
-  const overall=Math.round(rtSc*.3+mSc2*.35+stSc*.35);
+  // Penalize high variability
+  const rtScAdj=Math.round(rtSc*(1-Math.min(rtVar/500,0.2)));
+  const overall=Math.round(rtScAdj*0.3+mSc2*0.35+stSc*0.35);
+
   const rtL=avgRT<220?'Eksepsjonell':avgRT<270?'Rask':avgRT<330?'Over snitt':avgRT<400?'Gjennomsnitt':'Under snitt';
   const mL=memSpan>=7?'Eksepsjonell':memSpan>=6?'Over snitt':memSpan>=5?'Gjennomsnitt':'Under snitt';
-  const stL=stroopPct>=90?'Eksepsjonell':stroopPct>=80?'God':stroopPct>=65?'Gjennomsnitt':'Utviklingspotensial';
+  const stL=stroopPct>=90&&stroopInterference<100?'Eksepsjonell':stroopPct>=80?'God':stroopPct>=65?'Gjennomsnitt':'Utviklingspotensial';
 
-  const resultData={avgRT,memSpan,memPct,stroopPct,overall,rtScore:rtSc,memScore:mSc2,stroopScore:stSc};
+  const resultData={avgRT,minRT,rtVar,memSpan,fwdPct,bwdPct,memCombined,stroopPct,stroopInterference,avgCongrRT,avgIncongrRT,overall,rtScore:rtScAdj,memScore:mSc2,stroopScore:stSc};
   await saveResult('now',resultData);
 
   const snap=cu?await getDoc(doc(db,'users',cu.uid)):null;
@@ -1084,8 +1177,8 @@ async function showNowRes(){
   document.getElementById('ressub').textContent=new Date().toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('resbb').style.display=isBase?'block':'none';
   if(isBase)document.getElementById('resbb').textContent='✓ Første dagsform-resultat lagret som din baseline.';
-  document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${avgRT}<span class="rsu">ms</span></div><div class="rsl">Reaksjon</div></div><div class="rs"><div class="rsv">${memSpan}</div><div class="rsl">Minnespenn</div></div><div class="rs"><div class="rsv">${stroopPct}<span class="rsu">%</span></div><div class="rsl">Stroop</div></div><div class="rs"><div class="rsv">${overall}</div><div class="rsl">Total</div></div>`;
-  document.getElementById('resdom').innerHTML=`<div class="dc"><div class="dn">Reaksjonstid</div><div class="dsc">${rtL}</div><div class="dl">${avgRT}ms · min ${minRT}ms</div><div class="dbar"><div class="dbarf" style="width:${rtSc}%;background:#94f5ff"></div></div></div><div class="dc"><div class="dn">Arbeidsminne</div><div class="dsc">${mL}</div><div class="dl">Spenn ${memSpan} · ${mSc}/${mTot}</div><div class="dbar"><div class="dbarf" style="width:${mSc2}%;background:#4ade80"></div></div></div><div class="dc"><div class="dn">Impulskontroll</div><div class="dsc">${stL}</div><div class="dl">${stC}/${stTot} riktige</div><div class="dbar"><div class="dbarf" style="width:${stSc}%;background:#a78bfa"></div></div></div><div class="dc"><div class="dn">Samlet</div><div class="dsc">${overall}/100</div><div class="dl">${overall>=80?'Topp 20%':overall>=65?'Over snitt':'Gjennomsnitt'}</div><div class="dbar"><div class="dbarf" style="width:${overall}%;background:#facc15"></div></div></div>`;
+  document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${avgRT}<span class="rsu">ms</span></div><div class="rsl">Reaksjon</div></div><div class="rs"><div class="rsv">${memSpan}</div><div class="rsl">Minnespenn</div></div><div class="rs"><div class="rsv">${stroopInterference}<span class="rsu">ms</span></div><div class="rsl">Interferens</div></div><div class="rs"><div class="rsv">${overall}</div><div class="rsl">Total</div></div>`;
+  document.getElementById('resdom').innerHTML=`<div class="dc"><div class="dn">Reaksjonstid</div><div class="dsc">${rtL}</div><div class="dl">${avgRT}ms · variasjon ±${rtVar}ms</div><div class="dbar"><div class="dbarf" style="width:${rtScAdj}%;background:#94f5ff"></div></div></div><div class="dc"><div class="dn">Fremover-minne</div><div class="dsc">${fwdPct}%</div><div class="dl">Spenn ${memSpan} · ${mFwdSc}/${mFwdTot} riktige</div><div class="dbar"><div class="dbarf" style="width:${fwdPct}%;background:#4ade80"></div></div></div><div class="dc"><div class="dn">Baklengs-minne</div><div class="dsc">${bwdPct}%</div><div class="dl">${mBwdSc}/${mBwdTot} riktige · mer krevende</div><div class="dbar"><div class="dbarf" style="width:${bwdPct}%;background:#a78bfa"></div></div></div><div class="dc"><div class="dn">Stroop-interferens</div><div class="dsc">${stL}</div><div class="dl">${stroopInterference}ms interferens · ${stroopPct}% riktige</div><div class="dbar"><div class="dbarf" style="width:${stSc}%;background:#facc15"></div></div></div>`;
 
   // Baseline comparison
   if(bl?.now){
@@ -1103,12 +1196,8 @@ async function showNowRes(){
     }).join('');
   }
 
-  document.getElementById('resbr').innerHTML=rBar('Reaksjonstid — '+rtL,rtSc,'#94f5ff')+rBar('Arbeidsminne — '+mL,mSc2,'#4ade80')+rBar('Impulskontroll — '+stL,stSc,'#a78bfa');
+  document.getElementById('resbr').innerHTML=rBar('Reaksjonstid — '+rtL,rtScAdj,'#94f5ff')+rBar('Fremover-minne — '+fwdPct+'%',fwdPct,'#4ade80')+rBar('Baklengs-minne — '+bwdPct+'%',bwdPct,'#a78bfa')+rBar('Stroop-impulskontroll — '+stL,stSc,'#facc15');
   document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px">Analyserer...</span></div>';
   goTo('page-results');
 
-  const insight=generateInsight('now',resultData,bl);
-  document.getElementById('ai-body').innerHTML=insight;
-
-  if(cu){
-    await addDoc(collection(db,'insights'),{uid:cu.uid,type:'now',overall,avgRT,memSpan,stroopPct,aiInsight:insight,score:null,pct:null,domains:null,createdAt:serverTimestamp(
+  const insight=generateInsight('now',resultDa
