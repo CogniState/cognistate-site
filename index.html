@@ -483,10 +483,10 @@
 <footer>
   <a href="https://instagram.com/cognistate" target="_blank" rel="noopener">@cognistate</a>
   <span style="color:var(--b1)">•</span>
-  <a href="#" onclick="this.href='mai'+'lto:'+'contact'+'@'+'cognistate'+'.io';return true;">Kontakt oss</a>
+  <span style="color:var(--muted)">contact @ cognistate.io</span>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+<script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -1190,7 +1190,7 @@ async function showNowRes(){
       {label:'Total',curr:overall,base:bl.now.overall||overall}
     ];
     document.getElementById('bc-rows').innerHTML=bcData.map(r=>{
-      const pctOfBase=r.base>0?Math.round((r.curr/r.base)*100):100;
+      const pctOfBase=r.base>0?Math.round((r.curr/r.base)*100):100;A
       const col=pctOfBase>=90?'#4ade80':pctOfBase>=70?'#facc15':'#f87171';
       return`<div class="bc-row"><div class="bc-label">${r.label}</div><div class="bc-track"><div class="bc-base" style="left:${Math.min(r.base,100)}%"></div><div class="bc-fill" style="width:${Math.min(r.curr,100)}%;background:${col}"></div></div><div class="bc-pct" style="color:${col}">${pctOfBase}%</div></div>`;
     }).join('');
