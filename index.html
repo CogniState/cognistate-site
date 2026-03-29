@@ -488,7 +488,7 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyCyx9X7Gg6WVpgEX5OrmGu1q31nXVnvaw0",authDomain:"cognistate.firebaseapp.com",projectId:"cognistate",storageBucket:"cognistate.firebasestorage.app",messagingSenderId:"671593867260",appId:"1:671593867260:web:93e3851b5652ef1c5bf479"});
@@ -513,7 +513,13 @@ window.showAuth=(mode)=>{
   goTo('page-auth');
 };
 window.toggleAuth=()=>window.showAuth(am==='login'?'register':'login');
-window.loginGoogle=async()=>{try{const r=await signInWithPopup(auth,gp);await ensureUser(r.user);}catch(e){showErr(e.message);}};
+window.loginGoogle=async()=>{
+  try{
+    const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if(isMobile){await signInWithRedirect(auth,gp);}
+    else{const r=await signInWithPopup(auth,gp);await ensureUser(r.user);}
+  }catch(e){showErr(e.message);}
+};
 window.submitAuth=async()=>{
   const email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;
   const btn=document.getElementById('asb');
@@ -695,6 +701,11 @@ async function loadInsights(){
 }
 
 /* ===== AUTH STATE ===== */
+// Handle redirect result on page load
+getRedirectResult(auth).then(async result=>{
+  if(result?.user) await ensureUser(result.user);
+}).catch(()=>{});
+
 onAuthStateChanged(auth,async user=>{
   document.getElementById('ls').style.display='none';
   document.getElementById('mn').style.display='flex';
