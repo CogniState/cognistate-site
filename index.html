@@ -483,10 +483,10 @@
 <footer>
   <a href="https://instagram.com/cognistate" target="_blank" rel="noopener">@cognistate</a>
   <span style="color:var(--b1)">•</span>
-  <a href="mailto:contact@cognistate.io">contact@cognistate.io</a>
+  <a href="/cdn-cgi/l/email-protection#1f7c70716b7e7c6b5f7c707871766c6b7e6b7a317670"><span class="__cf_email__" data-cfemail="096a66677d686a7d496a666e67607a7d687d6c276066">[email&#160;protected]</span></a>
 </footer>
 
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -713,28 +713,137 @@ onAuthStateChanged(auth,async user=>{
 
 window.abortTest=()=>{clearInterval(lqTmr);goToDash();};
 
+/* ===== SVG HELPERS ===== */
+function mkSVG(content,size=110){return`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto">${content}</svg>`;}
+const C='#e2e8f0',CD='#94a3b8',CA='#94f5ff',CB='rgba(255,255,255,0.06)',CS='rgba(148,245,255,0.15)';
+// Shapes
+function rect(x,y,w,h,fill=CB,stroke=C,sw=1.5,r=2){return`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;}
+function circ(cx,cy,r,fill=CB,stroke=C,sw=1.5){return`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;}
+function tri(pts,fill=CB,stroke=C,sw=1.5){return`<polygon points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;}
+function line(x1,y1,x2,y2,stroke=C,sw=1.5){return`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}"/>`;}
+function cross(cx,cy,s,stroke=C,sw=2){return line(cx-s,cy,cx+s,cy,stroke,sw)+line(cx,cy-s,cx,cy+s,stroke,sw);}
+function dot(cx,cy,r=3,fill=C){return`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}"/>`;}
+function txt(x,y,t,fill=C,fs=13,anchor='middle'){return`<text x="${x}" y="${y}" fill="${fill}" font-size="${fs}" text-anchor="${anchor}" dominant-baseline="middle" font-family="system-ui,sans-serif">${t}</text>`;}
+function rotShape(shape,deg,cx=55,cy=55){return`<g transform="rotate(${deg},${cx},${cy})">${shape}</g>`;}
+// Raven matrix cell renderer
+function mCell(x,y,s,content){return`<g transform="translate(${x},${y})">${rect(0,0,s,s,'rgba(255,255,255,0.03)','rgba(255,255,255,0.1)',1,0)}${content}</g>`;}
+
+// Build a 3x3 Raven matrix SVG (size=180, cell=54, gap=6)
+function ravenGrid(cells, qmark=true){
+  const S=180,cs=54,g=6,pad=6;
+  let svg=`<svg viewBox="0 0 ${S} ${S}" width="180" height="180" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto">`;
+  svg+=`<rect width="${S}" height="${S}" rx="10" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`;
+  for(let r=0;r<3;r++){for(let c=0;c<3;c++){
+    const idx=r*3+c;
+    const x=pad+c*(cs+g),y=pad+r*(cs+g);
+    const isLast=idx===8;
+    svg+=`<g transform="translate(${x},${y})">`;
+    svg+=`<rect width="${cs}" height="${cs}" rx="3" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>`;
+    if(isLast&&qmark){svg+=`<text x="${cs/2}" y="${cs/2}" fill="rgba(148,245,255,0.6)" font-size="22" text-anchor="middle" dominant-baseline="middle" font-family="system-ui">?</text>`;}
+    else if(cells[idx]){svg+=cells[idx];}
+    svg+=`</g>`;
+  }}
+  svg+='</svg>';return svg;
+}
+
+// Render a small shape inside a matrix cell (cs=54, so center=27)
+function mc(shape){
+  // shape: 'circle','square','triangle','diamond','cross','dot-grid','arrow-r','arrow-d','ring'
+  const s=shape;
+  if(s==='circle')return circ(27,27,14,'rgba(148,245,255,0.15)','#94f5ff',1.5);
+  if(s==='square')return rect(13,13,28,28,'rgba(148,245,255,0.15)','#94f5ff',1.5,2);
+  if(s==='triangle')return tri('27,10 44,44 10,44','rgba(148,245,255,0.15)','#94f5ff',1.5);
+  if(s==='diamond')return`<polygon points="27,10 44,27 27,44 10,27" fill="rgba(148,245,255,0.15)" stroke="#94f5ff" stroke-width="1.5"/>`;
+  if(s==='cross')return cross(27,27,12,'#94f5ff',2);
+  if(s==='dot')return dot(27,27,5,'#94f5ff');
+  if(s==='ring')return circ(27,27,14,'none','#94f5ff',3)+circ(27,27,7,'none','#94f5ff',1.5);
+  if(s==='filled-c')return circ(27,27,14,'#94f5ff','#94f5ff',0);
+  if(s==='filled-s')return rect(13,13,28,28,'#94f5ff','#94f5ff',0,2);
+  if(s==='empty')return'';
+  if(s==='small-c')return circ(27,27,8,'rgba(148,245,255,0.15)','#94f5ff',1.5);
+  if(s==='big-c')return circ(27,27,20,'rgba(148,245,255,0.1)','#94f5ff',1.5);
+  if(s==='x')return line(15,15,39,39,'#94f5ff',2)+line(39,15,15,39,'#94f5ff',2);
+  return '';
+}
+
+// Option cell SVG (small, 70px)
+function optCell(content){
+  return`<svg viewBox="0 0 54 54" width="70" height="70" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto"><rect width="54" height="54" rx="6" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>${content}</svg>`;
+}
+
+// Rotation SVG option (90px target shape)
+function rotOpt(shape, deg){
+  const center=45;
+  let s='';
+  if(shape==='arrow'){s=`<polygon points="${center},${center-20} ${center+8},${center+8} ${center},${center+2} ${center-8},${center+8}" fill="rgba(148,245,255,0.2)" stroke="#94f5ff" stroke-width="1.5"/>`;}
+  else if(shape==='Lshape'){s=`<polyline points="20,20 20,55 45,55" fill="none" stroke="#94f5ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;}
+  else if(shape==='flag'){s=rect(20,15,6,30,'rgba(148,245,255,0.15)','#94f5ff',1.5)+tri('26,15 46,22 26,29','rgba(148,245,255,0.2)','#94f5ff',1.5);}
+  else if(shape==='step'){s=`<polyline points="15,50 15,30 30,30 30,15 50,15" fill="none" stroke="#94f5ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;}
+  return`<svg viewBox="0 0 90 90" width="80" height="80" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto"><g transform="rotate(${deg},${center},${center})">${s}</g></svg>`;
+}
+
 /* ===== NIVÅ-TEST ===== */
 const LQ=[
-  {cat:'number',diff:1,q:"Hvilken tall kommer neste?\n2 · 4 · 6 · 8 · ?",opts:["9","10","11","12"],ans:1,hint:"Aritmetisk rekke: +2 hvert ledd"},
-  {cat:'logic',diff:1,q:"Alle fugler har vinger.\nSpurven er en fugl.\nHar spurven vinger?",opts:["Ja","Nei","Vet ikke","Muligens"],ans:0,hint:"Grunnleggende syllogisme"},
-  {cat:'number',diff:1,q:"Hva er 25% av 80?",opts:["15","20","25","30"],ans:1,hint:"25% = ¼ · 80"},
-  {cat:'abstract',diff:1,q:"Hvilket ord hører ikke hjemme?\nMars · Venus · Jupiter · Månen · Saturn",opts:["Mars","Venus","Jupiter","Månen","Saturn"],ans:3,hint:"Alle er planeter — unntatt én"},
+  // --- LOGIKK ---
+  {cat:'logic',diff:1,q:"Alle fugler har vinger.\nSpurven er en fugl.\nHar spurven vinger?",opts:["Ja","Nei","Vet ikke","Muligens"],ans:0,hint:"Grunnleggende syllogisme: premiss → konklusjon"},
   {cat:'logic',diff:1,q:"ABBA : BAAB\nCDDC : ?",opts:["DCCD","CDDC","DCDC","CCDD"],ans:0,hint:"Ytterste og innerste tegn byttes"},
-  {cat:'number',diff:1,q:"En butikk gir 20% rabatt på kr 250.\nHva er ny pris?",opts:["180 kr","190 kr","200 kr","210 kr"],ans:2,hint:"250 · 0,80 = 200"},
-  {cat:'spatial',diff:1,q:"En terning: motstående sider summerer alltid til 7.\nHvilken side er mot siden med 2?",opts:["3","4","5","6"],ans:2,hint:"2 + 5 = 7"},
-  {cat:'number',diff:2,q:"Hvilken tall kommer neste?\n1 · 1 · 2 · 3 · 5 · 8 · 13 · ?",opts:["18","19","20","21"],ans:3,hint:"Fibonacci: sum av de to forrige"},
-  {cat:'logic',diff:2,q:"Ingen reptiler er varmblodige.\nAlle krokodiller er reptiler.\nKan krokodiller være varmblodige?",opts:["Ja","Nei","Av og til","Vet ikke"],ans:1,hint:"Universell negasjon via syllogisme"},
-  {cat:'spatial',diff:2,q:"Ovenfra: sirkel. Fra siden: rektangel.\nHva er objektet?",opts:["Kule","Sylinder","Kjegle","Kube"],ans:1,hint:"Topp: sirkel · Side: rektangel"},
-  {cat:'number',diff:2,q:"3 malere maler 3 hus på 3 dager.\nHvor mange dager bruker 6 malere på 6 hus?",opts:["3","6","9","12"],ans:0,hint:"Kapasitet skalerer proporsjonalt"},
-  {cat:'abstract',diff:2,q:"Tallrekken: 2 · 6 · 12 · 20 · 30 · ?\nHva er neste tall?",opts:["38","40","42","44"],ans:2,hint:"Differansene øker med 2 hver gang"},
+  {cat:'logic',diff:2,q:"Ingen reptiler er varmblodige.\nAlle krokodiller er reptiler.\nKan krokodiller være varmblodige?",opts:["Ja","Nei","Av og til","Vet ikke"],ans:1,hint:"Universell negasjon overføres via syllogisme"},
   {cat:'logic',diff:2,q:"Hvis det regner, tar Maria paraply.\nMaria har ikke paraply.\nHva kan vi slutte?",opts:["Det regner","Det regner ikke","Maria er inne","Ingenting sikkert"],ans:1,hint:"Modus tollens: ¬Q → ¬P"},
-  {cat:'spatial',diff:2,q:"Et kvadrat roteres 45° med klokken.\nDeretter speiles om vertikal akse.\nResultat?",opts:["Rombus pekende opp","Et kvadrat","Rombus pekende ned","Speil av original"],ans:0,hint:"Rotasjon → rombus, speiling endrer ikke form"},
-  {cat:'number',diff:3,q:"Tallrekken: 1 · 4 · 9 · 16 · 25 · ?\nOg den etter det?",opts:["36 · 49","34 · 47","36 · 48","35 · 49"],ans:0,hint:"Kvadrattall: n²"},
-  {cat:'abstract',diff:3,q:"KODE = 11-15-4-5 (A=1...)\nHva er LOGIKK?",opts:["12-15-7-9-11-11","11-14-6-9-10-10","12-16-8-10-12-12","13-16-8-10-12-12"],ans:0,hint:"L=12, O=15, G=7, I=9, K=11"},
-  {cat:'logic',diff:3,q:"5 venner i rad. Ana ikke ved siden av Bo.\nCa mellom Ana og Di. Ed ytterst høyre.\nHvem ytterst venstre?",opts:["Ana","Bo","Ca","Di"],ans:1,hint:"Ed høyre, Ca mellom Ana og Di"},
-  {cat:'spatial',diff:3,q:"Kube brettes ut til kors.\nToppen merkes ★.\nHvilken side er direkte overfor ★?",opts:["Fremste","Bakre","Bunnen","Venstre"],ans:2,hint:"Topp og bunn er alltid overfor hverandre"},
-  {cat:'number',diff:3,q:"Tog A: 120 km/t. Tog B mot A: 80 km/t.\nStart: 500 km fra hverandre.\nMinutter til de møtes?",opts:["150 min","160 min","175 min","180 min"],ans:0,hint:"Relativ fart 200 km/t · 500/200 = 2,5t = 150 min"},
-  {cat:'abstract',diff:3,q:"A → ¬B\n¬B → C\nC → ¬D\nA er sant — hva er D?",opts:["Sant","Falskt","Ukjent","Avhenger av E"],ans:1,hint:"Kjed: A→¬B→C→¬D"}
+  {cat:'logic',diff:3,q:"5 venner i rad. Ana ikke ved siden av Bo.\nCa mellom Ana og Di. Ed ytterst høyre.\nHvem ytterst venstre?",opts:["Ana","Bo","Ca","Di"],ans:1,hint:"Plasser Ed høyre, Ca mellom Ana og Di"},
+  {cat:'logic',diff:3,q:"A → ¬B\n¬B → C\nC → ¬D\nA er sant — hva er D?",opts:["Sant","Falskt","Ukjent","Avhenger av E"],ans:1,hint:"Kjed: A→¬B→C→¬D"},
+  // --- TALL ---
+  {cat:'number',diff:1,q:"Hvilken tall kommer neste?\n2 · 4 · 6 · 8 · ?",opts:["9","10","11","12"],ans:1,hint:"Aritmetisk rekke: +2 hvert ledd"},
+  {cat:'number',diff:1,q:"En butikk gir 20% rabatt på kr 250.\nHva er ny pris?",opts:["180 kr","190 kr","200 kr","210 kr"],ans:2,hint:"250 · 0,80 = 200"},
+  {cat:'number',diff:2,q:"Tallrekken: 1 · 1 · 2 · 3 · 5 · 8 · 13 · ?",opts:["18","19","20","21"],ans:3,hint:"Fibonacci: hvert tall er summen av de to forrige"},
+  {cat:'number',diff:2,q:"3 malere maler 3 hus på 3 dager.\nHvor mange dager bruker 6 malere på 6 hus?",opts:["3","6","9","12"],ans:0,hint:"Kapasitet skalerer proporsjonalt — raten er konstant"},
+  {cat:'number',diff:3,q:"Tallrekken: 1 · 4 · 9 · 16 · 25 · ?\nOg den etter det?",opts:["36 · 49","34 · 47","36 · 48","35 · 49"],ans:0,hint:"Perfekte kvadrattall: n²"},
+  {cat:'number',diff:3,q:"Tog A: 120 km/t. Tog B mot A: 80 km/t.\nStart: 500 km fra hverandre.\nMinutter til de møtes?",opts:["150 min","160 min","175 min","180 min"],ans:0,hint:"Relativ fart 200 km/t · 500/200 t = 150 min"},
+  // --- ABSTRAKT ---
+  {cat:'abstract',diff:1,q:"Hvilket ord hører ikke hjemme?\nMars · Venus · Jupiter · Månen · Saturn",opts:["Mars","Venus","Jupiter","Månen","Saturn"],ans:3,hint:"Alle er planeter — unntatt én"},
+  {cat:'abstract',diff:2,q:"Tallrekken: 2 · 6 · 12 · 20 · 30 · ?",opts:["38","40","42","44"],ans:2,hint:"Differansene øker med 2 hver gang: +4,+6,+8,+10,+12"},
+  {cat:'abstract',diff:3,q:"KODE = 11-15-4-5 (A=1, B=2...)\nHva er LOGIKK?",opts:["12-15-7-9-11-11","11-14-6-9-10-10","12-16-8-10-12-12","13-16-8-10-12-12"],ans:0,hint:"L=12, O=15, G=7, I=9, K=11, K=11"},
+  // --- SPATIAL: RAVEN'S MATRICES ---
+  {cat:'spatial',diff:1,svg:true,
+   q:"Hvilken form mangler i rutenettet?",
+   matrix:ravenGrid([mc('circle'),mc('square'),mc('triangle'),mc('circle'),mc('square'),mc('triangle'),mc('circle'),mc('square')]),
+   optSVGs:[optCell(mc('triangle')),optCell(mc('circle')),optCell(mc('square')),optCell(mc('diamond'))],
+   opts:["","","",""],ans:0,hint:"Raden følger mønsteret: sirkel → kvadrat → trekant"},
+  {cat:'spatial',diff:1,svg:true,
+   q:"Hvilken form mangler?",
+   matrix:ravenGrid([mc('dot'),mc('dot'),mc('dot'),mc('dot'),mc('dot'),mc('dot'),mc('dot'),mc('dot')]),
+   optSVGs:[optCell(mc('dot')),optCell(mc('circle')),optCell(mc('empty')),optCell(mc('x'))],
+   opts:["","","",""],ans:0,hint:"Alle celler inneholder samme form"},
+  {cat:'spatial',diff:2,svg:true,
+   q:"Hva skal stå i det tomme feltet?",
+   matrix:ravenGrid([mc('small-c'),mc('circle'),mc('big-c'),mc('small-c'),mc('circle'),mc('big-c'),mc('small-c'),mc('circle')]),
+   optSVGs:[optCell(mc('big-c')),optCell(mc('small-c')),optCell(mc('circle')),optCell(mc('dot'))],
+   opts:["","","",""],ans:0,hint:"Mønsteret gjentar seg: liten → medium → stor sirkel"},
+  {cat:'spatial',diff:2,svg:true,
+   q:"Hvilken form fullfører matrisen?",
+   matrix:ravenGrid([mc('circle'),mc('ring'),mc('filled-c'),mc('square'),mc('ring'),mc('filled-s'),mc('triangle'),mc('ring')]),
+   optSVGs:[optCell(mc('triangle')+`<polygon points="27,10 44,44 10,44" fill="#94f5ff" stroke="#94f5ff" stroke-width="0"/>`),optCell(mc('filled-c')),optCell(mc('dot')),optCell(mc('ring'))],
+   opts:["","","",""],ans:0,hint:"Kolonne 3: form blir fylt. Rad 3: trekant-varianten"},
+  {cat:'spatial',diff:3,svg:true,
+   q:"Hva mangler i matrisen?",
+   matrix:ravenGrid([mc('cross'),mc('cross')+dot(27,27,4,'#0f172a'),mc('cross')+dot(27,27,8,'rgba(148,245,255,0.4)'),mc('x'),mc('x')+dot(27,27,4,'#0f172a'),mc('x')+dot(27,27,8,'rgba(148,245,255,0.4)'),mc('dot'),mc('dot')+dot(27,27,4,'#0f172a')]),
+   optSVGs:[optCell(mc('dot')+dot(27,27,8,'rgba(148,245,255,0.4)')),optCell(mc('dot')+dot(27,27,4,'#0f172a')),optCell(mc('cross')),optCell(mc('x'))],
+   opts:["","","",""],ans:0,hint:"Kolonne 3: alltid stor dot. Rad 3: dot-varianten"},
+  // --- SPATIAL: MENTAL ROTATION ---
+  {cat:'spatial',diff:1,svg:true,
+   q:"Hvilken av alternativene er den samme formen rotert (ikke speilet)?",
+   matrix:`<div style="text-align:center;padding:1rem 0">${rotOpt('arrow',0)}</div>`,
+   optSVGs:[rotOpt('arrow',90),rotOpt('arrow',180),rotOpt('arrow',270),`<svg viewBox="0 0 90 90" width="80" height="80" xmlns="http://www.w3.org/2000/svg"><g transform="scale(-1,1) translate(-90,0)"><g transform="rotate(0,45,45)"><polygon points="45,25 53,53 45,47 37,53" fill="rgba(148,245,255,0.2)" stroke="#94f5ff" stroke-width="1.5"/></g></g></svg>`],
+   opts:["","","",""],ans:0,hint:"Roter pilen 90° med klokken — den peker til høyre"},
+  {cat:'spatial',diff:2,svg:true,
+   q:"Hvilken er den samme L-formen rotert?",
+   matrix:`<div style="text-align:center;padding:1rem 0">${rotOpt('Lshape',0)}</div>`,
+   optSVGs:[rotOpt('Lshape',90),rotOpt('Lshape',180),`<svg viewBox="0 0 90 90" width="80" height="80" xmlns="http://www.w3.org/2000/svg"><g transform="scale(-1,1) translate(-90,0)"><polyline points="20,20 20,55 45,55" fill="none" stroke="#94f5ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`,rotOpt('Lshape',270)],
+   opts:["","","",""],ans:1,hint:"180° rotasjon snur L opp-ned"},
+  {cat:'spatial',diff:3,svg:true,
+   q:"Hvilken er trappemønsteret rotert 90° mot klokken?",
+   matrix:`<div style="text-align:center;padding:1rem 0">${rotOpt('step',0)}</div>`,
+   optSVGs:[rotOpt('step',270),rotOpt('step',90),rotOpt('step',180),`<svg viewBox="0 0 90 90" width="80" height="80" xmlns="http://www.w3.org/2000/svg"><g transform="scale(-1,1) translate(-90,0)"><polyline points="15,50 15,30 30,30 30,15 50,15" fill="none" stroke="#94f5ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`],
+   opts:["","","",""],ans:0,hint:"90° mot klokken: toppen peker til venstre"},
 ];
 let lqI=0,lqS=0,lqT=[],lqDS={logic:0,number:0,spatial:0,abstract:0},lqDT={logic:0,number:0,spatial:0,abstract:0},lqTmr=null,lqTL=150,lqA=false,lqSt=0;
 
@@ -747,14 +856,35 @@ window.startLevelTest=()=>{
 function showLQ(){
   lqA=false;const q=LQ[lqI];
   document.getElementById('lqn').textContent=lqI+1;
-  document.getElementById('lqq').textContent=q.q;
   document.getElementById('lqh').textContent='';
   document.getElementById('lqp').style.width=Math.max(2,Math.round((lqI/LQ.length)*100))+'%';
   document.getElementById('lqd').innerHTML=q.diff===1?'<span class="db de">Lett</span>':q.diff===2?'<span class="db dm">Middels</span>':'<span class="db dh">Krevende</span>';
-  const opts=document.getElementById('lqo');
-  opts.className='opts'+(q.opts.length===3?' opts3':'');opts.innerHTML='';
-  q.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>ansLQ(i,b);opts.appendChild(b);});
-  lqTL=150;lqSt=Date.now();clearInterval(lqTmr);lqTmr=setInterval(()=>{lqTL--;updLQT();if(lqTL<=0){clearInterval(lqTmr);nxtLQ();}},1000);updLQT();
+
+  if(q.svg){
+    // SVG spatial question
+    document.getElementById('lqq').innerHTML='';
+    const qbox=document.getElementById('lqq');
+    qbox.style.fontSize='14px';
+    qbox.innerHTML=`<div><div style="font-size:14px;font-weight:500;color:#e2e8f0;margin-bottom:.9rem">${q.q}</div>${q.matrix}</div>`;
+    const opts=document.getElementById('lqo');
+    opts.className='opts';opts.innerHTML='';
+    q.optSVGs.forEach((svg,i)=>{
+      const b=document.createElement('button');
+      b.className='ob';
+      b.style.cssText='padding:8px;display:flex;align-items:center;justify-content:center;';
+      b.innerHTML=svg;
+      b.onclick=()=>ansLQ(i,b);
+      opts.appendChild(b);
+    });
+  } else {
+    // Text question
+    document.getElementById('lqq').textContent=q.q;
+    document.getElementById('lqq').style.fontSize='';
+    const opts=document.getElementById('lqo');
+    opts.className='opts'+(q.opts.length===3?' opts3':'');opts.innerHTML='';
+    q.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>ansLQ(i,b);opts.appendChild(b);});
+  }
+  lqTL=q.svg?180:150;lqSt=Date.now();clearInterval(lqTmr);lqTmr=setInterval(()=>{lqTL--;updLQT();if(lqTL<=0){clearInterval(lqTmr);nxtLQ();}},1000);updLQT();
 }
 function updLQT(){const m=Math.floor(lqTL/60),s=lqTL%60;const el=document.getElementById('lqt');el.textContent=m+':'+(s<10?'0':'')+s;el.className=lqTL<=20?'tv tw':'tv';}
 function ansLQ(i,btn){
@@ -955,11 +1085,4 @@ async function showNowRes(){
   document.getElementById('ai-body').innerHTML=insight;
 
   if(cu){
-    await addDoc(collection(db,'insights'),{uid:cu.uid,type:'now',overall,avgRT,memSpan,stroopPct,aiInsight:insight,score:null,pct:null,domains:null,createdAt:serverTimestamp()});
-  }
-}
-
-function rBar(l,p,c){p=Math.max(0,Math.min(100,p||0));return`<div class="rbw"><div class="rbr"><span>${l}</span></div><div class="rb"><div class="rbf" style="width:${p}%;background:${c}"></div></div></div>`;}
-</script>
-</body>
-</html>
+    await addDoc(collection(db,'insights'),{uid:cu.uid,type:'now',overall,avgRT,memSpan,stroopPct,aiInsight:insight,score:null,pct:null,domains:null,createdAt:serverTimestamp(
