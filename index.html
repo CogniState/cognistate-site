@@ -7,7 +7,6 @@
   <meta name="description" content="CogniState kartlegger og forbedrer beslutningsevne ved hjelp av moderne teknologi, datadrevet innsikt og kognitiv analyse." />
   <link rel="icon" type="image/png" href="assets/cognistate-logo.png" />
   <style>
-    /* ---------- Basestil ---------- */
     :root{
       --bg-deep:#0f172a;
       --bg-slate:#1e293b;
@@ -30,14 +29,12 @@
     html,body{height:100%}
     body{
       color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
       background:radial-gradient(1200px 800px at 30% 20%,var(--bg-slate),var(--bg-deep) 70%);
-      overflow-x:hidden;
-      min-height:100vh;
+      overflow-x:hidden;min-height:100vh;
     }
     body::before{
-      content:"";
-      position:fixed;inset:0;
+      content:"";position:fixed;inset:0;
       background-image:radial-gradient(var(--grid-dot) 1px,transparent 1px);
       background-size:40px 40px;
       animation:moveGrid 20s linear infinite;
@@ -57,227 +54,168 @@
       0%{opacity:.45;transform:translate(-50%,-50%) scale(1)}
       100%{opacity:.75;transform:translate(-50%,-50%) scale(1.12)}
     }
-
-    /* ---------- Header ---------- */
     header.brand{
       position:fixed;top:24px;left:24px;
       display:flex;align-items:center;gap:12px;z-index:10;
     }
-    header.brand img{
-      height:44px;width:auto;display:block;
-      filter:drop-shadow(0 0 8px var(--accent-soft));
-    }
+    header.brand img{height:44px;width:auto;filter:drop-shadow(0 0 8px var(--accent-soft));}
     header.brand span{font-weight:700;letter-spacing:.3px;font-size:1.2rem;color:#e8f3ff;}
     header.brand::before{
-      content:"";position:absolute;
-      width:84px;height:84px;left:-10px;top:-12px;z-index:-1;
-      border-radius:50%;
-      background:radial-gradient(circle,rgba(94,234,212,.16),transparent 70%);
-      filter:blur(.5px);
+      content:"";position:absolute;width:84px;height:84px;left:-10px;top:-12px;z-index:-1;
+      border-radius:50%;background:radial-gradient(circle,rgba(94,234,212,.16),transparent 70%);
     }
 
-    /* ---------- Sidenavigasjon ---------- */
     .page{display:none;position:relative;z-index:1;min-height:100vh;}
     .page.active{display:flex;}
 
-    /* ===== HJEMMESIDE ===== */
-    #page-home{
-      align-items:center;justify-content:center;
-      padding:96px 24px 120px;text-align:center;
-    }
+    /* HOME */
+    #page-home{align-items:center;justify-content:center;padding:96px 24px 120px;text-align:center;}
     .hero{max-width:820px;}
     .title{
-      font-size:clamp(2.2rem,4.5vw,3.6rem);
-      margin:0 0 .6rem 0;letter-spacing:.5px;
-      color:var(--accent);
-      text-shadow:0 0 20px var(--accent-soft);
+      font-size:clamp(2.2rem,4.5vw,3.6rem);margin:0 0 .6rem;
+      color:var(--accent);text-shadow:0 0 20px var(--accent-soft);letter-spacing:.5px;
     }
-    .tagline{
-      font-size:clamp(1.05rem,1.7vw,1.25rem);
-      line-height:1.65;margin:0 auto;
-      color:var(--text);opacity:.95;
-    }
-    .hero-buttons{
-      margin-top:2rem;
-      display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
-    }
+    .tagline{font-size:clamp(1.05rem,1.7vw,1.25rem);line-height:1.65;color:var(--text);opacity:.95;}
+    .hero-buttons{margin-top:2rem;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
     .cta-primary{
       display:inline-block;padding:12px 28px;
-      background:var(--accent);color:var(--bg-deep);
-      font-weight:600;font-size:1rem;
-      border-radius:10px;text-decoration:none;border:none;cursor:pointer;
-      font-family:inherit;
-      transition:all .25s ease;
-      box-shadow:0 0 20px rgba(148,245,255,.25);
+      background:var(--accent);color:var(--bg-deep);font-weight:600;font-size:1rem;
+      border-radius:10px;text-decoration:none;border:none;cursor:pointer;font-family:inherit;
+      transition:all .25s;box-shadow:0 0 20px rgba(148,245,255,.25);
     }
     .cta-primary:hover{transform:translateY(-2px);box-shadow:0 0 32px rgba(148,245,255,.4);}
     .cta-secondary{
       display:inline-block;padding:12px 28px;
       border:1px solid var(--accent-border);color:var(--accent);
       font-size:1rem;border-radius:10px;text-decoration:none;
-      background:transparent;cursor:pointer;font-family:inherit;
-      transition:all .25s ease;
+      background:transparent;cursor:pointer;font-family:inherit;transition:all .25s;
     }
     .cta-secondary:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(148,245,255,.18);}
-
-    /* Funksjons-kort på hjemmesiden */
-    .feature-grid{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:16px;margin-top:3rem;text-align:left;
-    }
+    .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:3rem;text-align:left;}
     .feature-card{
       background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:14px;padding:1.25rem 1.5rem;
-      transition:border-color .2s,background .2s;
+      border-radius:14px;padding:1.25rem 1.5rem;transition:border-color .2s,background .2s;
     }
     .feature-card:hover{background:var(--surface-hover);border-color:var(--border);}
     .feature-icon{font-size:22px;margin-bottom:8px;}
     .feature-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:4px;}
     .feature-desc{font-size:13px;color:var(--muted);line-height:1.55;}
 
-    /* ===== TESTVELGER ===== */
-    #page-tests{
-      flex-direction:column;align-items:center;
-      padding:96px 24px 120px;
-    }
-    .tests-inner{width:100%;max-width:560px;}
+    /* TESTS PAGE */
+    #page-tests{flex-direction:column;align-items:center;padding:96px 24px 120px;}
+    .tests-inner{width:100%;max-width:580px;}
     .back-btn{
       display:inline-flex;align-items:center;gap:6px;
       font-size:13px;color:var(--muted);cursor:pointer;
-      background:none;border:none;font-family:inherit;
-      margin-bottom:2rem;transition:color .2s;padding:0;
+      background:none;border:none;font-family:inherit;margin-bottom:2rem;transition:color .2s;
     }
     .back-btn:hover{color:var(--accent);}
-    .section-title{
-      font-size:clamp(1.5rem,3vw,2rem);
-      color:var(--accent);
-      text-shadow:0 0 14px var(--accent-soft);
-      margin-bottom:.5rem;
-    }
+    .section-title{font-size:clamp(1.5rem,3vw,2rem);color:var(--accent);text-shadow:0 0 14px var(--accent-soft);margin-bottom:.5rem;}
     .section-sub{font-size:14px;color:var(--muted);margin-bottom:2rem;line-height:1.6;}
-
     .test-card{
       background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:14px;padding:1.4rem 1.6rem;
-      margin-bottom:14px;cursor:pointer;
-      transition:all .2s;position:relative;
-      display:flex;align-items:center;gap:1rem;
+      border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:14px;cursor:pointer;
+      transition:all .2s;position:relative;display:flex;align-items:center;gap:1rem;
     }
     .test-card:hover{background:var(--surface-hover);border-color:var(--border);transform:translateX(4px);}
     .test-card-icon{
-      font-size:28px;
-      width:52px;height:52px;
+      font-size:26px;width:52px;height:52px;
       background:rgba(148,245,255,.08);border-radius:12px;
-      display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
     }
     .test-card-body{flex:1;}
     .test-card-badge{
       display:inline-block;font-size:10px;font-weight:600;
-      text-transform:uppercase;letter-spacing:.07em;
-      padding:3px 10px;border-radius:20px;
-      margin-bottom:6px;
+      text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:20px;margin-bottom:6px;
     }
     .badge-blue{background:rgba(148,245,255,.12);color:var(--accent);}
     .badge-green{background:rgba(74,222,128,.12);color:#4ade80;}
+    .badge-amber{background:rgba(250,204,21,.1);color:#facc15;}
     .test-card-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:3px;}
     .test-card-desc{font-size:13px;color:var(--muted);line-height:1.5;}
     .test-card-arrow{font-size:18px;color:rgba(148,245,255,.4);}
-
-    /* ===== TEST-SKJERM ===== */
-    #page-run{
-      flex-direction:column;align-items:center;
-      padding:96px 24px 120px;
+    .test-modules{
+      background:var(--surface);border:1px solid var(--border-soft);
+      border-radius:10px;padding:.75rem 1rem;margin-bottom:14px;
+      font-size:12px;color:rgba(148,245,255,.5);line-height:1.8;
     }
-    .run-inner{width:100%;max-width:560px;}
+    .test-modules span{color:var(--muted);margin-right:4px;}
 
-    /* Topprad */
-    .top-row{
-      display:flex;justify-content:space-between;align-items:center;
-      margin-bottom:.75rem;
-    }
+    /* RUN PAGE */
+    #page-run{flex-direction:column;align-items:center;padding:96px 24px 120px;}
+    .run-inner{width:100%;max-width:580px;}
+    .phase-header{margin-bottom:1.5rem;}
+    .phase-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.45);margin-bottom:4px;}
+    .phase-title{font-size:1.2rem;font-weight:600;color:var(--accent);}
+    .phase-desc{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5;}
+    .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
     .top-label{font-size:13px;color:var(--muted);}
     .timer-val{font-size:14px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;}
-
-    /* Fremdrift */
+    .timer-warn{color:var(--wrong);}
     .progress-bar{height:2px;background:var(--border-soft);border-radius:2px;margin-bottom:1.5rem;}
     .progress-fill{height:2px;background:var(--accent);border-radius:2px;transition:width .4s ease;box-shadow:0 0 8px var(--accent-soft);}
-
-    /* Spørsmålsboks */
     .question-box{
       background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:14px;padding:2rem 1.5rem;
-      text-align:center;margin-bottom:1.25rem;
-      min-height:110px;display:flex;align-items:center;justify-content:center;
+      border-radius:14px;padding:2rem 1.5rem;text-align:center;
+      margin-bottom:1.25rem;min-height:120px;
+      display:flex;align-items:center;justify-content:center;
     }
-    .question-text{
-      font-size:1.2rem;font-weight:500;
-      color:var(--text);line-height:1.45;white-space:pre-line;
-    }
-
-    /* Svarsknapper */
+    .question-text{font-size:1.15rem;font-weight:500;color:var(--text);line-height:1.5;white-space:pre-line;}
     .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
     .option-btn{
-      padding:13px 10px;
-      border:1px solid var(--border-soft);
-      border-radius:10px;background:var(--surface);
-      color:var(--text);font-size:15px;
-      font-family:inherit;cursor:pointer;
-      transition:all .12s;line-height:1.3;
+      padding:13px 10px;border:1px solid var(--border-soft);
+      border-radius:10px;background:var(--surface);color:var(--text);
+      font-size:14px;font-family:inherit;cursor:pointer;transition:all .12s;line-height:1.3;
     }
-    .option-btn:hover:not(:disabled){
-      background:var(--surface-hover);border-color:var(--border);
-      box-shadow:0 0 12px rgba(148,245,255,.1);
-    }
+    .option-btn:hover:not(:disabled){background:var(--surface-hover);border-color:var(--border);box-shadow:0 0 12px rgba(148,245,255,.1);}
     .option-btn.correct{background:var(--correct-bg);border-color:var(--correct);color:var(--correct);}
     .option-btn.wrong{background:var(--wrong-bg);border-color:var(--wrong);color:var(--wrong);}
     .option-btn:disabled{cursor:default;}
-    .hint-text{font-size:12px;color:rgba(148,245,255,.5);text-align:center;min-height:16px;font-style:italic;}
-
-    /* Knapper generelt */
-    .btn{
-      display:inline-block;padding:10px 22px;
-      border-radius:8px;border:1px solid var(--border);
-      background:var(--surface);color:var(--text);
-      font-size:14px;font-family:inherit;cursor:pointer;
-      transition:all .15s;
+    .options-3{grid-template-columns:1fr 1fr 1fr;}
+    .hint-text{font-size:12px;color:rgba(148,245,255,.45);text-align:center;min-height:16px;font-style:italic;margin-bottom:.5rem;}
+    .difficulty-badge{
+      display:inline-block;font-size:10px;font-weight:600;
+      text-transform:uppercase;letter-spacing:.06em;
+      padding:2px 8px;border-radius:4px;margin-bottom:.75rem;
     }
-    .btn:hover{background:var(--surface-hover);border-color:rgba(148,245,255,.4);}
-    .btn-accent{
-      background:rgba(148,245,255,.12);
-      border-color:var(--accent-border);
-      color:var(--accent);
-    }
-    .btn-accent:hover{background:rgba(148,245,255,.2);}
+    .diff-easy{background:rgba(74,222,128,.1);color:#4ade80;}
+    .diff-medium{background:rgba(250,204,21,.1);color:#facc15;}
+    .diff-hard{background:rgba(248,113,113,.1);color:#f87171;}
 
-    /* Reaksjon */
-    .reaction-area{text-align:center;padding:2.5rem 0;}
+    /* SVG spatial */
+    .spatial-svg{max-width:100%;height:auto;}
+    .svg-container{display:flex;justify-content:center;margin:0.5rem 0;}
+
+    /* Reaction */
+    .reaction-area{text-align:center;padding:2rem 0;}
     .rt-circle{
-      width:110px;height:110px;border-radius:50%;
+      width:120px;height:120px;border-radius:50%;
       background:var(--surface);border:2px solid var(--border-soft);
       display:inline-flex;align-items:center;justify-content:center;
       cursor:pointer;font-size:13px;color:var(--muted);
       font-weight:500;user-select:none;transition:all .1s;
     }
-    .rt-circle.ready{
-      background:var(--correct-bg);border-color:var(--correct);
-      color:var(--correct);
-      box-shadow:0 0 24px rgba(74,222,128,.25);
-    }
+    .rt-circle.ready{background:var(--correct-bg);border-color:var(--correct);color:var(--correct);box-shadow:0 0 28px rgba(74,222,128,.3);}
+    .rt-circle.too-early{background:var(--wrong-bg);border-color:var(--wrong);color:var(--wrong);}
     .rt-status{font-size:13px;color:var(--muted);margin-top:1rem;}
+    .rt-results{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:1rem;}
+    .rt-pill{
+      font-size:12px;padding:4px 12px;border-radius:20px;
+      background:var(--surface);border:1px solid var(--border-soft);color:var(--muted);
+    }
+    .rt-pill.done{border-color:var(--correct);color:var(--correct);}
 
-    /* Minne */
+    /* Memory */
     .seq-display{display:flex;justify-content:center;gap:10px;margin:1.5rem 0;flex-wrap:wrap;}
     .seq-dot{
-      width:50px;height:50px;border-radius:50%;
+      width:52px;height:52px;border-radius:50%;
       background:var(--surface);border:1px solid var(--border-soft);
       display:flex;align-items:center;justify-content:center;
       font-size:18px;font-weight:600;color:var(--muted);transition:all .15s;
     }
-    .seq-dot.lit{
-      background:rgba(148,245,255,.12);border-color:var(--accent);
-      color:var(--accent);box-shadow:0 0 12px rgba(148,245,255,.2);
-    }
+    .seq-dot.lit{background:rgba(148,245,255,.12);border-color:var(--accent);color:var(--accent);box-shadow:0 0 14px rgba(148,245,255,.2);}
+    .seq-dot.correct-dot{background:var(--correct-bg);border-color:var(--correct);color:var(--correct);}
+    .seq-dot.wrong-dot{background:var(--wrong-bg);border-color:var(--wrong);color:var(--wrong);}
     .seq-input-row{display:flex;justify-content:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap;}
     .seq-btn{
       width:48px;height:48px;border-radius:50%;
@@ -286,174 +224,185 @@
       color:var(--text);font-family:inherit;transition:all .1s;
     }
     .seq-btn:hover{background:var(--surface-hover);border-color:var(--border);}
+    .mem-level-badge{
+      text-align:center;font-size:12px;color:rgba(148,245,255,.4);
+      margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em;
+    }
 
-    /* ===== RESULTATER ===== */
-    #page-results{
-      flex-direction:column;align-items:center;
-      padding:96px 24px 120px;
-    }
-    .results-inner{width:100%;max-width:560px;}
-    .results-title{
-      font-size:clamp(1.4rem,3vw,1.9rem);
-      color:var(--accent);text-shadow:0 0 14px var(--accent-soft);
-      margin-bottom:1.5rem;
-    }
-    .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem;}
-    .stat-card{
-      background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:12px;padding:1rem;text-align:center;
-    }
-    .stat-val{
-      font-size:26px;font-weight:700;color:var(--accent);
-      text-shadow:0 0 10px var(--accent-soft);
-    }
-    .stat-unit{font-size:13px;color:var(--muted);}
-    .stat-label{font-size:11px;color:rgba(148,245,255,.45);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;}
+    /* Stroop */
+    .stroop-word{font-size:40px;font-weight:700;text-align:center;padding:1.5rem 0;line-height:1;}
 
-    .section-label{
-      font-size:11px;text-transform:uppercase;letter-spacing:.08em;
-      color:rgba(148,245,255,.4);margin-bottom:10px;
+    /* Buttons */
+    .btn{
+      display:inline-block;padding:10px 22px;border-radius:8px;
+      border:1px solid var(--border);background:var(--surface);
+      color:var(--text);font-size:14px;font-family:inherit;cursor:pointer;transition:all .15s;
     }
+    .btn:hover{background:var(--surface-hover);border-color:rgba(148,245,255,.4);}
+    .btn-accent{background:rgba(148,245,255,.1);border-color:var(--accent-border);color:var(--accent);}
+    .btn-accent:hover{background:rgba(148,245,255,.18);}
+
+    /* RESULTS */
+    #page-results{flex-direction:column;align-items:center;padding:96px 24px 120px;}
+    .results-inner{width:100%;max-width:580px;}
+    .results-title{font-size:clamp(1.4rem,3vw,1.9rem);color:var(--accent);text-shadow:0 0 14px var(--accent-soft);margin-bottom:1.5rem;}
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
+    .stat-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;padding:1rem;text-align:center;}
+    .stat-val{font-size:22px;font-weight:700;color:var(--accent);text-shadow:0 0 8px var(--accent-soft);}
+    .stat-unit{font-size:12px;color:var(--muted);}
+    .stat-label{font-size:10px;color:rgba(148,245,255,.4);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;}
+    .results-section{margin-bottom:1.5rem;}
+    .results-section-title{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:rgba(148,245,255,.4);margin-bottom:12px;}
+    .domain-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;}
+    .domain-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;padding:1rem 1.25rem;}
+    .domain-name{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
+    .domain-score{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px;}
+    .domain-label{font-size:11px;color:var(--muted);}
+    .domain-bar{height:3px;background:var(--border-soft);border-radius:2px;margin-top:8px;}
+    .domain-bar-fill{height:3px;border-radius:2px;}
     .r-bar-wrap{margin-bottom:10px;}
     .r-bar-row{display:flex;justify-content:space-between;margin-bottom:4px;}
     .r-bar-row span{font-size:13px;color:var(--muted);}
     .r-bar-row strong{font-size:13px;font-weight:600;color:var(--accent);}
     .r-bar{height:4px;background:var(--border-soft);border-radius:2px;}
-    .r-bar-fill{height:4px;border-radius:2px;box-shadow:0 0 6px currentColor;}
-
+    .r-bar-fill{height:4px;border-radius:2px;}
     .interpret{
       background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:12px;padding:1rem 1.25rem;
-      font-size:13px;color:var(--muted);line-height:1.65;
-      margin:1rem 0 1.5rem;
+      border-radius:12px;padding:1.25rem 1.5rem;
+      font-size:13px;color:var(--muted);line-height:1.7;margin:0 0 1.5rem;
     }
+    .interpret-title{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:rgba(148,245,255,.4);margin-bottom:8px;}
+    .interpret p{margin-bottom:.75rem;}
+    .interpret p:last-child{margin-bottom:0;}
     .interpret strong{color:var(--text);}
-    .interpret em{color:rgba(148,245,255,.4);font-size:12px;}
-
+    .interpret em{color:rgba(148,245,255,.35);font-size:12px;}
+    .percentile-note{
+      background:rgba(148,245,255,.05);border:1px solid var(--border);
+      border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;
+      font-size:12px;color:rgba(148,245,255,.6);line-height:1.6;
+    }
     .divider{border:none;border-top:1px solid var(--border-soft);margin:1.5rem 0;}
     .btn-row{display:flex;gap:10px;flex-wrap:wrap;}
 
-    /* ---------- Footer ---------- */
     footer{
       position:fixed;bottom:22px;left:0;right:0;
       display:flex;justify-content:center;gap:14px;
-      z-index:2;font-size:.95rem;color:var(--muted);
-      padding:0 16px;text-align:center;
+      z-index:2;font-size:.95rem;color:var(--muted);padding:0 16px;text-align:center;
     }
-    footer a{color:var(--accent);text-decoration:none;transition:opacity .25s ease;}
+    footer a{color:var(--accent);text-decoration:none;transition:opacity .25s;}
     footer a:hover{opacity:.8;}
 
-    @media(max-width:480px){
+    @media(max-width:500px){
       .stat-grid{grid-template-columns:1fr 1fr;}
+      .domain-grid{grid-template-columns:1fr;}
       .options{grid-template-columns:1fr;}
+      .options-3{grid-template-columns:1fr 1fr;}
       header.brand span{display:none;}
     }
   </style>
 </head>
 <body>
 <div class="glow" aria-hidden="true"></div>
-
 <header class="brand">
   <img src="assets/cognistate-logo.png" alt="CogniState logo" />
   <span>CogniState</span>
 </header>
 
-<!-- ===== HJEMMESIDE ===== -->
+<!-- HOME -->
 <div id="page-home" class="page active">
   <section class="hero">
     <h1 class="title">CogniState</h1>
-    <p class="tagline">
-      CogniState arbeider med å <strong>kartlegge og forbedre beslutningsevne</strong>
-      gjennom moderne teknologi, datadrevet innsikt og kognitiv analyse.
-    </p>
+    <p class="tagline">CogniState arbeider med å <strong>kartlegge og forbedre beslutningsevne</strong> gjennom moderne teknologi, datadrevet innsikt og kognitiv analyse.</p>
     <div class="hero-buttons">
       <button class="cta-primary" onclick="goTo('page-tests')">Start kognitiv test</button>
       <a class="cta-secondary" href="mailto:contact@cognistate.io">Kontakt oss</a>
     </div>
     <div class="feature-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🧠</div>
-        <div class="feature-title">Nivåanalyse</div>
-        <div class="feature-desc">Mål ditt generelle kognitive nivå gjennom logikk og mønstergjenkjenning.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <div class="feature-title">Dagsform</div>
-        <div class="feature-desc">Sjekk reaksjonstid, arbeidsminne og konsentrasjon akkurat nå.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <div class="feature-title">Datadrevet</div>
-        <div class="feature-desc">Resultater basert på validerte kognitive prinsipper og metodikk.</div>
-      </div>
+      <div class="feature-card"><div class="feature-icon">🧩</div><div class="feature-title">Logikk &amp; resonnering</div><div class="feature-desc">Induktiv og deduktiv tenkning, tallmønstre og abstrakt problemløsning.</div></div>
+      <div class="feature-card"><div class="feature-icon">🔷</div><div class="feature-title">Romlig tenkning</div><div class="feature-desc">Mental rotasjon og visuospatial prosessering — avgjørende for tekniske yrker.</div></div>
+      <div class="feature-card"><div class="feature-icon">💾</div><div class="feature-title">Arbeidsminne</div><div class="feature-desc">Adaptiv sekvenstest som måler din korttidskapasitet nøyaktig.</div></div>
+      <div class="feature-card"><div class="feature-icon">🎯</div><div class="feature-title">Impulskontroll</div><div class="feature-desc">Stroop-interferens og reaksjonstid avdekker kognitiv kontroll under press.</div></div>
     </div>
   </section>
 </div>
 
-<!-- ===== TESTVELGER ===== -->
+<!-- TESTS -->
 <div id="page-tests" class="page">
   <div class="tests-inner">
     <button class="back-btn" onclick="goTo('page-home')">← Tilbake</button>
     <h2 class="section-title">Velg test</h2>
-    <p class="section-sub">Begge testene er anonyme — ingen data lagres eller sendes noen steder.</p>
+    <p class="section-sub">Begge testene er anonyme. Ingen data lagres eller sendes noen steder.</p>
 
     <div class="test-card" onclick="startLevelTest()">
-      <div class="test-card-icon">🧩</div>
+      <div class="test-card-icon">🧠</div>
       <div class="test-card-body">
-        <span class="test-card-badge badge-blue">Nivåanalyse · ca. 6 min</span>
-        <div class="test-card-title">Kognitivt nivå</div>
-        <div class="test-card-desc">Logikk, tallmønstre og romlig tenkning. Estimerer ditt generelle kognitive nivå.</div>
+        <span class="test-card-badge badge-blue">Kognitiv profil · ca. 10 min</span>
+        <div class="test-card-title">Nivåanalyse</div>
+        <div class="test-card-desc">20 oppgaver med stigende vanskelighetsgrad innen logikk, tallresonnering og romlig tenkning. Gir en domenebasert kognitiv profil.</div>
       </div>
       <span class="test-card-arrow">→</span>
+    </div>
+    <div class="test-modules">
+      <span>Inneholder:</span> Induktiv logikk · Deduktiv resonnering · Tallmønstre · Romlig rotasjon · Abstrakt tenkning
     </div>
 
     <div class="test-card" onclick="startNowTest()">
       <div class="test-card-icon">⚡</div>
       <div class="test-card-body">
-        <span class="test-card-badge badge-green">Dagsform · ca. 3 min</span>
+        <span class="test-card-badge badge-green">Dagsform · ca. 4 min</span>
         <div class="test-card-title">Kognitiv ytelse nå</div>
-        <div class="test-card-desc">Reaksjonstid, arbeidsminne og Stroop-konsentrasjon. Sjekk om du er skjerpet i dag.</div>
+        <div class="test-card-desc">Rask vurdering av reaksjonstid, arbeidsminnekapasitet og konsentrasjon. Ideell for daglig sjekk.</div>
       </div>
       <span class="test-card-arrow">→</span>
     </div>
+    <div class="test-modules">
+      <span>Inneholder:</span> Reaksjonstid (5 forsøk) · Adaptivt arbeidsminne · Stroop-interferens (12 runder)
+    </div>
 
-    <p style="font-size:12px;color:rgba(255,255,255,.25);margin-top:1.5rem;line-height:1.6;">
-      ⚠ Disse testene er ikke klinisk validerte. De er ment som en indikasjon, ikke en diagnose.
-    </p>
+    <p style="font-size:12px;color:rgba(255,255,255,.2);margin-top:1.5rem;line-height:1.7;">⚠ CogniState-testene er ikke klinisk validerte diagnostiske verktøy. De er basert på etablerte kognitive paradigmer og gir en indikasjon — ikke en diagnose. Søk fagprofesjonell vurdering ved behov.</p>
   </div>
 </div>
 
-<!-- ===== TEST-KJØRING ===== -->
+<!-- RUN -->
 <div id="page-run" class="page">
   <div class="run-inner">
-    <button class="back-btn" onclick="goTo('page-tests')">← Avbryt</button>
+    <button class="back-btn" onclick="abortTest()">← Avbryt</button>
 
     <!-- Nivå-test -->
     <div id="run-level" style="display:none">
       <div class="top-row">
-        <span class="top-label">Spørsmål <span id="lq-num">1</span> av <span id="lq-total">12</span></span>
-        <span class="timer-val" id="lq-timer">2:00</span>
+        <span class="top-label">Oppgave <span id="lq-num">1</span> av <span id="lq-total">20</span></span>
+        <span class="timer-val" id="lq-timer">2:30</span>
       </div>
-      <div class="progress-bar"><div class="progress-fill" id="lq-progress" style="width:4%"></div></div>
-      <div class="question-box"><div class="question-text" id="lq-question"></div></div>
+      <div class="progress-bar"><div class="progress-fill" id="lq-progress" style="width:2%"></div></div>
+      <div id="lq-diff-badge"></div>
+      <div class="question-box" id="lq-qbox"><div class="question-text" id="lq-question"></div></div>
       <div class="options" id="lq-options"></div>
       <p class="hint-text" id="lq-hint"></p>
     </div>
 
-    <!-- Dagsform: reaksjonstid -->
+    <!-- Reaksjonstid -->
     <div id="run-reaction" style="display:none">
-      <h2 style="color:var(--accent);font-size:1.3rem;margin-bottom:.5rem">Reaksjonstid</h2>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:0">Trykk på sirkelen så fort den blir grønn. 5 forsøk.</p>
+      <div class="phase-header">
+        <div class="phase-label">Del 1 av 3</div>
+        <div class="phase-title">Reaksjonstid</div>
+        <div class="phase-desc">Trykk på sirkelen så fort den blir grønn. 5 forsøk — vi fjerner beste og dårligste og tar snittet av de 3 midterste.</div>
+      </div>
       <div class="reaction-area">
         <div class="rt-circle" id="rt-target" onclick="handleReaction()">Vent...</div>
-        <p class="rt-status" id="rt-status">Gjøre klar...</p>
+        <p class="rt-status" id="rt-status"></p>
+        <div class="rt-results" id="rt-results"></div>
       </div>
     </div>
 
-    <!-- Dagsform: arbeidsminne -->
+    <!-- Arbeidsminne -->
     <div id="run-memory" style="display:none">
-      <h2 style="color:var(--accent);font-size:1.3rem;margin-bottom:.5rem">Arbeidsminne</h2>
-      <p style="font-size:14px;color:var(--muted)" id="mem-instruction">Se på tallene og husk rekkefølgen.</p>
+      <div class="phase-header">
+        <div class="phase-label">Del 2 av 3</div>
+        <div class="phase-title">Arbeidsminne</div>
+        <div class="phase-desc" id="mem-instruction">Se tallene som lyser opp — husk rekkefølgen. Sekvensen øker automatisk.</div>
+      </div>
+      <div class="mem-level-badge" id="mem-level-badge">Nivå 3</div>
       <div class="seq-display" id="mem-display"></div>
       <div class="seq-input-row" id="mem-input" style="display:none"></div>
       <div style="text-align:center;margin-top:.75rem">
@@ -461,30 +410,37 @@
       </div>
     </div>
 
-    <!-- Dagsform: stroop -->
+    <!-- Stroop -->
     <div id="run-stroop" style="display:none">
-      <h2 style="color:var(--accent);font-size:1.3rem;margin-bottom:.5rem">Konsentrasjon</h2>
-      <p style="font-size:14px;color:var(--muted)">Velg <strong style="color:var(--text)">fargen ordet er skrevet i</strong> — ikke hva ordet sier.</p>
+      <div class="phase-header">
+        <div class="phase-label">Del 3 av 3</div>
+        <div class="phase-title">Konsentrasjon — Stroop</div>
+        <div class="phase-desc">Velg <strong style="color:var(--text)">fargen ordet er skrevet i</strong>, ikke hva ordet betyr. Reager raskt og nøyaktig.</div>
+      </div>
       <div class="progress-bar" style="margin-top:1rem">
         <div class="progress-fill" id="st-progress" style="width:0%"></div>
       </div>
       <div class="question-box" style="min-height:130px">
-        <div style="font-size:36px;font-weight:700" id="st-word"></div>
+        <div class="stroop-word" id="st-word"></div>
       </div>
-      <div class="options" id="st-options"></div>
+      <div class="options options-3" id="st-options"></div>
       <p class="hint-text" id="st-count"></p>
     </div>
   </div>
 </div>
 
-<!-- ===== RESULTATER ===== -->
+<!-- RESULTS -->
 <div id="page-results" class="page">
   <div class="results-inner">
     <button class="back-btn" onclick="goTo('page-tests')">← Ny test</button>
     <h2 class="results-title" id="res-title"></h2>
     <div class="stat-grid" id="res-stats"></div>
-    <p class="section-label">Delresultater</p>
-    <div id="res-breakdown"></div>
+    <div class="domain-grid" id="res-domains"></div>
+    <div class="results-section">
+      <div class="results-section-title">Delresultater</div>
+      <div id="res-breakdown"></div>
+    </div>
+    <div class="percentile-note" id="res-percentile"></div>
     <div class="interpret" id="res-interpret"></div>
     <div class="divider"></div>
     <div class="btn-row">
@@ -507,34 +463,113 @@ function goTo(id){
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
+function abortTest(){clearInterval(lqTimer);goTo('page-tests');}
 
-/* ===== NIVÅ-TEST ===== */
+/* ===== NIVÅ-TEST: 20 OPPGAVER ===== */
+// Vanskelighetsgrad: 1=lett, 2=middels, 3=hard
+// Kategorier: logic, number, spatial, deductive, abstract
 const LQ=[
-  {q:"2, 4, 8, 16, ?",opts:["24","28","32","36"],ans:2,hint:"Hvert tall fordobles"},
-  {q:"Hva kommer neste?\n◆ ◇ ◆ ◇ ◆ ?",opts:["◆","◇","○","□"],ans:1,hint:"Mønsteret veksler"},
-  {q:"81 → 27 → 9 → ?",opts:["6","3","4","2"],ans:1,hint:"Deles på 3 hver gang"},
-  {q:"Alle katter er dyr. Felix er en katt.\nEr Felix et dyr?",opts:["Ja","Nei","Muligens","Vet ikke"],ans:0,hint:"Logisk syllogisme"},
-  {q:"5 + 3 × 2 = ?",opts:["16","11","13","10"],ans:1,hint:"Gange har prioritet"},
-  {q:"Hvilket ord hører ikke hjemme?\nEple · Pære · Gulrot · Banan",opts:["Eple","Pære","Gulrot","Banan"],ans:2,hint:"En er ikke en frukt"},
-  {q:"ABCD : DCBA\nEFGH : ?",opts:["HGFE","GHFE","FEGH","HFGE"],ans:0,hint:"Bokstavene reverseres"},
-  {q:"3 malere bruker 3 dager på 3 hus.\nHvor mange dager bruker 6 malere på 6 hus?",opts:["3","6","9","12"],ans:0,hint:"Proporsjonalitet"},
-  {q:"1, 1, 2, 3, 5, 8, ?",opts:["12","13","11","15"],ans:1,hint:"Fibonacci: legg sammen de to siste"},
-  {q:"Hva er 15% av 200?",opts:["25","30","35","20"],ans:1,hint:"15/100 × 200"},
-  {q:"Et speil speiler NAPS.\nHva ser du?",opts:["SPAN","SNAP","PANS","NAPS"],ans:1,hint:"Bokstavene reverseres"},
-  {q:"Klokken er 3:45.\nVinkel mellom timeviser og minuttviser?",opts:["157,5°","142,5°","172,5°","165°"],ans:0,hint:"Timeviser: 112,5° · Minuttviser: 270°"}
+  // LETT (1-7)
+  {cat:'number',diff:1,
+   q:"Hvilken tall kommer neste?\n2 · 4 · 6 · 8 · ?",
+   opts:["9","10","11","12"],ans:1,
+   hint:"Aritmetisk rekke: +2 hvert ledd"},
+  {cat:'logic',diff:1,
+   q:"Alle fugler har vinger.\nSpurven er en fugl.\nHar spurven vinger?",
+   opts:["Ja","Nei","Vet ikke","Muligens"],ans:0,
+   hint:"Grunnleggende syllogisme: premiss → konklusjon"},
+  {cat:'number',diff:1,
+   q:"Hva er 25% av 80?",
+   opts:["15","20","25","30"],ans:1,
+   hint:"25% = ¼ · 80"},
+  {cat:'abstract',diff:1,
+   q:"Hvilket ord hører ikke hjemme?\nMars · Venus · Jupiter · Månen · Saturn",
+   opts:["Mars","Venus","Jupiter","Månen","Saturn"],ans:3,
+   hint:"Alle er planeter — unntatt én"},
+  {cat:'logic',diff:1,
+   q:"ABBA : BAAB\nCDDC : ?",
+   opts:["DCCD","CDDC","DCDC","CCDD"],ans:0,
+   hint:"Ytterste og innerste tegn byttes"},
+  {cat:'number',diff:1,
+   q:"En butikk gir 20% rabatt på en vare til 250 kr.\nHva er ny pris?",
+   opts:["180 kr","190 kr","200 kr","210 kr"],ans:2,
+   hint:"250 · 0,80 = ?"},
+  {cat:'spatial',diff:1,
+   q:"En terning har 6 sider.\nHvis motstående sider alltid summerer til 7 —\nhvilken side er mot siden med 2?",
+   opts:["3","4","5","6"],ans:2,
+   hint:"2 + ? = 7"},
+
+  // MIDDELS (8-14)
+  {cat:'number',diff:2,
+   q:"Hvilken tall kommer neste?\n1 · 1 · 2 · 3 · 5 · 8 · 13 · ?",
+   opts:["18","19","20","21"],ans:3,
+   hint:"Fibonacci: hvert tall er summen av de to forrige"},
+  {cat:'logic',diff:2,
+   q:"Ingen reptiler er varmblodige.\nAlle krokodiller er reptiler.\nKan krokodiller være varmblodige?",
+   opts:["Ja","Nei","Av og til","Vet ikke"],ans:1,
+   hint:"Universell negasjon overføres via syllogisme"},
+  {cat:'spatial',diff:2,
+   q:"Du ser et objekt ovenfra som en sirkel.\nFra siden ser du et rektangel.\nHva er objektet mest sannsynlig?",
+   opts:["Kule","Sylinder","Kjegle","Kube"],ans:1,
+   hint:"Topp: sirkel · Side: rektangel"},
+  {cat:'number',diff:2,
+   q:"3 malere maler 3 hus på 3 dager.\nHvor mange dager bruker 6 malere på 6 hus?",
+   opts:["3","6","9","12"],ans:0,
+   hint:"Kapasitet skalerer proporsjonalt — rate er konstant"},
+  {cat:'abstract',diff:2,
+   q:"Tallrekken: 2 · 6 · 12 · 20 · 30 · ?\nHva er neste tall?",
+   opts:["38","40","42","44"],ans:2,
+   hint:"Differansene: 4, 6, 8, 10 — hva er neste differanse?"},
+  {cat:'logic',diff:2,
+   q:"Hvis det regner, tar Maria paraply.\nMaria har ikke paraply.\nHva kan vi slutte?",
+   opts:["Det regner","Det regner ikke","Maria er inne","Ingenting sikkert"],ans:1,
+   hint:"Modus tollens: ¬Q → ¬P"},
+  {cat:'spatial',diff:2,
+   q:"Et kvadrat roteres 45° med klokken.\nDeretter speiles det om den vertikale aksen.\nHva er resultatet?",
+   opts:["En rombus pekende opp","Et kvadrat","En rombus pekende ned","Et speil av originalen"],ans:0,
+   hint:"Rotasjon gir rombus — speiling endrer retning men ikke form"},
+
+  // HARD (15-20)
+  {cat:'number',diff:3,
+   q:"Tallrekken: 1 · 4 · 9 · 16 · 25 · ?\nOg den neste etter det?",
+   opts:["36 · 49","34 · 47","36 · 48","35 · 49"],ans:0,
+   hint:"Perfekte kvadrattall: n²"},
+  {cat:'abstract',diff:3,
+   q:"Hvis KODE er 11-15-4-5 (A=1, B=2...)\nHva er LOGIKK?",
+   opts:["12-15-7-9-11-11","11-14-6-9-10-10","12-15-7-9-11-11","13-16-8-10-12-12"],ans:0,
+   hint:"L=12, O=15, G=7, I=9, K=11, K=11"},
+  {cat:'logic',diff:3,
+   q:"5 venner sitter i en rad.\nAna sitter ikke ved siden av Bo.\nCa sitter mellom Ana og Di.\nEd sitter ytterst til høyre.\nHvem sitter ytterst til venstre?",
+   opts:["Ana","Bo","Ca","Di"],ans:1,
+   hint:"Plasser Ed til høyre, Ca i midten mellom Ana og Di"},
+  {cat:'spatial',diff:3,
+   q:"En kube brettes ut til et kors-mønster (1 topp, 4 sider, 1 bunn).\nDu merker toppen med ★.\nHvilken side er direkte overfor ★ når den er brettet sammen?",
+   opts:["Den fremste","Den bakre","Bunnen","Den venstre"],ans:2,
+   hint:"I standard kors-utbretting er topp og bunn direkte overfor hverandre"},
+  {cat:'number',diff:3,
+   q:"Et tog reiser 120 km/t.\nEt annet tog reiser mot det med 80 km/t.\nDe starter 500 km fra hverandre.\nHvor mange minutter tar det før de møtes?",
+   opts:["150 min","160 min","175 min","180 min"],ans:0,
+   hint:"Relativ hastighet = 200 km/t · Tid = 500/200 timer"},
+  {cat:'abstract',diff:3,
+   q:"I en logisk sekvens:\nHvis A er sant, er B falskt.\nHvis B er falskt, er C sant.\nHvis C er sant, er D falskt.\nA er sant — hva er D?",
+   opts:["Sant","Falskt","Ukjent","Avhenger av E"],ans:1,
+   hint:"Kjed premissene: A→¬B → C → ¬D"}
 ];
 
-let lqIdx=0,lqScore=0,lqTimes=[],lqTimer=null,lqTimeLeft=120,lqAnswered=false,lqStart=0;
+let lqIdx=0,lqScore=0,lqTimes=[],lqDomainScores={logic:0,number:0,spatial:0,abstract:0,deductive:0},
+    lqDomainTotal={logic:0,number:0,spatial:0,abstract:0,deductive:0},
+    lqTimer=null,lqTimeLeft=150,lqAnswered=false,lqStart=0;
 
 function startLevelTest(){
   lqIdx=0;lqScore=0;lqTimes=[];
+  lqDomainScores={logic:0,number:0,spatial:0,abstract:0,deductive:0};
+  lqDomainTotal={logic:0,number:0,spatial:0,abstract:0,deductive:0};
+  ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-level').style.display='block';
-  document.getElementById('run-reaction').style.display='none';
-  document.getElementById('run-memory').style.display='none';
-  document.getElementById('run-stroop').style.display='none';
   goTo('page-run');
   showLQ();
 }
+
 function showLQ(){
   lqAnswered=false;
   const q=LQ[lqIdx];
@@ -542,8 +577,13 @@ function showLQ(){
   document.getElementById('lq-total').textContent=LQ.length;
   document.getElementById('lq-question').textContent=q.q;
   document.getElementById('lq-hint').textContent='';
-  document.getElementById('lq-progress').style.width=Math.max(4,Math.round((lqIdx/LQ.length)*100))+'%';
+  document.getElementById('lq-progress').style.width=Math.max(2,Math.round((lqIdx/LQ.length)*100))+'%';
+  const db=document.getElementById('lq-diff-badge');
+  db.innerHTML=q.diff===1?'<span class="difficulty-badge diff-easy">Lett</span>':
+    q.diff===2?'<span class="difficulty-badge diff-medium">Middels</span>':
+    '<span class="difficulty-badge diff-hard">Krevende</span>';
   const opts=document.getElementById('lq-options');
+  opts.className='options'+(q.opts.length===3?' options-3':'');
   opts.innerHTML='';
   q.opts.forEach((o,i)=>{
     const b=document.createElement('button');
@@ -551,160 +591,232 @@ function showLQ(){
     b.onclick=()=>answerLQ(i,b);
     opts.appendChild(b);
   });
-  lqTimeLeft=120;lqStart=Date.now();
+  lqTimeLeft=150;lqStart=Date.now();
   clearInterval(lqTimer);
   lqTimer=setInterval(tickLQ,1000);
   updateLQTimer();
 }
-function tickLQ(){lqTimeLeft--;updateLQTimer();if(lqTimeLeft<=0){clearInterval(lqTimer);nextLQ();}}
+
+function tickLQ(){
+  lqTimeLeft--;
+  updateLQTimer();
+  if(lqTimeLeft<=0){clearInterval(lqTimer);nextLQ();}
+}
 function updateLQTimer(){
   const m=Math.floor(lqTimeLeft/60),s=lqTimeLeft%60;
-  document.getElementById('lq-timer').textContent=m+':'+(s<10?'0':'')+s;
+  const el=document.getElementById('lq-timer');
+  el.textContent=m+':'+(s<10?'0':'')+s;
+  el.className=lqTimeLeft<=20?'timer-val timer-warn':'timer-val';
 }
 function answerLQ(i,btn){
   if(lqAnswered)return;
   lqAnswered=true;clearInterval(lqTimer);
-  lqTimes.push((Date.now()-lqStart)/1000);
+  const elapsed=(Date.now()-lqStart)/1000;
+  lqTimes.push(elapsed);
   const q=LQ[lqIdx];
+  lqDomainTotal[q.cat]=(lqDomainTotal[q.cat]||0)+1;
   document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
-  if(i===q.ans){lqScore++;btn.classList.add('correct');}
-  else{btn.classList.add('wrong');document.querySelectorAll('.option-btn')[q.ans].classList.add('correct');}
+  if(i===q.ans){
+    lqScore++;
+    lqDomainScores[q.cat]=(lqDomainScores[q.cat]||0)+1;
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.option-btn')[q.ans].classList.add('correct');
+  }
   document.getElementById('lq-hint').textContent=q.hint;
-  setTimeout(nextLQ,1300);
+  setTimeout(nextLQ,1400);
 }
 function nextLQ(){
   lqIdx++;
   if(lqIdx>=LQ.length){showLevelResults();return;}
   showLQ();
 }
+
 function showLevelResults(){
   const pct=Math.round((lqScore/LQ.length)*100);
-  const avg=Math.round(lqTimes.reduce((a,b)=>a+b,0)/lqTimes.length);
-  let iq=pct>=92?'~125–135+':pct>=75?'~110–125':pct>=58?'~95–110':pct>=42?'~85–95':'~under 85';
-  let txt=pct>=90?'Fremragende. Du løste nesten alle oppgavene og viser sterk logikk, tallforståelse og abstrakt tenkning.':
-    pct>=75?'Over snittet. God evne til å gjenkjenne mønstre og trekke logiske slutninger.':
-    pct>=50?'Gjennomsnittlig. Du klarte de fleste grunnleggende oppgavene.':
-    'Under snittet denne gangen. Søvn, stress og dagsform påvirker resultatet mye.';
-  document.getElementById('res-title').textContent='Nivåanalyse — resultat';
+  const avg=lqTimes.length?Math.round(lqTimes.reduce((a,b)=>a+b,0)/lqTimes.length):0;
+  // IQ-indikator basert på normalkurve-tilnærming
+  let iq=pct>=95?'~130+':pct>=85?'~120–130':pct>=70?'~110–120':pct>=55?'~100–110':pct>=40?'~90–100':pct>=25?'~80–90':'~under 80';
+  // Percentil-estimat
+  let pctile=pct>=95?'topp 2%':pct>=85?'topp 15%':pct>=70?'topp 30%':pct>=55?'omtrent gjennomsnitt':pct>=40?'under gjennomsnitt':'lavere kvartal';
+  // Domenescorer
+  const cats={logic:'Logikk',number:'Tallresonnering',spatial:'Romlig tenkning',abstract:'Abstrakt'};
+  let domainHTML='';
+  let domainBreakdown='';
+  const colors={'logic':'#94f5ff','number':'#4ade80','spatial':'#a78bfa','abstract':'#facc15'};
+  Object.entries(cats).forEach(([k,label])=>{
+    if(!lqDomainTotal[k])return;
+    const dp=Math.round((lqDomainScores[k]/lqDomainTotal[k])*100);
+    const dlabel=dp>=80?'Sterk':dp>=60?'Over snitt':dp>=40?'Gjennomsnitt':'Utviklingspotensial';
+    domainHTML+=`<div class="domain-card">
+      <div class="domain-name">${label}</div>
+      <div class="domain-score">${dp}<span style="font-size:14px;color:var(--muted)">%</span></div>
+      <div class="domain-label">${dlabel} · ${lqDomainScores[k]}/${lqDomainTotal[k]}</div>
+      <div class="domain-bar"><div class="domain-bar-fill" style="width:${dp}%;background:${colors[k]};box-shadow:0 0 4px ${colors[k]}"></div></div>
+    </div>`;
+    domainBreakdown+=rBar(label+' — '+dlabel,dp,colors[k]);
+  });
+  // Tolkning
+  let strengths=[], develop=[];
+  Object.entries(cats).forEach(([k,label])=>{
+    if(!lqDomainTotal[k])return;
+    const dp=Math.round((lqDomainScores[k]/lqDomainTotal[k])*100);
+    if(dp>=70)strengths.push(label.toLowerCase());
+    else if(dp<50)develop.push(label.toLowerCase());
+  });
+  let interpText=`<div class="interpret-title">Tolkning</div>`;
+  interpText+=`<p>Du svarte riktig på <strong>${lqScore} av ${LQ.length} oppgaver</strong> (${pct}%), med et gjennomsnitt på <strong>${avg} sekunder</strong> per oppgave.</p>`;
+  if(strengths.length)interpText+=`<p><strong>Styrker:</strong> Du presterer godt innen ${strengths.join(' og ')}, noe som tyder på solid analytisk grunnlag i disse domenene.</p>`;
+  if(develop.length)interpText+=`<p><strong>Utviklingspotensial:</strong> ${develop.map(d=>d.charAt(0).toUpperCase()+d.slice(1)).join(' og ')} er områder der målrettet øving kan gi rask fremgang.</p>`;
+  interpText+=`<p><em>Viktig: Kognitive evner er formbare. Denne testen måler prestasjon akkurat nå, ikke et fast tak. Søvn, trening og øving påvirker alle domenene betydelig.</em></p>`;
+
+  document.getElementById('res-title').textContent='Kognitiv profil';
   document.getElementById('res-stats').innerHTML=`
     <div class="stat-card"><div class="stat-val">${lqScore}<span class="stat-unit">/${LQ.length}</span></div><div class="stat-label">Riktige</div></div>
     <div class="stat-card"><div class="stat-val">${pct}<span class="stat-unit">%</span></div><div class="stat-label">Poengsum</div></div>
-    <div class="stat-card"><div class="stat-val">${avg}<span class="stat-unit">s</span></div><div class="stat-label">Snitt/svar</div></div>`;
-  document.getElementById('res-breakdown').innerHTML=
-    rBar('Logikk og mønster',pct,'#94f5ff')+
-    rBar('Svarhastighet (indeks)',Math.max(5,100-Math.round((avg-10)/1.2)),'#4ade80')+
-    `<p style="font-size:13px;color:var(--muted);margin:12px 0 4px">IQ-indikator: <strong style="color:var(--accent)">${iq}</strong></p>`;
-  document.getElementById('res-interpret').innerHTML=`<strong>Tolkning:</strong> ${txt}<br><br><em>Merk: Dette er ikke en klinisk IQ-test. Resultatet er kun en grov indikasjon basert på 12 oppgaver.</em>`;
+    <div class="stat-card"><div class="stat-val">${avg}<span class="stat-unit">s</span></div><div class="stat-label">Snitt/svar</div></div>
+    <div class="stat-card"><div class="stat-val" style="font-size:14px">${iq}</div><div class="stat-label">IQ-indikator</div></div>`;
+  document.getElementById('res-domains').innerHTML=domainHTML;
+  document.getElementById('res-breakdown').innerHTML=domainBreakdown;
+  document.getElementById('res-percentile').textContent=`📊 Basert på oppgavesammensetningen tilsvarer ${pct}% omtrent ${pctile} i en normalfordelt populasjon. IQ-indikatoren er ikke en klinisk skåre, men en veiledende referanse.`;
+  document.getElementById('res-interpret').innerHTML=interpText;
   goTo('page-results');
 }
 
 /* ===== DAGSFORM-TEST ===== */
 let rtTimes=[],rtRound=0,rtReady=false,rtTimeout=null,rtStart=0;
-let memLevel=3,memSeq=[],memInput=[],memPhase='idle',memScore=0,memTotal=0;
-let stCorrect=0,stTotal=10,stIdx=0,stData=[];
+let memLevel=3,memSeq=[],memInput=[],memPhase='idle',memScore=0,memTotal=0,memMaxLevel=3;
+let stCorrect=0,stTotal=12,stIdx=0,stData=[],stStartTime=0,stTotalTime=0;
 
 const SW=[
-  {word:'Rød',color:'#f87171',label:'Rød'},
-  {word:'Blå',color:'#60a5fa',label:'Blå'},
+  {word:'Rød',  color:'#f87171',label:'Rød'},
+  {word:'Blå',  color:'#60a5fa',label:'Blå'},
   {word:'Grønn',color:'#4ade80',label:'Grønn'},
-  {word:'Gul',color:'#facc15',label:'Gul'}
+  {word:'Gul',  color:'#facc15',label:'Gul'},
+  {word:'Lilla',color:'#c084fc',label:'Lilla'},
+  {word:'Oransje',color:'#fb923c',label:'Oransje'}
 ];
 
 function startNowTest(){
   rtTimes=[];rtRound=0;rtReady=false;
-  memLevel=3;memSeq=[];memInput=[];memScore=0;memTotal=0;memPhase='idle';
-  stCorrect=0;stIdx=0;stData=[];
-  document.getElementById('run-level').style.display='none';
+  memLevel=3;memSeq=[];memInput=[];memScore=0;memTotal=0;memPhase='idle';memMaxLevel=3;
+  stCorrect=0;stIdx=0;stData=[];stTotalTime=0;
+  ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-reaction').style.display='block';
-  document.getElementById('run-memory').style.display='none';
-  document.getElementById('run-stroop').style.display='none';
   goTo('page-run');
   startRT();
 }
 
-/* Reaksjonstid */
+/* --- Reaksjonstid (trimmed mean) --- */
 function startRT(){
   rtRound=0;rtTimes=[];
-  document.getElementById('rt-status').textContent='Runde 1 av 5 — vent på grønn';
+  document.getElementById('rt-status').textContent='Klar — vent på grønn sirkel';
+  document.getElementById('rt-results').innerHTML='';
   scheduleRT();
 }
 function scheduleRT(){
   const t=document.getElementById('rt-target');
   t.className='rt-circle';t.textContent='Vent...';rtReady=false;
   rtTimeout=setTimeout(()=>{
-    t.className='rt-circle ready';t.textContent='Trykk!';
+    t.className='rt-circle ready';t.textContent='NÅ!';
     rtReady=true;rtStart=Date.now();
-  },1500+Math.random()*2500);
+  },1000+Math.random()*3000);
 }
 function handleReaction(){
   if(!rtReady){
     clearTimeout(rtTimeout);
-    document.getElementById('rt-status').textContent='For tidlig! Prøv igjen.';
-    setTimeout(scheduleRT,800);return;
+    const t=document.getElementById('rt-target');
+    t.className='rt-circle too-early';t.textContent='For tidlig';
+    document.getElementById('rt-status').textContent='Vent til sirkelen er grønn!';
+    setTimeout(scheduleRT,1200);return;
   }
   const rt=Date.now()-rtStart;
   rtTimes.push(rt);rtRound++;
   const t=document.getElementById('rt-target');
   t.className='rt-circle';t.textContent=rt+'ms';
-  document.getElementById('rt-status').textContent=`Runde ${rtRound} av 5 — ${rt} ms`;
-  if(rtRound>=5){setTimeout(startMemory,1000);return;}
-  setTimeout(scheduleRT,900);
+  const pills=document.getElementById('rt-results');
+  const p=document.createElement('div');
+  p.className='rt-pill done';p.textContent='#'+rtRound+': '+rt+'ms';
+  pills.appendChild(p);
+  document.getElementById('rt-status').textContent=rtRound<5?'Runde '+(rtRound+1)+' av 5...':'Ferdig!';
+  if(rtRound>=5){setTimeout(startMemory,1200);return;}
+  setTimeout(scheduleRT,800);
 }
 
-/* Arbeidsminne */
+/* --- Arbeidsminne (adaptivt, Corsi-inspirert) --- */
 function startMemory(){
   document.getElementById('run-reaction').style.display='none';
   document.getElementById('run-memory').style.display='block';
-  memLevel=3;memPhase='idle';
+  memLevel=3;memPhase='idle';memMaxLevel=3;
   document.getElementById('mem-btn').textContent='Start';
-  document.getElementById('mem-instruction').textContent='Se på tallene og husk rekkefølgen.';
-  renderMemDisplay([]);document.getElementById('mem-input').style.display='none';
+  document.getElementById('mem-instruction').textContent='Se tallene som vises — husk rekkefølgen nøyaktig.';
+  document.getElementById('mem-level-badge').textContent='Nivå 3';
+  renderMemDisplay([]);
+  document.getElementById('mem-input').style.display='none';
 }
 function memNext(){
   if(memPhase==='idle'||memPhase==='correct'||memPhase==='wrong'){
+    if(memTotal>=5){document.getElementById('mem-btn').style.display='none';setTimeout(startStroop,800);return;}
     memTotal++;
     memSeq=Array.from({length:memLevel},()=>Math.floor(Math.random()*9)+1);
     memPhase='show';
     document.getElementById('mem-btn').style.display='none';
     document.getElementById('mem-input').style.display='none';
     document.getElementById('mem-instruction').textContent='Husk tallene...';
+    document.getElementById('mem-level-badge').textContent='Nivå '+memLevel+' · '+memLevel+' tall';
     renderMemDisplay(Array(memLevel).fill(''));
     let i=0;
     function showNext(){
-      document.querySelectorAll('.seq-dot').forEach(d=>d.classList.remove('lit'));
+      document.querySelectorAll('.seq-dot').forEach(d=>{d.classList.remove('lit');d.textContent='';});
       if(i<memSeq.length){
         const dots=document.querySelectorAll('.seq-dot');
         if(dots[i]){dots[i].classList.add('lit');dots[i].textContent=memSeq[i];}
-        i++;setTimeout(showNext,700);
+        i++;setTimeout(showNext,650);
       } else {
         setTimeout(()=>{
-          memPhase='recall';
+          memPhase='recall';memInput=[];
           document.getElementById('mem-instruction').textContent='Skriv inn tallene i riktig rekkefølge:';
-          memInput=[];
-          renderMemDisplay(Array(memLevel).fill('?'));
+          renderMemDisplay(Array(memLevel).fill('_'));
           renderMemInputBtns();
-          document.getElementById('mem-btn').textContent='Sjekk';
+          document.getElementById('mem-btn').textContent='Bekreft';
           document.getElementById('mem-btn').style.display='';
-        },500);
+        },400);
       }
     }
     showNext();
   } else if(memPhase==='recall'){
     const ok=memInput.join(',')===memSeq.join(',');
-    if(ok){memScore++;memPhase='correct';
-      document.getElementById('mem-instruction').textContent='Riktig! '+(memTotal<4?'Neste runde...':'Ferdig!');
+    const dots=document.querySelectorAll('.seq-dot');
+    memSeq.forEach((v,i)=>{
+      if(dots[i]){
+        dots[i].textContent=v;
+        dots[i].classList.remove('lit');
+        dots[i].classList.add(ok?'correct-dot':'wrong-dot');
+      }
+    });
+    if(ok){
+      memScore++;memPhase='correct';
       memLevel=Math.min(memLevel+1,9);
+      memMaxLevel=Math.max(memMaxLevel,memLevel-1);
+      document.getElementById('mem-instruction').textContent='Riktig! '+(memTotal<5?'Neste...':'Ferdig!');
     } else {
       memPhase='wrong';
-      document.getElementById('mem-instruction').textContent='Feil. Riktig rekkefølge: '+memSeq.join(' – ');
+      memLevel=Math.max(3,memLevel-1);
+      document.getElementById('mem-instruction').textContent='Feil. Riktig rekkefølge: '+memSeq.join(' → ');
     }
-    if(memTotal>=4){document.getElementById('mem-btn').style.display='none';setTimeout(startStroop,1200);}
-    else{document.getElementById('mem-btn').textContent='Neste';}
+    document.getElementById('mem-input').style.display='none';
+    if(memTotal>=5){
+      document.getElementById('mem-btn').style.display='none';
+      setTimeout(startStroop,1500);
+    } else {
+      document.getElementById('mem-btn').textContent='Neste';
+    }
   }
 }
 function renderMemDisplay(arr){
   document.getElementById('mem-display').innerHTML=arr.map(v=>
-    `<div class="seq-dot${v!==''&&v!=='?'?' lit':''}">${v}</div>`
+    `<div class="seq-dot">${v==='_'?'':v}</div>`
   ).join('');
 }
 function renderMemInputBtns(){
@@ -720,69 +832,146 @@ function addMem(n){
   const dots=document.querySelectorAll('.seq-dot');
   if(dots[memInput.length-1]){dots[memInput.length-1].textContent=n;dots[memInput.length-1].classList.add('lit');}
 }
-function clearMem(){memInput=[];renderMemDisplay(Array(memSeq.length).fill('?'));}
+function clearMem(){
+  memInput=[];
+  renderMemDisplay(Array(memSeq.length).fill('_'));
+}
 
-/* Stroop */
+/* --- Stroop (6 farger, 12 runder) --- */
 function startStroop(){
   document.getElementById('run-memory').style.display='none';
   document.getElementById('run-stroop').style.display='block';
-  stCorrect=0;stIdx=0;
-  stData=Array.from({length:stTotal},()=>{
+  stCorrect=0;stIdx=0;stTotalTime=0;
+  // Garanter at alle items er kongruente eller inkongruente, ikke tilfeldig
+  stData=Array.from({length:stTotal},(_, i)=>{
     const w=SW[Math.floor(Math.random()*SW.length)];
-    const ink=SW[Math.floor(Math.random()*SW.length)];
-    return{word:w.word,ink:ink.color,inkLabel:ink.label};
+    // Annenhver: inkongruent (word ≠ ink) for å sikre mix
+    let ink;
+    if(i%2===0){
+      // inkongruent
+      const others=SW.filter(s=>s.label!==w.word);
+      ink=others[Math.floor(Math.random()*others.length)];
+    } else {
+      ink=w; // kongruent
+    }
+    return{word:w.word,ink:ink.color,inkLabel:ink.label,congruent:(w.word===ink.label)};
   });
   showStroop();
 }
 function showStroop(){
   if(stIdx>=stTotal){showNowResults();return;}
   document.getElementById('st-progress').style.width=Math.round((stIdx/stTotal)*100)+'%';
-  document.getElementById('st-count').textContent='Spørsmål '+(stIdx+1)+' av '+stTotal;
+  document.getElementById('st-count').textContent='Runde '+(stIdx+1)+' av '+stTotal;
   const s=stData[stIdx];
   const el=document.getElementById('st-word');
   el.textContent=s.word;el.style.color=s.ink;
+  stStartTime=Date.now();
+  // Vis 6 farger som alternativer
+  const shown=SW.slice().sort(()=>Math.random()-.5).slice(0,4);
+  if(!shown.find(s2=>s2.label===s.inkLabel))shown[3]=SW.find(s2=>s2.label===s.inkLabel);
   const opts=document.getElementById('st-options');
-  opts.innerHTML=SW.map(sw=>
+  opts.className='options options-3';
+  opts.innerHTML=shown.map(sw=>
     `<button class="option-btn" onclick="answerStroop('${sw.label}')">${sw.label}</button>`
   ).join('');
 }
 function answerStroop(label){
+  const rt=Date.now()-stStartTime;
+  stTotalTime+=rt;
   const s=stData[stIdx];
-  document.querySelectorAll('#st-options .option-btn').forEach(b=>b.disabled=true);
+  const btns=document.querySelectorAll('#st-options .option-btn');
+  btns.forEach(b=>b.disabled=true);
+  const shownLabels=Array.from(btns).map(b=>b.textContent);
+  const selectedIdx=shownLabels.indexOf(label);
+  const correctIdx=shownLabels.indexOf(s.inkLabel);
   if(label===s.inkLabel){
     stCorrect++;
-    document.querySelectorAll('#st-options .option-btn')[SW.findIndex(w=>w.label===label)].classList.add('correct');
+    if(btns[selectedIdx])btns[selectedIdx].classList.add('correct');
   } else {
-    document.querySelectorAll('#st-options .option-btn')[SW.findIndex(w=>w.label===label)].classList.add('wrong');
-    document.querySelectorAll('#st-options .option-btn')[SW.findIndex(w=>w.label===s.inkLabel)].classList.add('correct');
+    if(btns[selectedIdx])btns[selectedIdx].classList.add('wrong');
+    if(btns[correctIdx]&&correctIdx>=0)btns[correctIdx].classList.add('correct');
   }
-  stIdx++;setTimeout(showStroop,600);
+  stIdx++;
+  setTimeout(showStroop,500);
 }
 
-/* Dagsform-resultater */
+/* --- Dagsform-resultater --- */
 function showNowResults(){
-  const avgRT=Math.round(rtTimes.reduce((a,b)=>a+b,0)/rtTimes.length);
+  // Reaksjonstid: trimmed mean (fjern beste og verste)
+  const sorted=[...rtTimes].sort((a,b)=>a-b);
+  const trimmed=sorted.slice(1,-1);
+  const avgRT=Math.round(trimmed.reduce((a,b)=>a+b,0)/trimmed.length);
+  const minRT=Math.min(...rtTimes),maxRT=Math.max(...rtTimes);
+
+  // Arbeidsminne-score basert på maks nivå nådd
   const memPct=Math.round((memScore/memTotal)*100);
+  const memSpan=memMaxLevel;
+
+  // Stroop
   const stroopPct=Math.round((stCorrect/stTotal)*100);
-  const rtScore=Math.max(5,Math.min(100,Math.round(100-(avgRT-200)/4)));
-  const overall=Math.round((rtScore+memPct+stroopPct)/3);
-  let txt=overall>=75?'Du er i god kognitiv form akkurat nå. Rask reaksjonstid og god impulskontroll tyder på at du er skjerpet.':
-    overall>=50?'Gjennomsnittlig dagsform. Tretthet, stress eller distraksjoner kan spille inn.':
-    'Lav ytelse i dag. Søvn, mat og stressnivå påvirker kognisjon mye. Hvil og prøv igjen.';
-  let rtLbl=avgRT<220?'Utmerket':avgRT<300?'Bra':avgRT<400?'Gjennomsnitt':'Treig';
-  let memLbl=memPct>=75?'Sterk':memPct>=50?'OK':'Svak';
-  let stLbl=stroopPct>=80?'Fokusert':stroopPct>=60?'OK':'Distrahert';
+  const avgStroopRT=Math.round(stTotalTime/stTotal);
+
+  // Normaliserte delscorer (basert på populasjonsreferanser)
+  const rtScore=avgRT<180?98:avgRT<220?90:avgRT<270?75:avgRT<330?60:avgRT<400?45:avgRT<500?30:15;
+  const memScore2=memSpan>=7?95:memSpan>=6?82:memSpan>=5?68:memSpan>=4?52:35;
+  const stroopScore=stroopPct>=92?95:stroopPct>=83?80:stroopPct>=75?65:stroopPct>=58?50:35;
+  const overall=Math.round((rtScore*0.3+memScore2*0.35+stroopScore*0.35));
+
+  // Etiketter
+  const rtLbl=avgRT<220?'Eksepsjonell':avgRT<270?'Rask':avgRT<330?'Over snitt':avgRT<400?'Gjennomsnitt':'Under snitt';
+  const memLbl=memSpan>=7?'Eksepsjonell':memSpan>=6?'Over snitt':memSpan>=5?'Gjennomsnitt':memSpan>=4?'Under snitt':'Lav';
+  const stLbl=stroopPct>=90?'Eksepsjonell':stroopPct>=80?'God':stroopPct>=65?'Gjennomsnitt':'Utviklingspotensial';
+
+  let txt='';
+  if(overall>=80)txt='Du er i svært god kognitiv form akkurat nå. Alle tre domenene presterer sterkt, noe som indikerer god søvnkvalitet, lavt stressnivå og høy hjerneberedskap.';
+  else if(overall>=65)txt='God dagsform. De fleste domenene presterer over snittet. Mulige forbedringer i ett eller to domener kan tyde på lett tretthet eller distraksjon.';
+  else if(overall>=50)txt='Gjennomsnittlig dagsform. Kognitiv ytelse er påvirket av søvn, mat, stress og stimulans. En kort pause, et glass vann eller litt bevegelse kan gjøre en merkbar forskjell.';
+  else txt='Lav ytelse i dag. Dette er helt normalt og oftest forbigående. Prioriter søvn, reduser skjermtid og prøv testen igjen etter hvile.';
+
   document.getElementById('res-title').textContent='Dagsform — resultat';
   document.getElementById('res-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-val">${avgRT}<span class="stat-unit">ms</span></div><div class="stat-label">Reaksjon</div></div>
-    <div class="stat-card"><div class="stat-val">${memPct}<span class="stat-unit">%</span></div><div class="stat-label">Minne</div></div>
-    <div class="stat-card"><div class="stat-val">${stroopPct}<span class="stat-unit">%</span></div><div class="stat-label">Stroop</div></div>`;
+    <div class="stat-card"><div class="stat-val">${avgRT}<span class="stat-unit">ms</span></div><div class="stat-label">Reaksjon (snitt)</div></div>
+    <div class="stat-card"><div class="stat-val">${memSpan}</div><div class="stat-label">Minnespenn</div></div>
+    <div class="stat-card"><div class="stat-val">${stroopPct}<span class="stat-unit">%</span></div><div class="stat-label">Stroop</div></div>
+    <div class="stat-card"><div class="stat-val">${overall}</div><div class="stat-label">Total score</div></div>`;
+
+  document.getElementById('res-domains').innerHTML=`
+    <div class="domain-card">
+      <div class="domain-name">Reaksjonstid</div>
+      <div class="domain-score">${rtLbl}</div>
+      <div class="domain-label">${avgRT}ms snitt · min ${minRT}ms · maks ${maxRT}ms</div>
+      <div class="domain-bar"><div class="domain-bar-fill" style="width:${rtScore}%;background:#94f5ff;box-shadow:0 0 4px #94f5ff"></div></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-name">Arbeidsminne</div>
+      <div class="domain-score">${memLbl}</div>
+      <div class="domain-label">Minnespenn ${memSpan} · ${memScore}/${memTotal} riktige</div>
+      <div class="domain-bar"><div class="domain-bar-fill" style="width:${memScore2}%;background:#4ade80;box-shadow:0 0 4px #4ade80"></div></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-name">Impulskontroll</div>
+      <div class="domain-score">${stLbl}</div>
+      <div class="domain-label">${stCorrect}/${stTotal} riktige · snitt ${avgStroopRT}ms</div>
+      <div class="domain-bar"><div class="domain-bar-fill" style="width:${stroopScore}%;background:#a78bfa;box-shadow:0 0 4px #a78bfa"></div></div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-name">Samlet dagsform</div>
+      <div class="domain-score">${overall}/100</div>
+      <div class="domain-label">${overall>=80?'Topp 20%':overall>=65?'Over snitt':overall>=50?'Gjennomsnitt':'Under snitt'}</div>
+      <div class="domain-bar"><div class="domain-bar-fill" style="width:${overall}%;background:#facc15;box-shadow:0 0 4px #facc15"></div></div>
+    </div>`;
+
   document.getElementById('res-breakdown').innerHTML=
     rBar('Reaksjonstid — '+rtLbl,rtScore,'#94f5ff')+
-    rBar('Arbeidsminne — '+memLbl,memPct,'#4ade80')+
-    rBar('Konsentrasjon (Stroop) — '+stLbl,stroopPct,'#facc15')+
-    `<p style="font-size:14px;color:var(--muted);margin-top:12px">Samlet dagsform-score: <strong style="color:var(--accent)">${overall}/100</strong></p>`;
-  document.getElementById('res-interpret').innerHTML=`<strong>Tolkning:</strong> ${txt}`;
+    rBar('Arbeidsminne — '+memLbl,memScore2,'#4ade80')+
+    rBar('Impulskontroll (Stroop) — '+stLbl,stroopScore,'#a78bfa');
+
+  document.getElementById('res-percentile').textContent=
+    `📊 Reaksjonstid under 250ms er i topp ~15%. Minnespenn på 7+ er over normalområdet (5±2). Stroop-nøyaktighet over 80% regnes som god impulskontroll.`;
+
+  document.getElementById('res-interpret').innerHTML=
+    `<div class="interpret-title">Tolkning</div><p>${txt}</p>
+    <p><em>Metodikk: Reaksjonstid beregnes med trimmed mean (fjerner beste og dårligste). Arbeidsminne er basert på adaptivt digitalt minnespenn (Corsi-prinsipp). Stroop måler kognitiv interferens — evnen til å undertrykke automatiske responser.</em></p>`;
   goTo('page-results');
 }
 
@@ -790,10 +979,12 @@ function rBar(label,pct,color){
   pct=Math.max(0,Math.min(100,pct||0));
   return `<div class="r-bar-wrap">
     <div class="r-bar-row"><span>${label}</span></div>
-    <div class="r-bar"><div class="r-bar-fill" style="width:${pct}%;background:${color};box-shadow:0 0 6px ${color}"></div></div>
+    <div class="r-bar"><div class="r-bar-fill" style="width:${pct}%;background:${color};box-shadow:0 0 4px ${color}"></div></div>
   </div>`;
 }
 </script>
 </body>
 </html>
+
+
 
