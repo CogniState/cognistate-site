@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>CogniState</title>
-  <meta name="description" content="CogniState kartlegger og forbedrer beslutningsevne ved hjelp av moderne teknologi, datadrevet innsikt og kognitiv analyse." />
-  <link rel="icon" type="image/png" href="assets/cognistate-logo.png" />
+  <meta name="description" content="CogniState kartlegger og forbedrer beslutningsevne ved hjelp av moderne teknologi, datadrevet innsikt og kognitiv analyse."/>
+  <link rel="icon" type="image/png" href="assets/cognistate-logo.png"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root{
       --bg:#0f172a;--bg2:#1e293b;--text:#e2e8f0;--muted:#94a3b8;
-      --accent:#94f5ff;--as:rgba(148,245,255,.2);--ab:rgba(148,245,255,.3);
+      --accent:#94f5ff;--as:rgba(148,245,255,.18);--ab:rgba(148,245,255,.28);
       --dot:rgba(255,255,255,.04);--s1:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);
       --b1:rgba(255,255,255,.08);--ba:rgba(148,245,255,.2);
       --ok:#4ade80;--okb:rgba(74,222,128,.1);--no:#f87171;--nob:rgba(248,113,113,.1);
@@ -20,183 +21,257 @@
     body{color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);min-height:100vh;overflow-x:hidden;line-height:1.6;}
     body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:40px 40px;animation:mg 24s linear infinite;pointer-events:none;z-index:0;}
     @keyframes mg{from{background-position:0 0}to{background-position:40px 40px}}
-    .glow{position:fixed;left:50%;top:40%;width:min(900px,90vw);height:min(900px,90vw);transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(94,234,212,.12) 0%,transparent 65%);animation:pu 7s ease-in-out infinite alternate;z-index:0;pointer-events:none;}
-    @keyframes pu{0%{opacity:.4;transform:translate(-50%,-50%) scale(1)}100%{opacity:.7;transform:translate(-50%,-50%) scale(1.1)}}
+    .glow{position:fixed;left:50%;top:40%;width:min(900px,90vw);height:min(900px,90vw);transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(94,234,212,.1) 0%,transparent 65%);animation:pu 7s ease-in-out infinite alternate;z-index:0;pointer-events:none;}
+    @keyframes pu{0%{opacity:.4;transform:translate(-50%,-50%) scale(1)}100%{opacity:.65;transform:translate(-50%,-50%) scale(1.1)}}
     .page{display:none;position:relative;z-index:1;min-height:100vh;}
     .page.active{display:flex;flex-direction:column;}
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(15,23,42,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1);}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(15,23,42,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1);}
     .nb{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;}
-    .nb img{height:36px;filter:drop-shadow(0 0 6px var(--as));}
-    .nb span{font-weight:700;font-size:1.1rem;color:#e8f3ff;letter-spacing:.3px;}
-    .nr{display:flex;align-items:center;gap:12px;}
+    .nb img{height:34px;filter:drop-shadow(0 0 5px var(--as));}
+    .nb span{font-weight:700;font-size:1.05rem;color:#e8f3ff;letter-spacing:.3px;}
+    .nr{display:flex;align-items:center;gap:10px;}
+    .navlinks{display:flex;align-items:center;gap:4px;margin-right:8px;}
+    .navlink{background:none;border:none;font-family:inherit;font-size:13px;color:var(--muted);cursor:pointer;padding:6px 12px;border-radius:6px;transition:all .15s;}
+    .navlink:hover{color:var(--text);background:var(--s1);}
+    .navlink.active{color:var(--accent);}
     .nu{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);}
-    .av{width:32px;height:32px;border-radius:50%;background:var(--as);border:1px solid var(--ab);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--accent);overflow:hidden;}
-    .av img{width:32px;height:32px;border-radius:50%;object-fit:cover;}
-    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;border:1px solid var(--b1);background:var(--s1);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap;}
+    .av{width:30px;height:30px;border-radius:50%;background:var(--as);border:1px solid var(--ab);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--accent);overflow:hidden;}
+    .av img{width:30px;height:30px;border-radius:50%;object-fit:cover;}
+
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--b1);background:var(--s1);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap;}
     .btn:hover{background:var(--s2);border-color:var(--ba);}
-    .bta{background:rgba(148,245,255,.1);border-color:var(--ab);color:var(--accent);}
-    .bta:hover{background:rgba(148,245,255,.18);}
-    .btp{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600;font-size:14px;box-shadow:0 0 20px rgba(148,245,255,.2);}
-    .btp:hover{background:#7eeeff;box-shadow:0 0 28px rgba(148,245,255,.35);}
+    .bta{background:rgba(148,245,255,.08);border-color:var(--ab);color:var(--accent);}
+    .bta:hover{background:rgba(148,245,255,.15);}
+    .btp{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600;}
+    .btp:hover{background:#7eeeff;}
     .btg{background:white;color:#1f2937;border-color:#d1d5db;font-weight:500;}
     .btg:hover{background:#f9fafb;}
     .btd{border-color:rgba(248,113,113,.3);color:var(--no);}
     .btd:hover{background:var(--nob);}
-    .btlg{padding:12px 28px;font-size:15px;}
+    .btlg{padding:11px 26px;font-size:14px;}
     .btsm{padding:6px 14px;font-size:12px;}
-    #page-home{align-items:center;justify-content:center;padding:64px 24px 80px;text-align:center;}
+
+    /* HOME */
+    #page-home{align-items:center;justify-content:center;padding:60px 24px 80px;text-align:center;}
     .hero{max-width:760px;margin:0 auto;}
-    .eyebrow{display:inline-block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);background:var(--as);border:1px solid var(--ab);padding:5px 14px;border-radius:20px;margin-bottom:1.5rem;}
-    .htitle{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-bottom:1.25rem;background:linear-gradient(135deg,#e2e8f0 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .hsub{font-size:clamp(1rem,1.8vw,1.2rem);color:var(--muted);line-height:1.7;max-width:560px;margin:0 auto 2.5rem;}
-    .hctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:4rem;}
-    .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;text-align:left;}
-    .fc{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.25rem 1.4rem;transition:border-color .2s,background .2s;}
+    .eyebrow{display:inline-block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);background:var(--as);border:1px solid var(--ab);padding:4px 14px;border-radius:20px;margin-bottom:1.25rem;}
+    .htitle{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-bottom:1.1rem;background:linear-gradient(135deg,#e2e8f0 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .hsub{font-size:clamp(.95rem,1.8vw,1.15rem);color:var(--muted);line-height:1.7;max-width:540px;margin:0 auto 2.25rem;}
+    .hctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:3.5rem;}
+    .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;text-align:left;}
+    .fc{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.2rem 1.4rem;transition:border-color .2s,background .2s;}
     .fc:hover{background:var(--s2);border-color:var(--ba);}
-    .fci{font-size:20px;margin-bottom:10px;}
-    .fct{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px;letter-spacing:.02em;}
+    .fci{font-size:20px;margin-bottom:9px;}
+    .fct{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:3px;}
     .fcd{font-size:12px;color:var(--muted);line-height:1.55;}
-    #page-auth{align-items:center;justify-content:center;padding:64px 24px;}
-    .acard{width:100%;max-width:420px;background:var(--s1);border:1px solid var(--b1);border-radius:18px;padding:2rem 2.25rem;}
-    .alogo{display:flex;align-items:center;gap:10px;margin-bottom:1.75rem;}
-    .alogo img{height:36px;filter:drop-shadow(0 0 6px var(--as));}
-    .alogo span{font-weight:700;font-size:1.1rem;color:#e8f3ff;}
-    .atitle{font-size:1.3rem;font-weight:600;color:var(--text);margin-bottom:.4rem;}
-    .asub{font-size:13px;color:var(--muted);margin-bottom:1.75rem;}
-    .adiv{display:flex;align-items:center;gap:12px;margin:1.25rem 0;font-size:12px;color:rgba(255,255,255,.2);}
+
+    /* AUTH */
+    #page-auth{align-items:center;justify-content:center;padding:60px 24px;}
+    .acard{width:100%;max-width:410px;background:var(--s1);border:1px solid var(--b1);border-radius:18px;padding:2rem 2.25rem;}
+    .alogo{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;}
+    .alogo img{height:34px;filter:drop-shadow(0 0 5px var(--as));}
+    .alogo span{font-weight:700;font-size:1.05rem;color:#e8f3ff;}
+    .atitle{font-size:1.25rem;font-weight:600;color:var(--text);margin-bottom:.3rem;}
+    .asub{font-size:13px;color:var(--muted);margin-bottom:1.5rem;}
+    .adiv{display:flex;align-items:center;gap:12px;margin:1.1rem 0;font-size:12px;color:rgba(255,255,255,.2);}
     .adiv::before,.adiv::after{content:"";flex:1;height:1px;background:var(--b1);}
-    .fg{margin-bottom:1rem;}
-    .fl{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;letter-spacing:.03em;}
-    .fi{width:100%;padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid var(--b1);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;transition:border-color .15s;outline:none;}
-    .fi:focus{border-color:var(--ab);box-shadow:0 0 0 3px rgba(148,245,255,.08);}
-    .fi::placeholder{color:rgba(255,255,255,.2);}
-    .aerr{font-size:12px;color:var(--no);background:var(--nob);border:1px solid rgba(248,113,113,.2);border-radius:6px;padding:8px 12px;margin-bottom:1rem;display:none;}
-    .asw{font-size:13px;color:var(--muted);margin-top:1.25rem;text-align:center;}
-    .asw a{color:var(--accent);cursor:pointer;text-decoration:none;}
+    .fg{margin-bottom:.85rem;}
+    .fl{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:5px;letter-spacing:.03em;}
+    .fi{width:100%;padding:9px 13px;background:rgba(255,255,255,.05);border:1px solid var(--b1);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;transition:border-color .15s;outline:none;}
+    .fi:focus{border-color:var(--ab);box-shadow:0 0 0 3px rgba(148,245,255,.07);}
+    .fi::placeholder{color:rgba(255,255,255,.18);}
+    .aerr{font-size:12px;color:var(--no);background:var(--nob);border:1px solid rgba(248,113,113,.2);border-radius:6px;padding:8px 12px;margin-bottom:.85rem;display:none;}
+    .asw{font-size:13px;color:var(--muted);margin-top:1.1rem;text-align:center;}
+    .asw a{color:var(--accent);cursor:pointer;}
     .asw a:hover{text-decoration:underline;}
-    #page-dashboard{padding:64px 0 80px;}
-    .di{max-width:900px;margin:0 auto;padding:2rem 24px 0;}
-    .dg{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;flex-wrap:wrap;gap:12px;}
-    .dg h2{font-size:1.6rem;font-weight:600;color:var(--text);margin-bottom:.2rem;}
-    .dg p{font-size:14px;color:var(--muted);}
+
+    /* DASHBOARD */
+    #page-dashboard{padding:60px 0 80px;}
+    .di{max-width:920px;margin:0 auto;padding:2rem 24px 0;}
+    .dheader{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;flex-wrap:wrap;gap:12px;}
+    .dheader h2{font-size:1.5rem;font-weight:600;color:var(--text);margin-bottom:.2rem;}
+    .dheader p{font-size:13px;color:var(--muted);}
     .sl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.4);margin-bottom:12px;font-weight:600;}
-    .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:2rem;}
-    .sc{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.1rem 1.25rem;}
-    .sv{font-size:26px;font-weight:700;color:var(--accent);line-height:1.1;margin-bottom:2px;}
-    .su{font-size:13px;color:var(--muted);}
-    .slb{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:rgba(148,245,255,.35);margin-top:4px;}
-    .blc{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:1.5rem;margin-bottom:2rem;}
-    .blh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px;}
-    .blds{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;}
-    .bld{background:rgba(255,255,255,.03);border:1px solid var(--b1);border-radius:10px;padding:.9rem 1rem;}
-    .bdl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;}
-    .bdv{font-size:20px;font-weight:700;color:var(--text);}
-    .bds{font-size:11px;color:var(--muted);margin-top:2px;}
-    .bdb{height:3px;background:var(--b1);border-radius:2px;margin-top:8px;}
-    .bdbf{height:3px;border-radius:2px;}
-    .hcard{background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:2rem;}
-    .hh{padding:1.25rem 1.5rem;border-bottom:1px solid var(--b1);}
-    .hr{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;transition:background .15s;}
-    .hr:last-child{border-bottom:none;}
-    .hr:hover{background:var(--s2);}
-    .ht{font-weight:500;color:var(--text);}
-    .hd{color:var(--muted);font-size:12px;}
-    .hs{font-weight:600;color:var(--accent);background:var(--as);padding:3px 10px;border-radius:6px;font-size:12px;}
-    .he{padding:2rem;text-align:center;color:var(--muted);font-size:13px;}
-    .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:2rem;}
-    .tlc{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:1.5rem;cursor:pointer;transition:all .2s;}
+    .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-bottom:2rem;}
+    .tlc{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.4rem;cursor:pointer;transition:all .2s;}
     .tlc:hover{background:var(--s2);border-color:var(--ba);transform:translateY(-2px);}
-    .tlci{font-size:28px;margin-bottom:12px;}
-    .tlcb{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:20px;margin-bottom:8px;}
+    .tlci{font-size:26px;margin-bottom:10px;}
+    .tlcb{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:20px;margin-bottom:7px;}
     .bb{background:rgba(148,245,255,.1);color:var(--accent);}
     .bg{background:rgba(74,222,128,.1);color:var(--ok);}
-    .tlct{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;}
-    .tlcd{font-size:12px;color:var(--muted);line-height:1.55;}
-    .tlcm{font-size:11px;color:rgba(148,245,255,.35);margin-top:10px;line-height:1.7;}
-    #page-run{align-items:center;justify-content:flex-start;padding:80px 24px 80px;}
-    .ri{width:100%;max-width:580px;margin:0 auto;}
-    .bb2{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:inherit;margin-bottom:1.75rem;transition:color .2s;padding:0;}
+    .tlct{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;}
+    .tlcd{font-size:12px;color:var(--muted);line-height:1.5;}
+    .tlcm{font-size:11px;color:rgba(148,245,255,.3);margin-top:8px;}
+
+    /* Status banner */
+    .status-banner{border-radius:12px;padding:.9rem 1.1rem;margin-bottom:1.5rem;font-size:13px;line-height:1.6;display:none;}
+    .sb-good{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:rgba(74,222,128,.9);}
+    .sb-warn{background:rgba(250,204,21,.07);border:1px solid rgba(250,204,21,.2);color:rgba(250,204,21,.9);}
+    .sb-low{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);color:rgba(248,113,113,.9);}
+
+    /* Chart card */
+    .chart-card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:1.5rem;margin-bottom:2rem;}
+    .chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px;}
+    .chart-title{font-size:14px;font-weight:600;color:var(--text);}
+    .chart-legend{display:flex;gap:14px;flex-wrap:wrap;}
+    .cleg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+    .cleg-dot{width:8px;height:8px;border-radius:50%;}
+    .chart-wrap{position:relative;height:200px;}
+    .chart-empty{height:200px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);}
+
+    /* Domain profile */
+    .domain-profile{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:2rem;}
+    .dp-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:.9rem 1rem;}
+    .dp-name{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;}
+    .dp-val{font-size:20px;font-weight:700;color:var(--text);}
+    .dp-delta{font-size:11px;margin-top:2px;}
+    .delta-up{color:var(--ok);}
+    .delta-dn{color:var(--no);}
+    .delta-eq{color:var(--muted);}
+    .dp-bar{height:3px;background:var(--b1);border-radius:2px;margin-top:7px;}
+    .dp-barf{height:3px;border-radius:2px;}
+
+    /* History */
+    .hcard{background:var(--s1);border:1px solid var(--b1);border-radius:14px;overflow:hidden;margin-bottom:2rem;}
+    .hh{padding:1.1rem 1.4rem;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;}
+    .hrow{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:12px;padding:.9rem 1.4rem;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px;transition:background .15s;cursor:default;}
+    .hrow:last-child{border-bottom:none;}
+    .hrow:hover{background:var(--s2);}
+    .htype-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .htitle2{font-weight:500;color:var(--text);}
+    .hdate{color:var(--muted);font-size:12px;text-align:right;}
+    .hscore{font-weight:600;color:var(--accent);background:var(--as);padding:3px 10px;border-radius:6px;font-size:12px;}
+    .hempty{padding:2rem;text-align:center;color:var(--muted);font-size:13px;}
+
+    /* INSIGHTS PAGE */
+    #page-insights{padding:60px 0 80px;}
+    .ii{max-width:720px;margin:0 auto;padding:2rem 24px 0;}
+    .insight-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.4rem 1.5rem;margin-bottom:14px;}
+    .ic-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:.75rem;}
+    .ic-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+    .ic-meta{flex:1;}
+    .ic-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
+    .ic-date{font-size:11px;color:var(--muted);}
+    .ic-body{font-size:13px;color:var(--muted);line-height:1.7;}
+    .ic-body strong{color:var(--text);}
+    .ic-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:.75rem;}
+    .ic-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:3px 9px;border-radius:4px;}
+    .tag-good{background:rgba(74,222,128,.1);color:var(--ok);}
+    .tag-warn{background:rgba(250,204,21,.1);color:var(--am);}
+    .tag-info{background:rgba(148,245,255,.1);color:var(--accent);}
+    .tag-low{background:rgba(248,113,113,.1);color:var(--no);}
+    .ai-loading{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);padding:.75rem 0;}
+    .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.2s infinite;}
+    .ai-dot:nth-child(2){animation-delay:.2s;}
+    .ai-dot:nth-child(3){animation-delay:.4s;}
+    @keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+    .insights-empty{text-align:center;padding:3rem 1rem;color:var(--muted);font-size:13px;line-height:1.7;}
+
+    /* RUN */
+    #page-run{align-items:center;justify-content:flex-start;padding:76px 24px 80px;}
+    .ri{width:100%;max-width:560px;margin:0 auto;}
+    .bb2{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:inherit;margin-bottom:1.5rem;transition:color .2s;padding:0;}
     .bb2:hover{color:var(--accent);}
-    .ph{margin-bottom:1.5rem;}
-    .pl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.4);margin-bottom:4px;}
-    .pt{font-size:1.25rem;font-weight:600;color:var(--accent);}
-    .pd{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5;}
-    .tr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
-    .tl{font-size:13px;color:var(--muted);}
+    .ph{margin-bottom:1.4rem;}
+    .pl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.4);margin-bottom:3px;}
+    .pt{font-size:1.2rem;font-weight:600;color:var(--accent);}
+    .pd{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.5;}
+    .tr2{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;}
+    .tl2{font-size:13px;color:var(--muted);}
     .tv{font-size:14px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;}
     .tw{color:var(--no);}
-    .pb{height:2px;background:var(--b1);border-radius:2px;margin-bottom:1.5rem;}
+    .pb{height:2px;background:var(--b1);border-radius:2px;margin-bottom:1.4rem;}
     .pf{height:2px;background:var(--accent);border-radius:2px;transition:width .4s;box-shadow:0 0 8px var(--as);}
-    .qb{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:2rem 1.5rem;text-align:center;margin-bottom:1.25rem;min-height:120px;display:flex;align-items:center;justify-content:center;}
-    .qt{font-size:1.15rem;font-weight:500;color:var(--text);line-height:1.5;white-space:pre-line;}
-    .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
+    .qb{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.75rem 1.5rem;text-align:center;margin-bottom:1.1rem;min-height:110px;display:flex;align-items:center;justify-content:center;}
+    .qt{font-size:1.1rem;font-weight:500;color:var(--text);line-height:1.5;white-space:pre-line;}
+    .opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:.9rem;}
     .opts3{grid-template-columns:1fr 1fr 1fr;}
-    .ob{padding:13px 10px;border:1px solid var(--b1);border-radius:10px;background:var(--s1);color:var(--text);font-size:14px;font-family:inherit;cursor:pointer;transition:all .12s;line-height:1.3;}
+    .ob{padding:12px 10px;border:1px solid var(--b1);border-radius:10px;background:var(--s1);color:var(--text);font-size:14px;font-family:inherit;cursor:pointer;transition:all .12s;line-height:1.3;}
     .ob:hover:not(:disabled){background:var(--s2);border-color:var(--ba);}
     .ob.correct{background:var(--okb);border-color:var(--ok);color:var(--ok);}
     .ob.wrong{background:var(--nob);border-color:var(--no);color:var(--no);}
     .ob:disabled{cursor:default;}
-    .db{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:4px;margin-bottom:.75rem;}
+    .db{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:4px;margin-bottom:.6rem;}
     .de{background:rgba(74,222,128,.1);color:var(--ok);}
     .dm{background:rgba(250,204,21,.1);color:var(--am);}
     .dh{background:rgba(248,113,113,.1);color:var(--no);}
     .ht2{font-size:12px;color:rgba(148,245,255,.4);text-align:center;min-height:16px;font-style:italic;}
     .ra{text-align:center;padding:2rem 0;}
-    .rtc{width:120px;height:120px;border-radius:50%;background:var(--s1);border:2px solid var(--b1);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--muted);font-weight:500;user-select:none;transition:all .1s;}
-    .rtc.ready{background:var(--okb);border-color:var(--ok);color:var(--ok);box-shadow:0 0 28px rgba(74,222,128,.25);}
+    .rtc{width:114px;height:114px;border-radius:50%;background:var(--s1);border:2px solid var(--b1);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--muted);font-weight:500;user-select:none;transition:all .1s;}
+    .rtc.ready{background:var(--okb);border-color:var(--ok);color:var(--ok);box-shadow:0 0 28px rgba(74,222,128,.22);}
     .rtc.early{background:var(--nob);border-color:var(--no);color:var(--no);}
-    .rts{font-size:13px;color:var(--muted);margin-top:1rem;}
-    .rtp{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:.75rem;}
-    .rtpi{font-size:12px;padding:4px 12px;border-radius:20px;background:var(--s1);border:1px solid var(--b1);color:var(--muted);}
+    .rts{font-size:13px;color:var(--muted);margin-top:.9rem;}
+    .rtp{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:.65rem;}
+    .rtpi{font-size:12px;padding:3px 11px;border-radius:20px;background:var(--s1);border:1px solid var(--b1);color:var(--muted);}
     .rtpi.done{border-color:var(--ok);color:var(--ok);}
-    .sd{display:flex;justify-content:center;gap:10px;margin:1.5rem 0;flex-wrap:wrap;}
-    .sdot{width:52px;height:52px;border-radius:50%;background:var(--s1);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:var(--muted);transition:all .15s;}
-    .sdot.lit{background:rgba(148,245,255,.1);border-color:var(--accent);color:var(--accent);box-shadow:0 0 12px rgba(148,245,255,.2);}
+    .sd{display:flex;justify-content:center;gap:10px;margin:1.4rem 0;flex-wrap:wrap;}
+    .sdot{width:50px;height:50px;border-radius:50%;background:var(--s1);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;color:var(--muted);transition:all .15s;}
+    .sdot.lit{background:rgba(148,245,255,.1);border-color:var(--accent);color:var(--accent);box-shadow:0 0 12px rgba(148,245,255,.18);}
     .sdot.cd{background:var(--okb);border-color:var(--ok);color:var(--ok);}
     .sdot.wd{background:var(--nob);border-color:var(--no);color:var(--no);}
-    .sir{display:flex;justify-content:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap;}
-    .sb{width:48px;height:48px;border-radius:50%;border:1px solid var(--b1);background:var(--s1);font-size:16px;font-weight:600;cursor:pointer;color:var(--text);font-family:inherit;transition:all .1s;}
-    .sb:hover{background:var(--s2);border-color:var(--ba);}
-    .mli{text-align:center;font-size:12px;color:rgba(148,245,255,.4);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em;}
-    .sw2{font-size:40px;font-weight:700;text-align:center;padding:1.5rem 0;line-height:1;}
-    #page-results{align-items:center;justify-content:flex-start;padding:80px 24px 80px;}
-    .resi{width:100%;max-width:620px;margin:0 auto;}
-    .rh{margin-bottom:1.75rem;}
-    .rt2{font-size:1.7rem;font-weight:700;color:var(--accent);margin-bottom:.25rem;}
+    .sir{display:flex;justify-content:center;gap:8px;margin-bottom:.9rem;flex-wrap:wrap;}
+    .sb2{width:46px;height:46px;border-radius:50%;border:1px solid var(--b1);background:var(--s1);font-size:15px;font-weight:600;cursor:pointer;color:var(--text);font-family:inherit;transition:all .1s;}
+    .sb2:hover{background:var(--s2);border-color:var(--ba);}
+    .mli{text-align:center;font-size:12px;color:rgba(148,245,255,.4);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.08em;}
+    .sw2{font-size:38px;font-weight:700;text-align:center;padding:1.4rem 0;line-height:1;}
+
+    /* RESULTS */
+    #page-results{align-items:center;justify-content:flex-start;padding:76px 24px 80px;}
+    .resi{width:100%;max-width:600px;margin:0 auto;}
+    .rh{margin-bottom:1.5rem;}
+    .rt2{font-size:1.6rem;font-weight:700;color:var(--accent);margin-bottom:.2rem;}
     .rsub{font-size:13px;color:var(--muted);}
-    .rsg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.75rem;}
-    .rs{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:1rem;text-align:center;}
-    .rsv{font-size:22px;font-weight:700;color:var(--accent);}
+    .rsg{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:1.5rem;}
+    .rs{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:.9rem;text-align:center;}
+    .rsv{font-size:21px;font-weight:700;color:var(--accent);}
     .rsu{font-size:12px;color:var(--muted);}
     .rsl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:rgba(148,245,255,.35);margin-top:3px;}
-    .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.75rem;}
-    .dc{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:1rem 1.1rem;}
-    .dn{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px;}
-    .dsc{font-size:20px;font-weight:700;color:var(--text);}
+    .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:9px;margin-bottom:1.5rem;}
+    .dc{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:.95rem 1rem;}
+    .dn{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;}
+    .dsc{font-size:19px;font-weight:700;color:var(--text);}
     .dl{font-size:11px;color:var(--muted);margin-top:2px;}
-    .dbar{height:3px;background:var(--b1);border-radius:2px;margin-top:8px;}
+    .dbar{height:3px;background:var(--b1);border-radius:2px;margin-top:7px;}
     .dbarf{height:3px;border-radius:2px;}
-    .rbl{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:rgba(148,245,255,.35);margin-bottom:10px;}
-    .rbw{margin-bottom:10px;}
-    .rbr{display:flex;justify-content:space-between;margin-bottom:4px;}
+    .rbl{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:rgba(148,245,255,.35);margin-bottom:9px;}
+    .rbw{margin-bottom:9px;}
+    .rbr{display:flex;justify-content:space-between;margin-bottom:3px;}
     .rbr span{font-size:13px;color:var(--muted);}
-    .rbr strong{font-size:13px;font-weight:600;color:var(--accent);}
-    .rb{height:4px;background:var(--b1);border-radius:2px;}
-    .rbf{height:4px;border-radius:2px;}
-    .ib{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.25rem 1.5rem;font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1.5rem;}
-    .ib strong{color:var(--text);}
-    .ib em{color:rgba(148,245,255,.35);font-size:12px;}
-    .bban{background:rgba(148,245,255,.06);border:1px solid var(--ab);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:13px;color:rgba(148,245,255,.8);line-height:1.6;}
-    .div{border:none;border-top:1px solid var(--b1);margin:1.5rem 0;}
-    .br{display:flex;gap:10px;flex-wrap:wrap;}
-    .spin{width:40px;height:40px;border-radius:50%;border:2px solid var(--b1);border-top-color:var(--accent);animation:sp .8s linear infinite;margin:0 auto;}
+    .rb{height:3px;background:var(--b1);border-radius:2px;}
+    .rbf{height:3px;border-radius:2px;}
+    .bban{background:rgba(148,245,255,.06);border:1px solid var(--ab);border-radius:12px;padding:.9rem 1.1rem;margin-bottom:1.25rem;font-size:13px;color:rgba(148,245,255,.8);line-height:1.6;}
+
+    /* Baseline comparison bar */
+    .baseline-compare{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:1.25rem;}
+    .bc-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.9rem;}
+    .bc-row{display:flex;align-items:center;gap:12px;margin-bottom:.6rem;}
+    .bc-label{font-size:12px;color:var(--muted);width:110px;flex-shrink:0;}
+    .bc-track{flex:1;height:4px;background:var(--b1);border-radius:2px;position:relative;}
+    .bc-base{position:absolute;top:-4px;width:2px;height:12px;background:rgba(255,255,255,.3);border-radius:1px;}
+    .bc-fill{height:4px;border-radius:2px;transition:width .6s ease;}
+    .bc-pct{font-size:12px;font-weight:600;width:42px;text-align:right;flex-shrink:0;}
+
+    /* AI insight after test */
+    .ai-insight-box{background:var(--s1);border:1px solid var(--ba);border-radius:14px;padding:1.25rem 1.4rem;margin-bottom:1.25rem;}
+    .aib-header{display:flex;align-items:center;gap:8px;margin-bottom:.75rem;}
+    .aib-icon{font-size:16px;}
+    .aib-title{font-size:13px;font-weight:600;color:var(--accent);}
+    .aib-body{font-size:13px;color:var(--muted);line-height:1.7;}
+    .aib-body strong{color:var(--text);}
+
+    .div2{border:none;border-top:1px solid var(--b1);margin:1.25rem 0;}
+    .br2{display:flex;gap:10px;flex-wrap:wrap;}
+    .spin{width:36px;height:36px;border-radius:50%;border:2px solid var(--b1);border-top-color:var(--accent);animation:sp .8s linear infinite;margin:0 auto;}
     @keyframes sp{to{transform:rotate(360deg)}}
-    .ls{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--bg);flex-direction:column;gap:16px;}
+    .ls{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--bg);flex-direction:column;gap:14px;}
     .ls p{font-size:13px;color:var(--muted);}
-    footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;gap:14px;z-index:5;font-size:13px;color:var(--muted);padding:12px 16px;background:linear-gradient(to top,rgba(15,23,42,1),rgba(15,23,42,0));}
+    footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;gap:14px;z-index:5;font-size:12px;color:var(--muted);padding:10px 16px;background:linear-gradient(to top,rgba(15,23,42,1),rgba(15,23,42,0));}
     footer a{color:var(--accent);text-decoration:none;transition:opacity .2s;}
     footer a:hover{opacity:.75;}
-    @media(max-width:520px){.rsg{grid-template-columns:1fr 1fr;}.opts{grid-template-columns:1fr;}.opts3{grid-template-columns:1fr 1fr;}.nb span{display:none;}.sgrid{grid-template-columns:1fr 1fr;}}
+    @media(max-width:520px){.rsg{grid-template-columns:1fr 1fr;}.opts{grid-template-columns:1fr;}.opts3{grid-template-columns:1fr 1fr;}.nb span{display:none;}.navlinks{display:none;}}
   </style>
 </head>
 <body>
@@ -205,12 +280,18 @@
 
 <nav id="mn" style="display:none">
   <div class="nb" onclick="showHome()">
-    <img src="assets/cognistate-logo.png" alt="CogniState" />
+    <img src="assets/cognistate-logo.png" alt="CogniState"/>
     <span>CogniState</span>
   </div>
-  <div class="nr" id="nr">
-    <button class="btn btsm" onclick="showAuth('login')">Logg inn</button>
-    <button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>
+  <div class="nr">
+    <div class="navlinks" id="navlinks" style="display:none">
+      <button class="navlink" onclick="goToDash()">Dashboard</button>
+      <button class="navlink" onclick="goToInsights()">Innsikt</button>
+    </div>
+    <div id="nr2">
+      <button class="btn btsm" onclick="showAuth('login')">Logg inn</button>
+      <button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>
+    </div>
   </div>
 </nav>
 
@@ -225,10 +306,10 @@
       <button class="btn btlg" onclick="showAuth('login')">Logg inn</button>
     </div>
     <div class="fgrid">
-      <div class="fc"><div class="fci">🧩</div><div class="fct">Logikk &amp; resonnering</div><div class="fcd">20 kalibrerte oppgaver innen induktiv og deduktiv tenkning, tallmønstre og abstrakt problemløsning.</div></div>
-      <div class="fc"><div class="fci">🔷</div><div class="fct">Romlig tenkning</div><div class="fcd">Mental rotasjon og visuospatial prosessering — avgjørende for tekniske og analytiske yrker.</div></div>
-      <div class="fc"><div class="fci">💾</div><div class="fct">Arbeidsminne</div><div class="fcd">Adaptiv sekvenstest som tilpasser seg deg og måler minnespennkapasitet nøyaktig.</div></div>
-      <div class="fc"><div class="fci">📈</div><div class="fct">Historikk &amp; utvikling</div><div class="fcd">Alle resultater lagres sikkert. Baseline registreres automatisk og du kan spore utviklingen din.</div></div>
+      <div class="fc"><div class="fci">🧩</div><div class="fct">Logikk &amp; resonnering</div><div class="fcd">20 kalibrerte oppgaver. Induktiv og deduktiv tenkning, tallmønstre og abstrakt problemløsning.</div></div>
+      <div class="fc"><div class="fci">📈</div><div class="fct">Longitudinell baseline</div><div class="fcd">Baseline registreres automatisk. All fremtidig ytelse måles mot ditt kognitive toppnivå.</div></div>
+      <div class="fc"><div class="fci">💾</div><div class="fct">Adaptivt arbeidsminne</div><div class="fcd">Sekvenstesten tilpasser seg automatisk og måler din reelle minnespennkapasitet.</div></div>
+      <div class="fc"><div class="fci">🤖</div><div class="fct">AI-drevet innsikt</div><div class="fcd">Etter hver test analyserer AI resultatene dine og gir personlige, handlingsrettede råd.</div></div>
     </div>
   </div>
 </div>
@@ -236,7 +317,7 @@
 <!-- AUTH -->
 <div id="page-auth" class="page">
   <div class="acard">
-    <div class="alogo"><img src="assets/cognistate-logo.png" alt="CogniState" /><span>CogniState</span></div>
+    <div class="alogo"><img src="assets/cognistate-logo.png" alt=""/><span>CogniState</span></div>
     <h2 class="atitle" id="at">Logg inn</h2>
     <p class="asub" id="as2">Velkommen tilbake.</p>
     <div class="aerr" id="aerr"></div>
@@ -245,9 +326,9 @@
       Fortsett med Google
     </button>
     <div class="adiv">eller</div>
-    <div class="fg"><label class="fl">E-postadresse</label><input class="fi" type="email" id="ae" placeholder="navn@eksempel.no" /></div>
-    <div class="fg" id="ang" style="display:none"><label class="fl">Fullt navn</label><input class="fi" type="text" id="an" placeholder="Ditt navn" /></div>
-    <div class="fg"><label class="fl">Passord</label><input class="fi" type="password" id="ap" placeholder="Minimum 6 tegn" /></div>
+    <div class="fg"><label class="fl">E-postadresse</label><input class="fi" type="email" id="ae" placeholder="navn@eksempel.no"/></div>
+    <div class="fg" id="ang" style="display:none"><label class="fl">Fullt navn</label><input class="fi" type="text" id="an" placeholder="Ditt navn"/></div>
+    <div class="fg"><label class="fl">Passord</label><input class="fi" type="password" id="ap" placeholder="Minimum 6 tegn"/></div>
     <button class="btn btp" style="width:100%;justify-content:center" id="asb" onclick="submitAuth()">Logg inn</button>
     <div class="asw" id="asw">Ingen konto? <a onclick="toggleAuth()">Registrer deg gratis</a></div>
   </div>
@@ -256,42 +337,79 @@
 <!-- DASHBOARD -->
 <div id="page-dashboard" class="page">
   <div class="di">
-    <div class="dg">
+    <div class="dheader">
       <div><h2 id="dn2">Hei!</h2><p id="dp">Her er din kognitive oversikt.</p></div>
     </div>
-    <div class="sl" style="margin-bottom:14px">Start en test</div>
-    <div class="tgrid">
+
+    <!-- Status banner -->
+    <div class="status-banner" id="status-banner"></div>
+
+    <!-- Start test -->
+    <div class="sl" style="margin-bottom:12px">Start en test</div>
+    <div class="tgrid" style="margin-bottom:2rem">
       <div class="tlc" onclick="startLevelTest()">
         <div class="tlci">🧠</div>
         <span class="tlcb bb">Kognitiv profil · ca. 10 min</span>
         <div class="tlct">Nivåanalyse</div>
-        <div class="tlcd">20 oppgaver med stigende vanskelighetsgrad. Gir full domeneprofil og baseline.</div>
-        <div class="tlcm">Logikk · Tallresonnering · Romlig · Abstrakt</div>
+        <div class="tlcd">20 oppgaver. Gir full domeneprofil og setter/oppdaterer baseline.</div>
+        <div class="tlcm">Logikk · Tall · Romlig · Abstrakt</div>
       </div>
       <div class="tlc" onclick="startNowTest()">
         <div class="tlci">⚡</div>
         <span class="tlcb bg">Dagsform · ca. 4 min</span>
         <div class="tlct">Kognitiv ytelse nå</div>
-        <div class="tlcd">Rask vurdering av reaksjonstid, arbeidsminne og konsentrasjon.</div>
+        <div class="tlcd">Reaksjonstid, arbeidsminne og Stroop. Måles mot din baseline.</div>
         <div class="tlcm">Reaksjonstid · Arbeidsminne · Stroop</div>
       </div>
     </div>
-    <div id="dbs" style="display:none">
-      <div class="sl">Baseline</div>
-      <div class="blc" id="dbc"></div>
+
+    <!-- Score chart -->
+    <div class="sl">Kognitiv score over tid</div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Utvikling mot baseline</div>
+        <div class="chart-legend">
+          <div class="cleg"><div class="cleg-dot" style="background:#94f5ff"></div>Dagsform</div>
+          <div class="cleg"><div class="cleg-dot" style="background:#4ade80"></div>Nivåanalyse</div>
+          <div class="cleg"><div class="cleg-dot" style="background:rgba(255,255,255,.2);border:1px dashed rgba(255,255,255,.3)"></div>Baseline</div>
+        </div>
+      </div>
+      <div id="chart-wrap-el">
+        <div class="chart-empty" id="chart-empty">Ta din første test for å se utvikling over tid</div>
+        <div class="chart-wrap" id="chart-wrap" style="display:none"><canvas id="scoreChart"></canvas></div>
+      </div>
     </div>
-    <div id="dss" style="display:none">
-      <div class="sl">Oversikt</div>
-      <div class="sgrid" id="dsg"></div>
+
+    <!-- Domain profile -->
+    <div class="sl">Domeneprofil</div>
+    <div class="domain-profile" id="domain-profile">
+      <div class="dp-card"><div class="dp-name">Logikk</div><div class="dp-val" style="color:var(--muted)">—</div></div>
+      <div class="dp-card"><div class="dp-name">Tallresonnering</div><div class="dp-val" style="color:var(--muted)">—</div></div>
+      <div class="dp-card"><div class="dp-name">Romlig</div><div class="dp-val" style="color:var(--muted)">—</div></div>
+      <div class="dp-card"><div class="dp-name">Abstrakt</div><div class="dp-val" style="color:var(--muted)">—</div></div>
     </div>
+
+    <!-- History -->
     <div class="sl">Testhistorikk</div>
     <div class="hcard">
-      <div class="hh"><div class="sl" style="margin-bottom:0">Siste resultater</div></div>
-      <div id="dh"><div class="he">Ingen tester ennå. Start din første test ovenfor!</div></div>
+      <div class="hh"><div class="sl" style="margin-bottom:0">Siste 10 resultater</div></div>
+      <div id="dh"><div class="hempty">Ingen tester ennå.</div></div>
     </div>
+
     <div style="display:flex;justify-content:flex-end;margin-bottom:3rem">
       <button class="btn btd btsm" onclick="logout()">Logg ut</button>
     </div>
+  </div>
+</div>
+
+<!-- INSIGHTS -->
+<div id="page-insights" class="page">
+  <div class="ii">
+    <div style="margin-bottom:1.75rem">
+      <h2 style="font-size:1.4rem;font-weight:600;color:var(--text);margin-bottom:.25rem">Innsikt</h2>
+      <p style="font-size:13px;color:var(--muted)">AI-analyse av dine resultater — bygger seg opp over tid.</p>
+    </div>
+    <div id="insights-list"><div class="insights-empty">Ingen innsikter ennå.<br>Ta din første test for å generere personlige analyser.</div></div>
   </div>
 </div>
 
@@ -300,7 +418,7 @@
   <div class="ri">
     <button class="bb2" onclick="abortTest()">← Avbryt</button>
     <div id="run-level" style="display:none">
-      <div class="tr"><span class="tl">Oppgave <span id="lqn">1</span> av 20</span><span class="tv" id="lqt">2:30</span></div>
+      <div class="tr2"><span class="tl2">Oppgave <span id="lqn">1</span> av 20</span><span class="tv" id="lqt">2:30</span></div>
       <div class="pb"><div class="pf" id="lqp" style="width:2%"></div></div>
       <div id="lqd"></div>
       <div class="qb"><div class="qt" id="lqq"></div></div>
@@ -321,7 +439,7 @@
     <div id="run-stroop" style="display:none">
       <div class="ph"><div class="pl">Del 3 av 3</div><div class="pt">Konsentrasjon — Stroop</div><div class="pd">Velg <strong style="color:var(--text)">fargen ordet er skrevet i</strong>, ikke hva ordet betyr.</div></div>
       <div class="pb" style="margin-top:1rem"><div class="pf" id="stp" style="width:0%"></div></div>
-      <div class="qb" style="min-height:130px"><div class="sw2" id="stw"></div></div>
+      <div class="qb" style="min-height:120px"><div class="sw2" id="stw"></div></div>
       <div class="opts opts3" id="sto"></div>
       <p class="ht2" id="stc"></p>
     </div>
@@ -336,13 +454,28 @@
     <div class="bban" id="resbb" style="display:none"></div>
     <div class="rsg" id="resst"></div>
     <div class="dgrid" id="resdom"></div>
-    <div style="margin-bottom:1.25rem"><div class="rbl">Delresultater</div><div id="resbr"></div></div>
-    <div class="ib" id="resib"></div>
-    <div class="div"></div>
-    <div class="br">
+
+    <!-- Baseline comparison -->
+    <div class="baseline-compare" id="res-bc" style="display:none">
+      <div class="bc-title">Sammenligning med din baseline</div>
+      <div id="bc-rows"></div>
+    </div>
+
+    <div style="margin-bottom:1.1rem"><div class="rbl">Delresultater</div><div id="resbr"></div></div>
+
+    <!-- AI insight -->
+    <div class="ai-insight-box" id="ai-box">
+      <div class="aib-header"><div class="aib-icon">🤖</div><div class="aib-title">AI-analyse</div></div>
+      <div class="aib-body" id="ai-body">
+        <div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px">Analyserer resultater...</span></div>
+      </div>
+    </div>
+
+    <div class="div2"></div>
+    <div class="br2">
       <button class="btn bta" onclick="goToDash()">Dashboard</button>
-      <button class="btn" onclick="startLevelTest()">Nivåtest igjen</button>
-      <button class="btn" onclick="startNowTest()">Dagsformtest</button>
+      <button class="btn" onclick="goToInsights()">Se alle innsikter</button>
+      <button class="btn" onclick="startNowTest()">Ta ny test</button>
     </div>
   </div>
 </div>
@@ -360,11 +493,14 @@ import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limi
 
 const app=initializeApp({apiKey:"AIzaSyCyx9X7Gg6WVpgEX5OrmGu1q31nXVnvaw0",authDomain:"cognistate.firebaseapp.com",projectId:"cognistate",storageBucket:"cognistate.firebasestorage.app",messagingSenderId:"671593867260",appId:"1:671593867260:web:93e3851b5652ef1c5bf479"});
 const auth=getAuth(app),db=getFirestore(app),gp=new GoogleAuthProvider();
-let cu=null,am='login';
+let cu=null,am='login',scoreChart=null;
 
-function goTo(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function goTo(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);setNavActive(id);}
+function setNavActive(id){document.querySelectorAll('.navlink').forEach(l=>l.classList.remove('active'));if(id==='page-dashboard')document.querySelectorAll('.navlink')[0]?.classList.add('active');if(id==='page-insights')document.querySelectorAll('.navlink')[1]?.classList.add('active');}
 window.showHome=()=>goTo('page-home');
 window.goToDash=()=>{loadDash();goTo('page-dashboard');};
+window.goToInsights=()=>{loadInsights();goTo('page-insights');};
+
 window.showAuth=(mode)=>{
   am=mode;
   document.getElementById('at').textContent=mode==='login'?'Logg inn':'Opprett konto';
@@ -379,18 +515,12 @@ window.showAuth=(mode)=>{
 window.toggleAuth=()=>window.showAuth(am==='login'?'register':'login');
 window.loginGoogle=async()=>{try{const r=await signInWithPopup(auth,gp);await ensureUser(r.user);}catch(e){showErr(e.message);}};
 window.submitAuth=async()=>{
-  const email=document.getElementById('ae').value.trim();
-  const pw=document.getElementById('ap').value;
+  const email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;
   const btn=document.getElementById('asb');
   btn.textContent=am==='login'?'Logger inn...':'Oppretter...';btn.disabled=true;
   try{
     if(am==='login'){await signInWithEmailAndPassword(auth,email,pw);}
-    else{
-      const name=document.getElementById('an').value.trim();
-      const c=await createUserWithEmailAndPassword(auth,email,pw);
-      if(name)await updateProfile(c.user,{displayName:name});
-      await ensureUser(c.user,name);
-    }
+    else{const name=document.getElementById('an').value.trim();const c=await createUserWithEmailAndPassword(auth,email,pw);if(name)await updateProfile(c.user,{displayName:name});await ensureUser(c.user,name);}
   }catch(e){showErr(fe(e.code));btn.textContent=am==='login'?'Logg inn':'Opprett konto';btn.disabled=false;}
 };
 window.logout=async()=>await signOut(auth);
@@ -409,65 +539,181 @@ async function saveResult(type,data){
   const uref=doc(db,'users',cu.uid);
   const snap=await getDoc(uref);
   const ud=snap.data();
-  if(!ud.baseline)await setDoc(uref,{baseline:{[type]:data}},{merge:true});
-  else if(!ud.baseline[type])await setDoc(uref,{baseline:{...ud.baseline,[type]:data}},{merge:true});
+  // Update baseline if this is a new high score or first result
+  if(!ud.baseline||!ud.baseline[type]){
+    await setDoc(uref,{baseline:{...(ud.baseline||{}),[type]:data}},{merge:true});
+  } else {
+    // Only update baseline if score is higher
+    const isHigher = type==='level' ? data.pct > (ud.baseline[type]?.pct||0) : data.overall > (ud.baseline[type]?.overall||0);
+    if(isHigher) await setDoc(uref,{baseline:{...ud.baseline,[type]:data}},{merge:true});
+  }
 }
 
+/* ===== AI INSIGHT ===== */
+async function generateInsight(type, data, baseline){
+  const baselineText = baseline?.[type]
+    ? type==='level'
+      ? `Baseline: ${baseline[type].pct}% totalt, domener: ${JSON.stringify(baseline[type].domains||{})}`
+      : `Baseline: ${baseline[type].overall}/100, reaksjonstid: ${baseline[type].avgRT}ms, minnespenn: ${baseline[type].memSpan}, Stroop: ${baseline[type].stroopPct}%`
+    : 'Ingen baseline ennå (dette er første test)';
+
+  const currentText = type==='level'
+    ? `Score: ${data.pct}%, domener: ${JSON.stringify(data.domains||{})}, snitt ${data.avg}s per svar, IQ-indikator: ${data.iq}`
+    : `Total: ${data.overall}/100, reaksjonstid: ${data.avgRT}ms, minnespenn: ${data.memSpan}, Stroop: ${data.stroopPct}%`;
+
+  const prompt = `Du er en kognitiv analytiker for CogniState. Analyser følgende testresultat og gi en kort, konkret og personlig innsikt på norsk.
+
+Testtype: ${type==='level'?'Nivåanalyse (kognitiv profil)':'Dagsform (reaksjonstid, arbeidsminne, Stroop)'}
+Nåværende resultat: ${currentText}
+${baselineText}
+
+Skriv 2-3 setninger som:
+1. Oppsummerer hva resultatet betyr i praksis
+2. Fremhever styrker eller bekymringsfulle mønstre
+3. Gir ett konkret, handlingsrettet råd
+
+Vær direkte, faglig og unngå generiske fraser. Svar kun med selve analyseteksten, ingen tittel.`;
+
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:300,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const json = await res.json();
+    return json.content?.[0]?.text || 'Kunne ikke generere analyse.';
+  }catch(e){
+    return 'AI-analyse utilgjengelig akkurat nå.';
+  }
+}
+
+/* ===== DASHBOARD ===== */
 async function loadDash(){
   if(!cu)return;
   const snap=await getDoc(doc(db,'users',cu.uid));
   const ud=snap.data();
   const name=(ud?.name||cu.displayName||'deg').split(' ')[0];
   document.getElementById('dn2').textContent='Hei, '+name+'!';
-  if(ud?.baseline){renderBaseline(ud.baseline);document.getElementById('dbs').style.display='block';}
-  const q=query(collection(db,'results'),where('uid','==',cu.uid),orderBy('createdAt','desc'),limit(10));
+
+  const q=query(collection(db,'results'),where('uid','==',cu.uid),orderBy('createdAt','desc'),limit(20));
   const res=await getDocs(q);
-  let total=0,bestL=0,bestN=0,rows=[];
+  let rows=[],chartNow=[],chartLevel=[],latestNow=null,latestLevel=null;
+
   res.forEach(d=>{
-    const dd=d.data();total++;
-    if(dd.type==='level'&&dd.pct>bestL)bestL=dd.pct;
-    if(dd.type==='now'&&dd.overall>bestN)bestN=dd.overall;
+    const dd=d.data();
     const date=dd.createdAt?.toDate?dd.createdAt.toDate():new Date();
-    rows.push({label:dd.type==='level'?'Nivåanalyse':'Dagsform',score:dd.type==='level'?dd.pct+'%':dd.overall+'/100',date:date.toLocaleDateString('no',{day:'numeric',month:'short',year:'numeric'})});
+    const dateStr=date.toLocaleDateString('no',{day:'numeric',month:'short'});
+    rows.push({label:dd.type==='level'?'Nivåanalyse':'Dagsform',score:dd.type==='level'?dd.pct+'%':dd.overall+'/100',date:date.toLocaleDateString('no',{day:'numeric',month:'short',year:'numeric'}),color:dd.type==='level'?'#4ade80':'#94f5ff'});
+    if(dd.type==='now'){chartNow.unshift({x:dateStr,y:dd.overall});if(!latestNow)latestNow=dd;}
+    if(dd.type==='level'){chartLevel.unshift({x:dateStr,y:dd.pct});if(!latestLevel)latestLevel=dd;}
   });
-  if(total>0){
-    document.getElementById('dss').style.display='block';
-    document.getElementById('dsg').innerHTML=`<div class="sc"><div class="sv">${total}</div><div class="slb">Tester gjennomført</div></div><div class="sc"><div class="sv">${bestL}<span class="su">%</span></div><div class="slb">Beste nivåscore</div></div><div class="sc"><div class="sv">${bestN}<span class="su">/100</span></div><div class="slb">Beste dagsform</div></div>`;
+
+  // Status banner
+  if(latestNow){
+    const bl=ud?.baseline?.now;
+    const blScore=bl?.overall||0;
+    const pctOfBL=blScore>0?Math.round((latestNow.overall/blScore)*100):100;
+    const banner=document.getElementById('status-banner');
+    banner.style.display='block';
+    if(pctOfBL>=90){banner.className='status-banner sb-good';banner.textContent=`✓ Du er på ${pctOfBL}% av din kognitive baseline i dag. God form.`;}
+    else if(pctOfBL>=70){banner.className='status-banner sb-warn';banner.textContent=`⚡ Du er på ${pctOfBL}% av din baseline i dag. Noe under toppnivå — vurder viktige beslutninger med forsiktighet.`;}
+    else{banner.className='status-banner sb-low';banner.textContent=`⚠ Du er på ${pctOfBL}% av baseline i dag. Unngå kritiske beslutninger — prioriter hvile og restitusjon.`;}
   }
-  document.getElementById('dh').innerHTML=rows.length?rows.map(r=>`<div class="hr"><div class="ht">${r.label}</div><div class="hd">${r.date}</div><div class="hs">${r.score}</div></div>`).join(''):'<div class="he">Ingen tester ennå. Start din første test ovenfor!</div>';
+
+  // Chart
+  if(chartNow.length>0||chartLevel.length>0){
+    document.getElementById('chart-empty').style.display='none';
+    document.getElementById('chart-wrap').style.display='block';
+    const blNow=ud?.baseline?.now?.overall||null;
+    const blLevel=ud?.baseline?.level?.pct||null;
+    const baselineData=chartNow.length>0?chartNow.map(p=>({x:p.x,y:blNow||blLevel||80})):chartLevel.map(p=>({x:p.x,y:blLevel||80}));
+    if(scoreChart)scoreChart.destroy();
+    const ctx=document.getElementById('scoreChart').getContext('2d');
+    scoreChart=new Chart(ctx,{
+      type:'line',
+      data:{
+        datasets:[
+          chartNow.length>0?{label:'Dagsform',data:chartNow,borderColor:'#94f5ff',backgroundColor:'rgba(148,245,255,.08)',tension:.4,pointRadius:4,pointBackgroundColor:'#94f5ff',borderWidth:2}:null,
+          chartLevel.length>0?{label:'Nivåanalyse',data:chartLevel,borderColor:'#4ade80',backgroundColor:'rgba(74,222,128,.08)',tension:.4,pointRadius:4,pointBackgroundColor:'#4ade80',borderWidth:2}:null,
+          (blNow||blLevel)?{label:'Baseline',data:baselineData,borderColor:'rgba(255,255,255,.25)',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false}:null
+        ].filter(Boolean)
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(15,23,42,.9)',borderColor:'rgba(148,245,255,.2)',borderWidth:1,titleColor:'#94f5ff',bodyColor:'#94a3b8'}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:11}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#64748b',font:{size:11}},min:0,max:100}}}
+    });
+  }
+
+  // Domain profile
+  if(latestLevel?.domains){
+    const cols={logic:'#94f5ff',number:'#4ade80',spatial:'#a78bfa',abstract:'#facc15'};
+    const names={logic:'Logikk',number:'Tallresonnering',spatial:'Romlig',abstract:'Abstrakt'};
+    const bl=ud?.baseline?.level?.domains||{};
+    document.getElementById('domain-profile').innerHTML=Object.entries(names).map(([k,l])=>{
+      const val=latestLevel.domains[k]||0;
+      const blVal=bl[k]||0;
+      const delta=blVal>0?val-blVal:0;
+      const deltaHtml=delta>0?`<div class="dp-delta delta-up">▲ ${delta}% vs baseline</div>`:delta<0?`<div class="dp-delta delta-dn">▼ ${Math.abs(delta)}% vs baseline</div>`:'';
+      return`<div class="dp-card"><div class="dp-name">${l}</div><div class="dp-val">${val}%</div>${deltaHtml}<div class="dp-bar"><div class="dp-barf" style="width:${val}%;background:${cols[k]}"></div></div></div>`;
+    }).join('');
+  }
+
+  // History
+  document.getElementById('dh').innerHTML=rows.length?rows.map(r=>`<div class="hrow"><div class="htype-dot" style="background:${r.color}"></div><div class="htitle2">${r.label}</div><div class="hdate">${r.date}</div><div class="hscore">${r.score}</div></div>`).join(''):'<div class="hempty">Ingen tester ennå.</div>';
 }
 
-function renderBaseline(bl){
-  let html='';
-  const colors={logic:'#94f5ff',number:'#4ade80',spatial:'#a78bfa',abstract:'#facc15'};
-  const cats={logic:'Logikk',number:'Tall',spatial:'Romlig',abstract:'Abstrakt'};
-  if(bl.level){
-    html+=`<div style="margin-bottom:1rem"><div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Nivåanalyse — baseline</div><div class="blds">${Object.entries(cats).map(([k,l])=>{if(!bl.level.domains||!bl.level.domains[k])return'';const p=bl.level.domains[k];return`<div class="bld"><div class="bdl">${l}</div><div class="bdv">${p}%</div><div class="bdb"><div class="bdbf" style="width:${p}%;background:${colors[k]}"></div></div></div>`;}).join('')}</div></div>`;
-  }
-  if(bl.now){
-    const b=bl.now;
-    html+=`<div><div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Dagsform — baseline</div><div class="blds"><div class="bld"><div class="bdl">Reaksjon</div><div class="bdv">${b.avgRT}ms</div></div><div class="bld"><div class="bdl">Minnespenn</div><div class="bdv">${b.memSpan}</div></div><div class="bld"><div class="bdl">Stroop</div><div class="bdv">${b.stroopPct}%</div></div><div class="bld"><div class="bdl">Total</div><div class="bdv">${b.overall}/100</div></div></div></div>`;
-  }
-  document.getElementById('dbc').innerHTML=`<div class="blh"><div><div style="font-size:15px;font-weight:600;color:var(--text)">Din kognitive baseline</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Første registrerte resultat per testtype</div></div></div>${html}`;
+/* ===== INSIGHTS PAGE ===== */
+async function loadInsights(){
+  if(!cu)return;
+  const q=query(collection(db,'insights'),where('uid','==',cu.uid),orderBy('createdAt','desc'),limit(20));
+  const res=await getDocs(q);
+  const list=document.getElementById('insights-list');
+  if(res.empty){list.innerHTML='<div class="insights-empty">Ingen innsikter ennå.<br>Ta din første test for å generere personlige analyser.</div>';return;}
+  list.innerHTML='';
+  res.forEach(d=>{
+    const dd=d.data();
+    const date=dd.createdAt?.toDate?dd.createdAt.toDate():new Date();
+    const dateStr=date.toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
+    const icon=dd.type==='level'?'🧠':'⚡';
+    const scoreStr=dd.type==='level'?`${dd.score}% poengsum`:`${dd.overall}/100 total`;
+    let tags='';
+    if(dd.type==='now'){
+      if(dd.overall>=80)tags+='<span class="ic-tag tag-good">God form</span>';
+      else if(dd.overall>=60)tags+='<span class="ic-tag tag-warn">Middels</span>';
+      else tags+='<span class="ic-tag tag-low">Lav ytelse</span>';
+      if(dd.avgRT<250)tags+='<span class="ic-tag tag-good">Rask reaksjon</span>';
+      if(dd.memSpan>=6)tags+='<span class="ic-tag tag-good">Sterkt minne</span>';
+    }
+    if(dd.type==='level'){
+      if(dd.score>=75)tags+='<span class="ic-tag tag-good">Over snitt</span>';
+      tags+='<span class="ic-tag tag-info">Nivåanalyse</span>';
+    }
+    list.innerHTML+=`<div class="insight-card"><div class="ic-header"><div class="ic-icon">${icon}</div><div class="ic-meta"><div class="ic-title">${dd.type==='level'?'Nivåanalyse':'Dagsform'} — ${scoreStr}</div><div class="ic-date">${dateStr}</div></div></div><div class="ic-body">${dd.aiInsight||'Ingen analyse tilgjengelig.'}</div><div class="ic-tags">${tags}</div></div>`;
+  });
 }
 
+/* ===== AUTH STATE ===== */
 onAuthStateChanged(auth,async user=>{
   document.getElementById('ls').style.display='none';
   document.getElementById('mn').style.display='flex';
   cu=user;
   if(user){
+    document.getElementById('navlinks').style.display='flex';
     const init=(user.displayName||user.email||'?')[0].toUpperCase();
-    document.getElementById('nr').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span>${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
+    document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span style="font-size:13px">${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
     await loadDash();goTo('page-dashboard');
-  } else {
-    document.getElementById('nr').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
+  }else{
+    document.getElementById('navlinks').style.display='none';
+    document.getElementById('nr2').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
     goTo('page-home');
   }
 });
 
 window.abortTest=()=>{clearInterval(lqTmr);goToDash();};
 
-/* NIVÅ-TEST */
+/* ===== NIVÅ-TEST ===== */
 const LQ=[
   {cat:'number',diff:1,q:"Hvilken tall kommer neste?\n2 · 4 · 6 · 8 · ?",opts:["9","10","11","12"],ans:1,hint:"Aritmetisk rekke: +2 hvert ledd"},
   {cat:'logic',diff:1,q:"Alle fugler har vinger.\nSpurven er en fugl.\nHar spurven vinger?",opts:["Ja","Nei","Vet ikke","Muligens"],ans:0,hint:"Grunnleggende syllogisme"},
@@ -480,14 +726,14 @@ const LQ=[
   {cat:'logic',diff:2,q:"Ingen reptiler er varmblodige.\nAlle krokodiller er reptiler.\nKan krokodiller være varmblodige?",opts:["Ja","Nei","Av og til","Vet ikke"],ans:1,hint:"Universell negasjon via syllogisme"},
   {cat:'spatial',diff:2,q:"Ovenfra: sirkel. Fra siden: rektangel.\nHva er objektet?",opts:["Kule","Sylinder","Kjegle","Kube"],ans:1,hint:"Topp: sirkel · Side: rektangel"},
   {cat:'number',diff:2,q:"3 malere maler 3 hus på 3 dager.\nHvor mange dager bruker 6 malere på 6 hus?",opts:["3","6","9","12"],ans:0,hint:"Kapasitet skalerer proporsjonalt"},
-  {cat:'abstract',diff:2,q:"Tallrekken: 2 · 6 · 12 · 20 · 30 · ?\nHva er neste tall?",opts:["38","40","42","44"],ans:2,hint:"Differansene: 4, 6, 8, 10, 12..."},
+  {cat:'abstract',diff:2,q:"Tallrekken: 2 · 6 · 12 · 20 · 30 · ?\nHva er neste tall?",opts:["38","40","42","44"],ans:2,hint:"Differansene øker med 2 hver gang"},
   {cat:'logic',diff:2,q:"Hvis det regner, tar Maria paraply.\nMaria har ikke paraply.\nHva kan vi slutte?",opts:["Det regner","Det regner ikke","Maria er inne","Ingenting sikkert"],ans:1,hint:"Modus tollens: ¬Q → ¬P"},
   {cat:'spatial',diff:2,q:"Et kvadrat roteres 45° med klokken.\nDeretter speiles om vertikal akse.\nResultat?",opts:["Rombus pekende opp","Et kvadrat","Rombus pekende ned","Speil av original"],ans:0,hint:"Rotasjon → rombus, speiling endrer ikke form"},
   {cat:'number',diff:3,q:"Tallrekken: 1 · 4 · 9 · 16 · 25 · ?\nOg den etter det?",opts:["36 · 49","34 · 47","36 · 48","35 · 49"],ans:0,hint:"Kvadrattall: n²"},
   {cat:'abstract',diff:3,q:"KODE = 11-15-4-5 (A=1...)\nHva er LOGIKK?",opts:["12-15-7-9-11-11","11-14-6-9-10-10","12-16-8-10-12-12","13-16-8-10-12-12"],ans:0,hint:"L=12, O=15, G=7, I=9, K=11"},
-  {cat:'logic',diff:3,q:"5 venner i rad. Ana ikke ved siden av Bo.\nCa mellom Ana og Di. Ed ytterst høyre.\nHvem er ytterst venstre?",opts:["Ana","Bo","Ca","Di"],ans:1,hint:"Plasser Ed høyre, Ca mellom Ana og Di"},
-  {cat:'spatial',diff:3,q:"Kube brettes ut til kors (topp, 4 sider, bunn).\nDu merker toppen ★.\nHvilken side er direkte overfor ★?",opts:["Fremste","Bakre","Bunnen","Venstre"],ans:2,hint:"Topp og bunn er alltid overfor hverandre"},
-  {cat:'number',diff:3,q:"Tog A: 120 km/t. Tog B mot A: 80 km/t.\nStart: 500 km fra hverandre.\nMinutter til de møtes?",opts:["150 min","160 min","175 min","180 min"],ans:0,hint:"Relativ fart 200 km/t · 500/200 = 2,5 t = 150 min"},
+  {cat:'logic',diff:3,q:"5 venner i rad. Ana ikke ved siden av Bo.\nCa mellom Ana og Di. Ed ytterst høyre.\nHvem ytterst venstre?",opts:["Ana","Bo","Ca","Di"],ans:1,hint:"Ed høyre, Ca mellom Ana og Di"},
+  {cat:'spatial',diff:3,q:"Kube brettes ut til kors.\nToppen merkes ★.\nHvilken side er direkte overfor ★?",opts:["Fremste","Bakre","Bunnen","Venstre"],ans:2,hint:"Topp og bunn er alltid overfor hverandre"},
+  {cat:'number',diff:3,q:"Tog A: 120 km/t. Tog B mot A: 80 km/t.\nStart: 500 km fra hverandre.\nMinutter til de møtes?",opts:["150 min","160 min","175 min","180 min"],ans:0,hint:"Relativ fart 200 km/t · 500/200 = 2,5t = 150 min"},
   {cat:'abstract',diff:3,q:"A → ¬B\n¬B → C\nC → ¬D\nA er sant — hva er D?",opts:["Sant","Falskt","Ukjent","Avhenger av E"],ans:1,hint:"Kjed: A→¬B→C→¬D"}
 ];
 let lqI=0,lqS=0,lqT=[],lqDS={logic:0,number:0,spatial:0,abstract:0},lqDT={logic:0,number:0,spatial:0,abstract:0},lqTmr=null,lqTL=150,lqA=false,lqSt=0;
@@ -521,47 +767,70 @@ function ansLQ(i,btn){
   document.getElementById('lqh').textContent=q.hint;setTimeout(nxtLQ,1400);
 }
 function nxtLQ(){lqI++;if(lqI>=LQ.length)showLvlRes();else showLQ();}
+
 async function showLvlRes(){
   const pct=Math.round((lqS/LQ.length)*100);
   const avg=lqT.length?Math.round(lqT.reduce((a,b)=>a+b,0)/lqT.length):0;
   const iq=pct>=95?'~130+':pct>=85?'~120–130':pct>=70?'~110–120':pct>=55?'~100–110':pct>=40?'~90–100':'~under 90';
   const cats={logic:'Logikk',number:'Tallresonnering',spatial:'Romlig',abstract:'Abstrakt'};
   const colors={logic:'#94f5ff',number:'#4ade80',spatial:'#a78bfa',abstract:'#facc15'};
-  let dh='',dbr='',domains={},str=[],dev=[];
+  let dh='',dbr='',domains={};
   Object.entries(cats).forEach(([k,l])=>{
     if(!lqDT[k])return;
     const dp=Math.round((lqDS[k]/lqDT[k])*100);domains[k]=dp;
     const dl=dp>=80?'Sterk':dp>=60?'Over snitt':dp>=40?'Gjennomsnitt':'Utviklingspotensial';
-    dh+=`<div class="dc"><div class="dn">${l}</div><div class="dsc">${dp}<span style="font-size:13px;color:var(--muted)">%</span></div><div class="dl">${dl} · ${lqDS[k]}/${lqDT[k]}</div><div class="dbar"><div class="dbarf" style="width:${dp}%;background:${colors[k]}"></div></div></div>`;
+    dh+=`<div class="dc"><div class="dn">${l}</div><div class="dsc">${dp}<span style="font-size:12px;color:var(--muted)">%</span></div><div class="dl">${dl}</div><div class="dbar"><div class="dbarf" style="width:${dp}%;background:${colors[k]}"></div></div></div>`;
     dbr+=rBar(l+' — '+dl,dp,colors[k]);
-    if(dp>=70)str.push(l.toLowerCase());else if(dp<50)dev.push(l.toLowerCase());
   });
-  let interp=`<strong>Du svarte riktig på ${lqS} av ${LQ.length} oppgaver</strong> (${pct}%), gjennomsnitt ${avg}s per oppgave.`;
-  if(str.length)interp+=` Styrker: ${str.join(', ')}.`;
-  if(dev.length)interp+=` Utviklingspotensial: ${dev.join(', ')}.`;
-  interp+=`<br><br><em>IQ-indikatoren er veiledende, ikke klinisk. Kognitive evner er formbare — søvn, trening og øving påvirker alle domenene.</em>`;
-  await saveResult('level',{pct,avg,score:lqS,total:LQ.length,iq,domains});
+
+  const resultData={pct,avg,score:lqS,total:LQ.length,iq,domains};
+  await saveResult('level',resultData);
+
   const snap=cu?await getDoc(doc(db,'users',cu.uid)):null;
-  const isBase=snap&&snap.exists()&&!snap.data()?.baseline?.level;
+  const ud=snap?.data();
+  const bl=ud?.baseline;
+  const isBase=!bl?.level||bl.level.pct===pct;
+
   document.getElementById('restit').textContent='Kognitiv profil';
   document.getElementById('ressub').textContent=new Date().toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('resbb').style.display=isBase?'block':'none';
-  if(isBase)document.getElementById('resbb').textContent='✓ Første resultat lagret som din kognitive baseline.';
-  document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${lqS}<span class="rsu">/${LQ.length}</span></div><div class="rsl">Riktige</div></div><div class="rs"><div class="rsv">${pct}<span class="rsu">%</span></div><div class="rsl">Poengsum</div></div><div class="rs"><div class="rsv">${avg}<span class="rsu">s</span></div><div class="rsl">Snitt/svar</div></div><div class="rs"><div class="rsv" style="font-size:14px">${iq}</div><div class="rsl">IQ-indikator</div></div>`;
+  if(isBase)document.getElementById('resbb').textContent='✓ Resultat lagret som din kognitive baseline.';
+  document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${lqS}<span class="rsu">/${LQ.length}</span></div><div class="rsl">Riktige</div></div><div class="rs"><div class="rsv">${pct}<span class="rsu">%</span></div><div class="rsl">Poengsum</div></div><div class="rs"><div class="rsv">${avg}<span class="rsu">s</span></div><div class="rsl">Snitt/svar</div></div><div class="rs"><div class="rsv" style="font-size:13px">${iq}</div><div class="rsl">IQ-indikator</div></div>`;
   document.getElementById('resdom').innerHTML=dh;
+
+  // Baseline comparison
+  if(bl?.level?.domains){
+    document.getElementById('res-bc').style.display='block';
+    document.getElementById('bc-rows').innerHTML=Object.entries(cats).map(([k,l])=>{
+      const curr=domains[k]||0,base=bl.level.domains[k]||0;
+      const pctOfBase=base>0?Math.round((curr/base)*100):100;
+      const col=pctOfBase>=90?'#4ade80':pctOfBase>=70?'#facc15':'#f87171';
+      return`<div class="bc-row"><div class="bc-label">${l}</div><div class="bc-track"><div class="bc-base" style="left:${Math.min(base,100)}%"></div><div class="bc-fill" style="width:${Math.min(curr,100)}%;background:${col}"></div></div><div class="bc-pct" style="color:${col}">${pctOfBase}%</div></div>`;
+    }).join('');
+  }
+
   document.getElementById('resbr').innerHTML=dbr;
-  document.getElementById('resib').innerHTML=`<div style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:rgba(148,245,255,.35);margin-bottom:8px">Tolkning</div><p>${interp}</p>`;
+  document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px">Analyserer...</span></div>';
   goTo('page-results');
+
+  // Generate AI insight
+  const insight=await generateInsight('level',resultData,bl);
+  document.getElementById('ai-body').innerHTML=insight;
+
+  // Save insight to Firestore
+  if(cu){
+    await addDoc(collection(db,'insights'),{uid:cu.uid,type:'level',score:lqS,pct,domains,iq,avg,aiInsight:insight,overall:pct,avgRT:null,memSpan:null,stroopPct:null,createdAt:serverTimestamp()});
+  }
 }
 
-/* DAGSFORM */
+/* ===== DAGSFORM-TEST ===== */
 let rtT=[],rtR=0,rtRdy=false,rtTO=null,rtSt=0;
 let mLv=3,mSeq=[],mInp=[],mPh='idle',mSc=0,mTot=0,mMax=3;
-let stC=0,stTot=12,stI=0,stD=[],stTT=0;
+let stC=0,stTot=12,stI=0,stD=[];
 const SW=[{word:'Rød',color:'#f87171',label:'Rød'},{word:'Blå',color:'#60a5fa',label:'Blå'},{word:'Grønn',color:'#4ade80',label:'Grønn'},{word:'Gul',color:'#facc15',label:'Gul'},{word:'Lilla',color:'#c084fc',label:'Lilla'},{word:'Oransje',color:'#fb923c',label:'Oransje'}];
 
 window.startNowTest=()=>{
-  rtT=[];rtR=0;rtRdy=false;mLv=3;mSeq=[];mInp=[];mSc=0;mTot=0;mPh='idle';mMax=3;stC=0;stI=0;stD=[];stTT=0;
+  rtT=[];rtR=0;rtRdy=false;mLv=3;mSeq=[];mInp=[];mSc=0;mTot=0;mPh='idle';mMax=3;stC=0;stI=0;stD=[];
   ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-reaction').style.display='block';
   goTo('page-run');startRT();
@@ -608,12 +877,12 @@ window.memNext=function(){
   }
 };
 function renderMD(arr){document.getElementById('mds').innerHTML=arr.map(v=>`<div class="sdot">${v==='_'?'':v}</div>`).join('');}
-function renderMIB(){const d=document.getElementById('mins');d.style.display='flex';d.innerHTML=Array.from({length:9},(_,i)=>`<button class="sb" onclick="addM(${i+1})">${i+1}</button>`).join('')+`<button class="sb" style="font-size:12px" onclick="clrM()">↩</button>`;}
+function renderMIB(){const d=document.getElementById('mins');d.style.display='flex';d.innerHTML=Array.from({length:9},(_,i)=>`<button class="sb2" onclick="addM(${i+1})">${i+1}</button>`).join('')+`<button class="sb2" style="font-size:12px" onclick="clrM()">↩</button>`;}
 window.addM=n=>{if(mInp.length>=mSeq.length)return;mInp.push(n);const dots=document.querySelectorAll('.sdot');if(dots[mInp.length-1]){dots[mInp.length-1].textContent=n;dots[mInp.length-1].classList.add('lit');}};
 window.clrM=()=>{mInp=[];renderMD(Array(mSeq.length).fill('_'));};
 function startStroop(){
   document.getElementById('run-memory').style.display='none';document.getElementById('run-stroop').style.display='block';
-  stC=0;stI=0;stTT=0;
+  stC=0;stI=0;
   stD=Array.from({length:stTot},(_, i)=>{const w=SW[Math.floor(Math.random()*SW.length)];let ink=i%2===0?SW.filter(s=>s.label!==w.word)[Math.floor(Math.random()*(SW.length-1))]:w;return{word:w.word,ink:ink.color,inkLabel:ink.label};});
   showStrp();
 }
@@ -633,8 +902,6 @@ window.ansStrp=label=>{
   else{btns[lbls.indexOf(label)]?.classList.add('wrong');btns[lbls.indexOf(s.inkLabel)]?.classList.add('correct');}
   stI++;setTimeout(showStrp,500);
 };
-// alias for html onclick
-window.answerStroop=window.ansStrp;
 
 async function showNowRes(){
   const sorted=[...rtT].sort((a,b)=>a-b);const trimmed=sorted.slice(1,-1);
@@ -648,23 +915,51 @@ async function showNowRes(){
   const rtL=avgRT<220?'Eksepsjonell':avgRT<270?'Rask':avgRT<330?'Over snitt':avgRT<400?'Gjennomsnitt':'Under snitt';
   const mL=memSpan>=7?'Eksepsjonell':memSpan>=6?'Over snitt':memSpan>=5?'Gjennomsnitt':'Under snitt';
   const stL=stroopPct>=90?'Eksepsjonell':stroopPct>=80?'God':stroopPct>=65?'Gjennomsnitt':'Utviklingspotensial';
-  const txt=overall>=80?'Du er i svært god kognitiv form. Alle domenene presterer sterkt.':overall>=65?'God dagsform. De fleste domenene er over snittet.':overall>=50?'Gjennomsnittlig dagsform. En pause eller bevegelse kan hjelpe.':'Lav ytelse i dag. Prioriter søvn — prøv igjen etter hvile.';
-  await saveResult('now',{avgRT,memSpan,memPct,stroopPct,overall,rtScore:rtSc,memScore:mSc2,stroopScore:stSc});
+
+  const resultData={avgRT,memSpan,memPct,stroopPct,overall,rtScore:rtSc,memScore:mSc2,stroopScore:stSc};
+  await saveResult('now',resultData);
+
   const snap=cu?await getDoc(doc(db,'users',cu.uid)):null;
-  const isBase=snap&&snap.exists()&&!snap.data()?.baseline?.now;
+  const ud=snap?.data();
+  const bl=ud?.baseline;
+  const isBase=!bl?.now||bl.now.overall===overall;
+
   document.getElementById('restit').textContent='Dagsform';
   document.getElementById('ressub').textContent=new Date().toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('resbb').style.display=isBase?'block':'none';
   if(isBase)document.getElementById('resbb').textContent='✓ Første dagsform-resultat lagret som din baseline.';
   document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${avgRT}<span class="rsu">ms</span></div><div class="rsl">Reaksjon</div></div><div class="rs"><div class="rsv">${memSpan}</div><div class="rsl">Minnespenn</div></div><div class="rs"><div class="rsv">${stroopPct}<span class="rsu">%</span></div><div class="rsl">Stroop</div></div><div class="rs"><div class="rsv">${overall}</div><div class="rsl">Total</div></div>`;
-  document.getElementById('resdom').innerHTML=`<div class="dc"><div class="dn">Reaksjonstid</div><div class="dsc">${rtL}</div><div class="dl">${avgRT}ms · min ${minRT}ms</div><div class="dbar"><div class="dbarf" style="width:${rtSc}%;background:#94f5ff"></div></div></div><div class="dc"><div class="dn">Arbeidsminne</div><div class="dsc">${mL}</div><div class="dl">Spenn ${memSpan} · ${mSc}/${mTot}</div><div class="dbar"><div class="dbarf" style="width:${mSc2}%;background:#4ade80"></div></div></div><div class="dc"><div class="dn">Impulskontroll</div><div class="dsc">${stL}</div><div class="dl">${stC}/${stTot} riktige</div><div class="dbar"><div class="dbarf" style="width:${stSc}%;background:#a78bfa"></div></div></div><div class="dc"><div class="dn">Samlet</div><div class="dsc">${overall}/100</div><div class="dl">${overall>=80?'Topp 20%':overall>=65?'Over snitt':overall>=50?'Gjennomsnitt':'Under snitt'}</div><div class="dbar"><div class="dbarf" style="width:${overall}%;background:#facc15"></div></div></div>`;
+  document.getElementById('resdom').innerHTML=`<div class="dc"><div class="dn">Reaksjonstid</div><div class="dsc">${rtL}</div><div class="dl">${avgRT}ms · min ${minRT}ms</div><div class="dbar"><div class="dbarf" style="width:${rtSc}%;background:#94f5ff"></div></div></div><div class="dc"><div class="dn">Arbeidsminne</div><div class="dsc">${mL}</div><div class="dl">Spenn ${memSpan} · ${mSc}/${mTot}</div><div class="dbar"><div class="dbarf" style="width:${mSc2}%;background:#4ade80"></div></div></div><div class="dc"><div class="dn">Impulskontroll</div><div class="dsc">${stL}</div><div class="dl">${stC}/${stTot} riktige</div><div class="dbar"><div class="dbarf" style="width:${stSc}%;background:#a78bfa"></div></div></div><div class="dc"><div class="dn">Samlet</div><div class="dsc">${overall}/100</div><div class="dl">${overall>=80?'Topp 20%':overall>=65?'Over snitt':'Gjennomsnitt'}</div><div class="dbar"><div class="dbarf" style="width:${overall}%;background:#facc15"></div></div></div>`;
+
+  // Baseline comparison
+  if(bl?.now){
+    document.getElementById('res-bc').style.display='block';
+    const bcData=[
+      {label:'Reaksjonstid',curr:rtSc,base:bl.now.rtScore||rtSc},
+      {label:'Arbeidsminne',curr:mSc2,base:bl.now.memScore||mSc2},
+      {label:'Impulskontroll',curr:stSc,base:bl.now.stroopScore||stSc},
+      {label:'Total',curr:overall,base:bl.now.overall||overall}
+    ];
+    document.getElementById('bc-rows').innerHTML=bcData.map(r=>{
+      const pctOfBase=r.base>0?Math.round((r.curr/r.base)*100):100;
+      const col=pctOfBase>=90?'#4ade80':pctOfBase>=70?'#facc15':'#f87171';
+      return`<div class="bc-row"><div class="bc-label">${r.label}</div><div class="bc-track"><div class="bc-base" style="left:${Math.min(r.base,100)}%"></div><div class="bc-fill" style="width:${Math.min(r.curr,100)}%;background:${col}"></div></div><div class="bc-pct" style="color:${col}">${pctOfBase}%</div></div>`;
+    }).join('');
+  }
+
   document.getElementById('resbr').innerHTML=rBar('Reaksjonstid — '+rtL,rtSc,'#94f5ff')+rBar('Arbeidsminne — '+mL,mSc2,'#4ade80')+rBar('Impulskontroll — '+stL,stSc,'#a78bfa');
-  document.getElementById('resib').innerHTML=`<div style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:rgba(148,245,255,.35);margin-bottom:8px">Tolkning</div><p>${txt}</p><p style="margin-top:.75rem"><em>Metodikk: Reaksjonstid: trimmed mean (fjerner beste/dårligste). Arbeidsminne: adaptivt digitalt minnespenn (Corsi-prinsipp). Stroop: kognitiv interferens og impulskontroll.</em></p>`;
+  document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px">Analyserer...</span></div>';
   goTo('page-results');
+
+  const insight=await generateInsight('now',resultData,bl);
+  document.getElementById('ai-body').innerHTML=insight;
+
+  if(cu){
+    await addDoc(collection(db,'insights'),{uid:cu.uid,type:'now',overall,avgRT,memSpan,stroopPct,aiInsight:insight,score:null,pct:null,domains:null,createdAt:serverTimestamp()});
+  }
 }
 
 function rBar(l,p,c){p=Math.max(0,Math.min(100,p||0));return`<div class="rbw"><div class="rbr"><span>${l}</span></div><div class="rb"><div class="rbf" style="width:${p}%;background:${c}"></div></div></div>`;}
 </script>
 </body>
 </html>
-
