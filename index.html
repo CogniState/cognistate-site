@@ -337,6 +337,7 @@
 <!-- DASHBOARD -->
 <div id="page-dashboard" class="page">
   <div class="di">
+    <!-- Header -->
     <div class="dheader">
       <div><h2 id="dn2">Hei!</h2><p id="dp">Her er din kognitive oversikt.</p></div>
     </div>
@@ -344,22 +345,114 @@
     <!-- Status banner -->
     <div class="status-banner" id="status-banner"></div>
 
+    <!-- ONBOARDING (vises kun uten tester) -->
+    <div id="onboarding-box" style="display:none">
+
+      <!-- Hero onboarding -->
+      <div style="background:linear-gradient(135deg,rgba(148,245,255,0.08),rgba(167,139,250,0.06));border:1px solid rgba(148,245,255,0.2);border-radius:18px;padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(148,245,255,0.1),transparent 70%);pointer-events:none"></div>
+        <div style="display:flex;align-items:flex-start;gap:1.25rem;flex-wrap:wrap">
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.5);margin-bottom:.5rem;font-weight:600">Kom i gang</div>
+            <h3 style="font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:.6rem;line-height:1.3">Sett din kognitive baseline</h3>
+            <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1.25rem">
+              Baseline er ditt kognitive referansepunkt — et mål på hva du presterer når du er på ditt beste. 
+              Alle fremtidige tester måles mot denne. Ta den når du er <strong style="color:var(--text)">uthvilt og skjerpet</strong> for best mulig resultat.
+            </p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn btp" style="font-size:14px;padding:11px 24px" onclick="startLevelTest()">Start nivåanalyse (10 min) →</button>
+              <button class="btn bta" style="font-size:13px" onclick="startNowTest()">Eller ta dagsform (3 min)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-steg guide -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:2rem">
+        <div style="background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.25rem">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(148,245,255,0.12);border:1px solid rgba(148,245,255,0.3);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--accent);margin-bottom:.75rem">1</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.35rem">Ta nivåanalysen</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">20 oppgaver innen logikk, tall og romlig tenkning. Setter din kognitive baseline.</div>
+        </div>
+        <div style="background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.25rem">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#4ade80;margin-bottom:.75rem">2</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.35rem">Test dagsform daglig</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">3 minutter. Reaksjonstid, arbeidsminne og konsentrasjon. Måles mot din baseline.</div>
+        </div>
+        <div style="background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.25rem">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#a78bfa;margin-bottom:.75rem">3</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.35rem">Få AI-drevet innsikt</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Etter hver test analyserer AI resultatene og gir deg konkrete, personlige råd.</div>
+        </div>
+      </div>
+
+      <!-- Hva måler vi -->
+      <div style="background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.5rem;margin-bottom:2rem">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.4);margin-bottom:1rem;font-weight:600">Hva måler CogniState?</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <div style="font-size:20px;flex-shrink:0">🧩</div>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:2px">Logikk & resonnering</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.5">Induktiv og deduktiv tenkning. Sterkt knyttet til analytisk beslutningstaking.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <div style="font-size:20px;flex-shrink:0">💾</div>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#4ade80;margin-bottom:2px">Arbeidsminne</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.5">Fremover og baklengs. Forverres tidlig ved kognitiv svekkelse og stress.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <div style="font-size:20px;flex-shrink:0">⚡</div>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#facc15;margin-bottom:2px">Reaksjonstid</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.5">Prosesseringshastighet og nevral effektivitet. Påvirkes av søvn og stress.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <div style="font-size:20px;flex-shrink:0">🎯</div>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#a78bfa;margin-bottom:2px">Impulskontroll</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.5">Stroop-interferens. Evnen til å undertrykke automatiske responser under press.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- END ONBOARDING -->
+
     <!-- Start test -->
     <div class="sl" style="margin-bottom:12px">Start en test</div>
     <div class="tgrid" style="margin-bottom:2rem">
       <div class="tlc" onclick="startLevelTest()">
-        <div class="tlci">🧠</div>
-        <span class="tlcb bb">Kognitiv profil · ca. 10 min</span>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div class="tlci" style="font-size:24px">🧠</div>
+          <span class="tlcb bb">ca. 10 min</span>
+        </div>
         <div class="tlct">Nivåanalyse</div>
-        <div class="tlcd">20 oppgaver. Gir full domeneprofil og setter/oppdaterer baseline.</div>
-        <div class="tlcm">Logikk · Tall · Romlig · Abstrakt</div>
+        <div class="tlcd" style="margin-bottom:.75rem">20 kalibrerte oppgaver. Setter din kognitive baseline og gir full domeneprofil.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span style="font-size:10px;background:rgba(148,245,255,0.08);color:var(--accent);padding:3px 8px;border-radius:4px">Logikk</span>
+          <span style="font-size:10px;background:rgba(148,245,255,0.08);color:var(--accent);padding:3px 8px;border-radius:4px">Tall</span>
+          <span style="font-size:10px;background:rgba(148,245,255,0.08);color:var(--accent);padding:3px 8px;border-radius:4px">Romlig</span>
+          <span style="font-size:10px;background:rgba(148,245,255,0.08);color:var(--accent);padding:3px 8px;border-radius:4px">Abstrakt</span>
+        </div>
       </div>
       <div class="tlc" onclick="startNowTest()">
-        <div class="tlci">⚡</div>
-        <span class="tlcb bg">Dagsform · ca. 4 min</span>
-        <div class="tlct">Kognitiv ytelse nå</div>
-        <div class="tlcd">Reaksjonstid, arbeidsminne og Stroop. Måles mot din baseline.</div>
-        <div class="tlcm">Reaksjonstid · Arbeidsminne · Stroop</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div class="tlci" style="font-size:24px">⚡</div>
+          <span class="tlcb bg">ca. 3 min</span>
+        </div>
+        <div class="tlct">Dagsform</div>
+        <div class="tlcd" style="margin-bottom:.75rem">Rask daglig sjekk. Måler kognitiv ytelse mot din baseline akkurat nå.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span style="font-size:10px;background:rgba(74,222,128,0.08);color:#4ade80;padding:3px 8px;border-radius:4px">Reaksjon</span>
+          <span style="font-size:10px;background:rgba(74,222,128,0.08);color:#4ade80;padding:3px 8px;border-radius:4px">Minne</span>
+          <span style="font-size:10px;background:rgba(74,222,128,0.08);color:#4ade80;padding:3px 8px;border-radius:4px">Stroop</span>
+        </div>
       </div>
     </div>
 
@@ -375,7 +468,10 @@
         </div>
       </div>
       <div id="chart-wrap-el">
-        <div class="chart-empty" id="chart-empty">Ta din første test for å se utvikling over tid</div>
+        <div class="chart-empty" id="chart-empty" style="flex-direction:column;gap:8px">
+          <span style="font-size:24px">📊</span>
+          <span>Ta din første test for å se utvikling over tid</span>
+        </div>
         <div class="chart-wrap" id="chart-wrap" style="display:none"><canvas id="scoreChart"></canvas></div>
       </div>
     </div>
@@ -383,17 +479,33 @@
     <!-- Domain profile -->
     <div class="sl">Domeneprofil</div>
     <div class="domain-profile" id="domain-profile">
-      <div class="dp-card"><div class="dp-name">Logikk</div><div class="dp-val" style="color:var(--muted)">—</div></div>
-      <div class="dp-card"><div class="dp-name">Tallresonnering</div><div class="dp-val" style="color:var(--muted)">—</div></div>
-      <div class="dp-card"><div class="dp-name">Romlig</div><div class="dp-val" style="color:var(--muted)">—</div></div>
-      <div class="dp-card"><div class="dp-name">Abstrakt</div><div class="dp-val" style="color:var(--muted)">—</div></div>
+      <div class="dp-card">
+        <div class="dp-name">Logikk</div>
+        <div class="dp-val" style="color:var(--muted)">—</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.15);margin-top:3px">Ta nivåtest</div>
+      </div>
+      <div class="dp-card">
+        <div class="dp-name">Tallresonnering</div>
+        <div class="dp-val" style="color:var(--muted)">—</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.15);margin-top:3px">Ta nivåtest</div>
+      </div>
+      <div class="dp-card">
+        <div class="dp-name">Romlig</div>
+        <div class="dp-val" style="color:var(--muted)">—</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.15);margin-top:3px">Ta nivåtest</div>
+      </div>
+      <div class="dp-card">
+        <div class="dp-name">Abstrakt</div>
+        <div class="dp-val" style="color:var(--muted)">—</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.15);margin-top:3px">Ta nivåtest</div>
+      </div>
     </div>
 
     <!-- History -->
     <div class="sl">Testhistorikk</div>
     <div class="hcard">
       <div class="hh"><div class="sl" style="margin-bottom:0">Siste 10 resultater</div></div>
-      <div id="dh"><div class="hempty">Ingen tester ennå.</div></div>
+      <div id="dh"><div class="hempty">Ingen tester ennå — start din første test ovenfor!</div></div>
     </div>
 
     <div style="display:flex;justify-content:flex-end;margin-bottom:3rem">
@@ -680,7 +792,12 @@ async function loadDash(){
   }
 
   // History
-  document.getElementById('dh').innerHTML=rows.length?rows.map(r=>`<div class="hrow"><div class="htype-dot" style="background:${r.color}"></div><div class="htitle2">${r.label}</div><div class="hdate">${r.date}</div><div class="hscore">${r.score}</div></div>`).join(''):'<div class="hempty">Ingen tester ennå.</div>';
+  document.getElementById('dh').innerHTML=rows.length?rows.map(r=>`<div class="hrow"><div class="htype-dot" style="background:${r.color}"></div><div class="htitle2">${r.label}</div><div class="hdate">${r.date}</div><div class="hscore">${r.score}</div></div>`).join(''):'<div class="hempty">Ingen tester ennå — start din første test ovenfor!</div>';
+  
+  // Show onboarding if no tests taken
+  if(rows.length===0){
+    document.getElementById('onboarding-box').style.display='block';
+  }
 }
 
 /* ===== INSIGHTS PAGE ===== */
