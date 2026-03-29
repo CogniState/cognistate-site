@@ -730,11 +730,14 @@ auth.onAuthStateChanged(async user=>{
     document.getElementById('navlinks').style.display='flex';
     const init=(user.displayName||user.email||'?')[0].toUpperCase();
     document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span style="font-size:13px">${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
-    await loadDash();goTo('page-dashboard');
+    await loadDash();
+    goTo('page-dashboard');
   }else{
     document.getElementById('navlinks').style.display='none';
     document.getElementById('nr2').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
-    goTo('page-home');
+    if(document.querySelector('.page.active')?.id !== 'page-auth'){
+      goTo('page-home');
+    }
   }
 });
 
