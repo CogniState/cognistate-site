@@ -483,10 +483,10 @@
 <footer>
   <a href="https://instagram.com/cognistate" target="_blank" rel="noopener">@cognistate</a>
   <span style="color:var(--b1)">•</span>
-  <a href="/cdn-cgi/l/email-protection#1f7c70716b7e7c6b5f7c707871766c6b7e6b7a317670"><span class="__cf_email__" data-cfemail="096a66677d686a7d496a666e67607a7d687d6c276066">[email&#160;protected]</span></a>
+  <a href="mailto:contact[at]cognistate.io" onclick="this.href='mailto:contact@cognistate.io'">contact@cognistate.io</a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+<script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -555,45 +555,57 @@ async function saveResult(type,data){
   }
 }
 
-/* ===== AI INSIGHT ===== */
-async function generateInsight(type, data, baseline){
-  const baselineText = baseline?.[type]
-    ? type==='level'
-      ? `Baseline: ${baseline[type].pct}% totalt, domener: ${JSON.stringify(baseline[type].domains||{})}`
-      : `Baseline: ${baseline[type].overall}/100, reaksjonstid: ${baseline[type].avgRT}ms, minnespenn: ${baseline[type].memSpan}, Stroop: ${baseline[type].stroopPct}%`
-    : 'Ingen baseline ennå (dette er første test)';
-
-  const currentText = type==='level'
-    ? `Score: ${data.pct}%, domener: ${JSON.stringify(data.domains||{})}, snitt ${data.avg}s per svar, IQ-indikator: ${data.iq}`
-    : `Total: ${data.overall}/100, reaksjonstid: ${data.avgRT}ms, minnespenn: ${data.memSpan}, Stroop: ${data.stroopPct}%`;
-
-  const prompt = `Du er en kognitiv analytiker for CogniState. Analyser følgende testresultat og gi en kort, konkret og personlig innsikt på norsk.
-
-Testtype: ${type==='level'?'Nivåanalyse (kognitiv profil)':'Dagsform (reaksjonstid, arbeidsminne, Stroop)'}
-Nåværende resultat: ${currentText}
-${baselineText}
-
-Skriv 2-3 setninger som:
-1. Oppsummerer hva resultatet betyr i praksis
-2. Fremhever styrker eller bekymringsfulle mønstre
-3. Gir ett konkret, handlingsrettet råd
-
-Vær direkte, faglig og unngå generiske fraser. Svar kun med selve analyseteksten, ingen tittel.`;
-
-  try{
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:300,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const json = await res.json();
-    return json.content?.[0]?.text || 'Kunne ikke generere analyse.';
-  }catch(e){
-    return 'AI-analyse utilgjengelig akkurat nå.';
+/* ===== LOCAL INSIGHT ENGINE ===== */
+function generateInsight(type, data, baseline){
+  if(type==='level'){
+    const pct=data.pct, domains=data.domains||{}, avg=data.avg, iq=data.iq;
+    const bl=baseline?.level;
+    const cats={logic:'Logikk',number:'Tallresonnering',spatial:'Romlig tenkning',abstract:'Abstrakt tenkning'};
+    // Find strongest and weakest domain
+    let best='',bestVal=0,worst='',worstVal=100;
+    Object.entries(domains).forEach(([k,v])=>{if(v>bestVal){bestVal=v;best=cats[k]||k;}if(v<worstVal){worstVal=v;worst=cats[k]||k;}});
+    // Performance level
+    const level=pct>=85?'fremragende':pct>=70?'over snittet':pct>=50?'gjennomsnittlig':'under snittet';
+    // Speed assessment
+    const speed=avg<20?'svært raskt':avg<35?'godt':avg<55?'i normalt tempo':'langsomt';
+    // Baseline delta
+    let blText='';
+    if(bl){
+      const delta=pct-bl.pct;
+      if(delta>5)blText=` Dette er ${delta} prosentpoeng over din baseline — en tydelig fremgang.`;
+      else if(delta<-5)blText=` Dette er ${Math.abs(delta)} prosentpoeng under din baseline — vurder å ta testen igjen etter hvile.`;
+      else blText=` Dette er på linje med din etablerte baseline.`;
+    }
+    // Advice
+    let advice='';
+    if(worstVal<50)advice=`Fokuser på å styrke ${worst} — dette er ditt største utviklingsområde og vil ha mest effekt på din samlede kognitive profil.`;
+    else if(bestVal>=80)advice=`Din styrke innen ${best} er et solid fundament. Vurder å utfordre deg selv med mer krevende logiske problemer for å fortsette fremgangen.`;
+    else advice=`En balansert profil som dette tyder på god generell kognitiv kapasitet. Regelmessig trening på varierte oppgaver vil løfte alle domener.`;
+    return `Du presterte <strong>${level}</strong> med ${pct}% riktige svar, og besvarte oppgavene ${speed} (snitt ${avg}s).${blText} Sterkeste domene: <strong>${best} (${bestVal}%)</strong>. ${advice}`;
+  } else {
+    const{avgRT,memSpan,stroopPct,overall}=data;
+    const bl=baseline?.now;
+    // RT assessment
+    const rtLevel=avgRT<220?'eksepsjonell':avgRT<270?'rask':avgRT<330?'gjennomsnittlig':'treg';
+    // Memory
+    const memLevel=memSpan>=7?'eksepsjonell kapasitet':memSpan>=6?'over normalen':memSpan>=5?'innenfor normalområdet (5±2)':'noe under normalen';
+    // Stroop
+    const stLevel=stroopPct>=85?'sterk impulskontroll':stroopPct>=65?'god konsentrasjon':'noe interferens';
+    // Baseline
+    let blText='';
+    if(bl){
+      const pctOfBl=Math.round((overall/bl.overall)*100);
+      if(pctOfBl>=95)blText=` Du er på <strong>${pctOfBl}% av din baseline</strong> — du er i toppform i dag.`;
+      else if(pctOfBl>=80)blText=` Du er på <strong>${pctOfBl}% av din baseline</strong> — god form, litt under toppnivå.`;
+      else blText=` Du er på <strong>${pctOfBl}% av din baseline</strong> — kognitiv kapasitet er redusert i dag. Søvn og stressnivå er de vanligste årsakene.`;
+    }
+    // Advice
+    let advice='';
+    if(avgRT>380)advice='Reaksjonstid over 380ms tyder på tretthet eller redusert fokus — en kort pause, lys og bevegelse kan gi rask bedring.';
+    else if(memSpan<5)advice='Arbeidsminnet er det mest trenbare kognitive domenet. 10 minutter daglig minnetrening gir målbar forbedring på 4-6 uker.';
+    else if(stroopPct<65)advice='Lav Stroop-score tyder på redusert impulskontroll. Unngå viktige beslutninger under tidspress i dag.';
+    else advice='Alle tre domenene er i god form. Dette er et godt tidspunkt for krevende analytisk arbeid og viktige beslutninger.';
+    return `Reaksjonstid: <strong>${rtLevel} (${avgRT}ms)</strong>. Arbeidsminne: <strong>${memLevel} (spenn ${memSpan})</strong>. Konsentrasjon: <strong>${stLevel} (${stroopPct}%)</strong>.${blText} ${advice}`;
   }
 }
 
@@ -705,6 +717,9 @@ async function loadInsights(){
 getRedirectResult(auth).then(async result=>{
   if(result?.user) await ensureUser(result.user);
 }).catch(()=>{});
+
+// Fallback: hide spinner after 5s no matter what
+setTimeout(()=>{document.getElementById('ls').style.display='none';},5000);
 
 onAuthStateChanged(auth,async user=>{
   document.getElementById('ls').style.display='none';
@@ -955,7 +970,7 @@ async function showLvlRes(){
   goTo('page-results');
 
   // Generate AI insight
-  const insight=await generateInsight('level',resultData,bl);
+  const insight=generateInsight('level',resultData,bl);
   document.getElementById('ai-body').innerHTML=insight;
 
   // Save insight to Firestore
@@ -1092,7 +1107,7 @@ async function showNowRes(){
   document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px">Analyserer...</span></div>';
   goTo('page-results');
 
-  const insight=await generateInsight('now',resultData,bl);
+  const insight=generateInsight('now',resultData,bl);
   document.getElementById('ai-body').innerHTML=insight;
 
   if(cu){
