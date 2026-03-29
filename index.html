@@ -486,13 +486,14 @@
   <span style="color:var(--muted)">contact @ cognistate.io</span>
 </footer>
 
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
 
-const app=initializeApp({apiKey:"AIzaSyCyx9X7Gg6WVpgEX5OrmGu1q31nXVnvaw0",authDomain:"cognistate.firebaseapp.com",projectId:"cognistate",storageBucket:"cognistate.firebasestorage.app",messagingSenderId:"671593867260",appId:"1:671593867260:web:93e3851b5652ef1c5bf479"});
-const auth=getAuth(app),db=getFirestore(app),gp=new GoogleAuthProvider();
+
+const app=firebase.initializeApp({apiKey:"AIzaSyCyx9X7Gg6WVpgEX5OrmGu1q31nXVnvaw0",authDomain:"cognistate.firebaseapp.com",projectId:"cognistate",storageBucket:"cognistate.firebasestorage.app",messagingSenderId:"671593867260",appId:"1:671593867260:web:93e3851b5652ef1c5bf479"});
+const auth=firebase.auth(),db=firebase.firestore(),gp=new firebase.auth.GoogleAuthProvider();
 let cu=null,am='login',scoreChart=null;
 
 function goTo(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);setNavActive(id);}
@@ -516,8 +517,8 @@ window.toggleAuth=()=>window.showAuth(am==='login'?'register':'login');
 window.loginGoogle=async()=>{
   try{
     const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if(isMobile){await signInWithRedirect(auth,gp);}
-    else{const r=await signInWithPopup(auth,gp);await ensureUser(r.user);}
+    if(isMobile){await auth.signInWithRedirect(gp);}
+    else{const r=await auth.signInWithPopup(gp);await ensureUser(r.user);}
   }catch(e){showErr(e.message);}
 };
 window.submitAuth=async()=>{
@@ -525,33 +526,33 @@ window.submitAuth=async()=>{
   const btn=document.getElementById('asb');
   btn.textContent=am==='login'?'Logger inn...':'Oppretter...';btn.disabled=true;
   try{
-    if(am==='login'){await signInWithEmailAndPassword(auth,email,pw);}
-    else{const name=document.getElementById('an').value.trim();const c=await createUserWithEmailAndPassword(auth,email,pw);if(name)await updateProfile(c.user,{displayName:name});await ensureUser(c.user,name);}
+    if(am==='login'){await auth.signInWithEmailAndPassword(email,pw);}
+    else{const name=document.getElementById('an').value.trim();const c=await auth.createUserWithEmailAndPassword(email,pw);if(name)await c.user.updateProfile({displayName:name});await ensureUser(c.user,name);}
   }catch(e){showErr(fe(e.code));btn.textContent=am==='login'?'Logg inn':'Opprett konto';btn.disabled=false;}
 };
-window.logout=async()=>await signOut(auth);
+window.logout=async()=>await auth.signOut();
 function showErr(m){const el=document.getElementById('aerr');el.textContent=m;el.style.display='block';}
 function fe(c){return({'auth/user-not-found':'Ingen konto med denne e-posten.','auth/wrong-password':'Feil passord.','auth/email-already-in-use':'E-posten er allerede i bruk.','auth/weak-password':'Passordet må være minst 6 tegn.','auth/invalid-email':'Ugyldig e-postadresse.','auth/invalid-credential':'Feil e-post eller passord.','auth/popup-closed-by-user':'Innlogging avbrutt.'}[c])||'Noe gikk galt. Prøv igjen.';}
 
 async function ensureUser(user,name){
-  const ref=doc(db,'users',user.uid);
-  const snap=await getDoc(ref);
-  if(!snap.exists())await setDoc(ref,{uid:user.uid,email:user.email,name:name||user.displayName||user.email.split('@')[0],createdAt:serverTimestamp(),baseline:null});
+  const ref=db.collection('users').doc(user.uid);
+  const snap=await ref.get();
+  if(!snap.exists)await ref.set({uid:user.uid,email:user.email,name:name||user.displayName||user.email.split('@')[0],createdAt:firebase.firestore.FieldValue.serverTimestamp(),baseline:null});
 }
 
 async function saveResult(type,data){
   if(!cu)return;
-  await addDoc(collection(db,'results'),{uid:cu.uid,type,...data,createdAt:serverTimestamp()});
-  const uref=doc(db,'users',cu.uid);
-  const snap=await getDoc(uref);
+  await db.collection('results').add({uid:cu.uid,type,...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  const uref=db.collection('users').doc(cu.uid);
+  const snap=await uref.get();
   const ud=snap.data();
   // Update baseline if this is a new high score or first result
   if(!ud.baseline||!ud.baseline[type]){
-    await setDoc(uref,{baseline:{...(ud.baseline||{}),[type]:data}},{merge:true});
+    await uref.set({baseline:{...(ud.baseline||{}),[type]:data});
   } else {
     // Only update baseline if score is higher
     const isHigher = type==='level' ? data.pct > (ud.baseline[type]?.pct||0) : data.overall > (ud.baseline[type]?.overall||0);
-    if(isHigher) await setDoc(uref,{baseline:{...ud.baseline,[type]:data}},{merge:true});
+    if(isHigher) await uref.set({baseline:{...ud.baseline,[type]:data});
   }
 }
 
@@ -612,13 +613,13 @@ function generateInsight(type, data, baseline){
 /* ===== DASHBOARD ===== */
 async function loadDash(){
   if(!cu)return;
-  const snap=await getDoc(doc(db,'users',cu.uid));
+  const snap=await getDoc(db.collection('users').doc(cu.uid));
   const ud=snap.data();
   const name=(ud?.name||cu.displayName||'deg').split(' ')[0];
   document.getElementById('dn2').textContent='Hei, '+name+'!';
 
-  const q=query(collection(db,'results'),where('uid','==',cu.uid),orderBy('createdAt','desc'),limit(20));
-  const res=await getDocs(q);
+  const q=db.collection('results').where('uid','==',cu.uid).orderBy('createdAt','desc').limit(20);
+  const res=await q.get();
   let rows=[],chartNow=[],chartLevel=[],latestNow=null,latestLevel=null;
 
   res.forEach(d=>{
@@ -685,8 +686,8 @@ async function loadDash(){
 /* ===== INSIGHTS PAGE ===== */
 async function loadInsights(){
   if(!cu)return;
-  const q=query(collection(db,'insights'),where('uid','==',cu.uid),orderBy('createdAt','desc'),limit(20));
-  const res=await getDocs(q);
+  const q=db.collection('insights').where('uid','==',cu.uid).orderBy('createdAt','desc').limit(20);
+  const res=await q.get();
   const list=document.getElementById('insights-list');
   if(res.empty){list.innerHTML='<div class="insights-empty">Ingen innsikter ennå.<br>Ta din første test for å generere personlige analyser.</div>';return;}
   list.innerHTML='';
@@ -714,14 +715,14 @@ async function loadInsights(){
 
 /* ===== AUTH STATE ===== */
 // Handle redirect result on page load
-getRedirectResult(auth).then(async result=>{
+auth.getRedirectResult().then(async result=>{
   if(result?.user) await ensureUser(result.user);
 }).catch(()=>{});
 
 // Fallback: hide spinner after 5s no matter what
 setTimeout(()=>{document.getElementById('ls').style.display='none';},5000);
 
-onAuthStateChanged(auth,async user=>{
+auth.onAuthStateChanged(async user=>{
   document.getElementById('ls').style.display='none';
   document.getElementById('mn').style.display='flex';
   cu=user;
@@ -942,7 +943,7 @@ async function showLvlRes(){
   const resultData={pct,avg,score:lqS,total:LQ.length,iq,domains};
   await saveResult('level',resultData);
 
-  const snap=cu?await getDoc(doc(db,'users',cu.uid)):null;
+  const snap=cu?await getDoc(db.collection('users').doc(cu.uid)):null;
   const ud=snap?.data();
   const bl=ud?.baseline;
   const isBase=!bl?.level||bl.level.pct===pct;
@@ -975,7 +976,7 @@ async function showLvlRes(){
 
   // Save insight to Firestore
   if(cu){
-    await addDoc(collection(db,'insights'),{uid:cu.uid,type:'level',score:lqS,pct,domains,iq,avg,aiInsight:insight,overall:pct,avgRT:null,memSpan:null,stroopPct:null,createdAt:serverTimestamp()});
+    await db.collection('insights').add({uid:cu.uid,type:'level',score:lqS,pct,domains,iq,avg,aiInsight:insight,overall:pct,avgRT:null,memSpan:null,stroopPct:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
   }
 }
 
@@ -1168,7 +1169,7 @@ async function showNowRes(){
   const resultData={avgRT,minRT,rtVar,memSpan,fwdPct,bwdPct,memCombined,stroopPct,stroopInterference,avgCongrRT,avgIncongrRT,overall,rtScore:rtScAdj,memScore:mSc2,stroopScore:stSc};
   await saveResult('now',resultData);
 
-  const snap=cu?await getDoc(doc(db,'users',cu.uid)):null;
+  const snap=cu?await getDoc(db.collection('users').doc(cu.uid)):null;
   const ud=snap?.data();
   const bl=ud?.baseline;
   const isBase=!bl?.now||bl.now.overall===overall;
@@ -1190,7 +1191,7 @@ async function showNowRes(){
       {label:'Total',curr:overall,base:bl.now.overall||overall}
     ];
     document.getElementById('bc-rows').innerHTML=bcData.map(r=>{
-      const pctOfBase=r.base>0?Math.round((r.curr/r.base)*100):100;A
+      const pctOfBase=r.base>0?Math.round((r.curr/r.base)*100):100;
       const col=pctOfBase>=90?'#4ade80':pctOfBase>=70?'#facc15':'#f87171';
       return`<div class="bc-row"><div class="bc-label">${r.label}</div><div class="bc-track"><div class="bc-base" style="left:${Math.min(r.base,100)}%"></div><div class="bc-fill" style="width:${Math.min(r.curr,100)}%;background:${col}"></div></div><div class="bc-pct" style="color:${col}">${pctOfBase}%</div></div>`;
     }).join('');
