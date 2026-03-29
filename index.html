@@ -8,983 +8,663 @@
   <link rel="icon" type="image/png" href="assets/cognistate-logo.png" />
   <style>
     :root{
-      --bg-deep:#0f172a;
-      --bg-slate:#1e293b;
-      --text:#e2e8f0;
-      --muted:#cbd5e1;
-      --accent:#94f5ff;
-      --accent-soft:rgba(148,245,255,.25);
-      --accent-border:rgba(148,245,255,.35);
-      --grid-dot:rgba(255,255,255,.05);
-      --surface:rgba(255,255,255,.04);
-      --surface-hover:rgba(255,255,255,.07);
-      --border:rgba(148,245,255,.18);
-      --border-soft:rgba(255,255,255,.08);
-      --correct:#4ade80;
-      --correct-bg:rgba(74,222,128,.12);
-      --wrong:#f87171;
-      --wrong-bg:rgba(248,113,113,.12);
+      --bg:#0f172a;--bg2:#1e293b;--text:#e2e8f0;--muted:#94a3b8;
+      --accent:#94f5ff;--as:rgba(148,245,255,.2);--ab:rgba(148,245,255,.3);
+      --dot:rgba(255,255,255,.04);--s1:rgba(255,255,255,.04);--s2:rgba(255,255,255,.07);
+      --b1:rgba(255,255,255,.08);--ba:rgba(148,245,255,.2);
+      --ok:#4ade80;--okb:rgba(74,222,128,.1);--no:#f87171;--nob:rgba(248,113,113,.1);
+      --pu:#a78bfa;--am:#facc15;
     }
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{
-      color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-      background:radial-gradient(1200px 800px at 30% 20%,var(--bg-slate),var(--bg-deep) 70%);
-      overflow-x:hidden;min-height:100vh;
-    }
-    body::before{
-      content:"";position:fixed;inset:0;
-      background-image:radial-gradient(var(--grid-dot) 1px,transparent 1px);
-      background-size:40px 40px;
-      animation:moveGrid 20s linear infinite;
-      pointer-events:none;z-index:0;
-    }
-    @keyframes moveGrid{from{background-position:0 0}to{background-position:40px 40px}}
-    .glow{
-      position:fixed;left:50%;top:50%;
-      width:min(1200px,90vw);height:min(1200px,90vw);
-      transform:translate(-50%,-50%);
-      background:radial-gradient(circle,rgba(94,234,212,.18) 0%,transparent 65%);
-      filter:blur(2px);
-      animation:pulse 6s ease-in-out infinite alternate;
-      z-index:0;pointer-events:none;
-    }
-    @keyframes pulse{
-      0%{opacity:.45;transform:translate(-50%,-50%) scale(1)}
-      100%{opacity:.75;transform:translate(-50%,-50%) scale(1.12)}
-    }
-    header.brand{
-      position:fixed;top:24px;left:24px;
-      display:flex;align-items:center;gap:12px;z-index:10;
-    }
-    header.brand img{height:44px;width:auto;filter:drop-shadow(0 0 8px var(--accent-soft));}
-    header.brand span{font-weight:700;letter-spacing:.3px;font-size:1.2rem;color:#e8f3ff;}
-    header.brand::before{
-      content:"";position:absolute;width:84px;height:84px;left:-10px;top:-12px;z-index:-1;
-      border-radius:50%;background:radial-gradient(circle,rgba(94,234,212,.16),transparent 70%);
-    }
-
+    html{scroll-behavior:smooth}
+    body{color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+    body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:40px 40px;animation:mg 24s linear infinite;pointer-events:none;z-index:0;}
+    @keyframes mg{from{background-position:0 0}to{background-position:40px 40px}}
+    .glow{position:fixed;left:50%;top:40%;width:min(900px,90vw);height:min(900px,90vw);transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(94,234,212,.12) 0%,transparent 65%);animation:pu 7s ease-in-out infinite alternate;z-index:0;pointer-events:none;}
+    @keyframes pu{0%{opacity:.4;transform:translate(-50%,-50%) scale(1)}100%{opacity:.7;transform:translate(-50%,-50%) scale(1.1)}}
     .page{display:none;position:relative;z-index:1;min-height:100vh;}
-    .page.active{display:flex;}
-
-    /* HOME */
-    #page-home{align-items:center;justify-content:center;padding:96px 24px 120px;text-align:center;}
-    .hero{max-width:820px;}
-    .title{
-      font-size:clamp(2.2rem,4.5vw,3.6rem);margin:0 0 .6rem;
-      color:var(--accent);text-shadow:0 0 20px var(--accent-soft);letter-spacing:.5px;
-    }
-    .tagline{font-size:clamp(1.05rem,1.7vw,1.25rem);line-height:1.65;color:var(--text);opacity:.95;}
-    .hero-buttons{margin-top:2rem;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-    .cta-primary{
-      display:inline-block;padding:12px 28px;
-      background:var(--accent);color:var(--bg-deep);font-weight:600;font-size:1rem;
-      border-radius:10px;text-decoration:none;border:none;cursor:pointer;font-family:inherit;
-      transition:all .25s;box-shadow:0 0 20px rgba(148,245,255,.25);
-    }
-    .cta-primary:hover{transform:translateY(-2px);box-shadow:0 0 32px rgba(148,245,255,.4);}
-    .cta-secondary{
-      display:inline-block;padding:12px 28px;
-      border:1px solid var(--accent-border);color:var(--accent);
-      font-size:1rem;border-radius:10px;text-decoration:none;
-      background:transparent;cursor:pointer;font-family:inherit;transition:all .25s;
-    }
-    .cta-secondary:hover{transform:translateY(-2px);box-shadow:0 0 18px rgba(148,245,255,.18);}
-    .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:3rem;text-align:left;}
-    .feature-card{
-      background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:14px;padding:1.25rem 1.5rem;transition:border-color .2s,background .2s;
-    }
-    .feature-card:hover{background:var(--surface-hover);border-color:var(--border);}
-    .feature-icon{font-size:22px;margin-bottom:8px;}
-    .feature-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:4px;}
-    .feature-desc{font-size:13px;color:var(--muted);line-height:1.55;}
-
-    /* TESTS PAGE */
-    #page-tests{flex-direction:column;align-items:center;padding:96px 24px 120px;}
-    .tests-inner{width:100%;max-width:580px;}
-    .back-btn{
-      display:inline-flex;align-items:center;gap:6px;
-      font-size:13px;color:var(--muted);cursor:pointer;
-      background:none;border:none;font-family:inherit;margin-bottom:2rem;transition:color .2s;
-    }
-    .back-btn:hover{color:var(--accent);}
-    .section-title{font-size:clamp(1.5rem,3vw,2rem);color:var(--accent);text-shadow:0 0 14px var(--accent-soft);margin-bottom:.5rem;}
-    .section-sub{font-size:14px;color:var(--muted);margin-bottom:2rem;line-height:1.6;}
-    .test-card{
-      background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:14px;cursor:pointer;
-      transition:all .2s;position:relative;display:flex;align-items:center;gap:1rem;
-    }
-    .test-card:hover{background:var(--surface-hover);border-color:var(--border);transform:translateX(4px);}
-    .test-card-icon{
-      font-size:26px;width:52px;height:52px;
-      background:rgba(148,245,255,.08);border-radius:12px;
-      display:flex;align-items:center;justify-content:center;flex-shrink:0;
-    }
-    .test-card-body{flex:1;}
-    .test-card-badge{
-      display:inline-block;font-size:10px;font-weight:600;
-      text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:20px;margin-bottom:6px;
-    }
-    .badge-blue{background:rgba(148,245,255,.12);color:var(--accent);}
-    .badge-green{background:rgba(74,222,128,.12);color:#4ade80;}
-    .badge-amber{background:rgba(250,204,21,.1);color:#facc15;}
-    .test-card-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:3px;}
-    .test-card-desc{font-size:13px;color:var(--muted);line-height:1.5;}
-    .test-card-arrow{font-size:18px;color:rgba(148,245,255,.4);}
-    .test-modules{
-      background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:10px;padding:.75rem 1rem;margin-bottom:14px;
-      font-size:12px;color:rgba(148,245,255,.5);line-height:1.8;
-    }
-    .test-modules span{color:var(--muted);margin-right:4px;}
-
-    /* RUN PAGE */
-    #page-run{flex-direction:column;align-items:center;padding:96px 24px 120px;}
-    .run-inner{width:100%;max-width:580px;}
-    .phase-header{margin-bottom:1.5rem;}
-    .phase-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.45);margin-bottom:4px;}
-    .phase-title{font-size:1.2rem;font-weight:600;color:var(--accent);}
-    .phase-desc{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5;}
-    .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
-    .top-label{font-size:13px;color:var(--muted);}
-    .timer-val{font-size:14px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;}
-    .timer-warn{color:var(--wrong);}
-    .progress-bar{height:2px;background:var(--border-soft);border-radius:2px;margin-bottom:1.5rem;}
-    .progress-fill{height:2px;background:var(--accent);border-radius:2px;transition:width .4s ease;box-shadow:0 0 8px var(--accent-soft);}
-    .question-box{
-      background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:14px;padding:2rem 1.5rem;text-align:center;
-      margin-bottom:1.25rem;min-height:120px;
-      display:flex;align-items:center;justify-content:center;
-    }
-    .question-text{font-size:1.15rem;font-weight:500;color:var(--text);line-height:1.5;white-space:pre-line;}
-    .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
-    .option-btn{
-      padding:13px 10px;border:1px solid var(--border-soft);
-      border-radius:10px;background:var(--surface);color:var(--text);
-      font-size:14px;font-family:inherit;cursor:pointer;transition:all .12s;line-height:1.3;
-    }
-    .option-btn:hover:not(:disabled){background:var(--surface-hover);border-color:var(--border);box-shadow:0 0 12px rgba(148,245,255,.1);}
-    .option-btn.correct{background:var(--correct-bg);border-color:var(--correct);color:var(--correct);}
-    .option-btn.wrong{background:var(--wrong-bg);border-color:var(--wrong);color:var(--wrong);}
-    .option-btn:disabled{cursor:default;}
-    .options-3{grid-template-columns:1fr 1fr 1fr;}
-    .hint-text{font-size:12px;color:rgba(148,245,255,.45);text-align:center;min-height:16px;font-style:italic;margin-bottom:.5rem;}
-    .difficulty-badge{
-      display:inline-block;font-size:10px;font-weight:600;
-      text-transform:uppercase;letter-spacing:.06em;
-      padding:2px 8px;border-radius:4px;margin-bottom:.75rem;
-    }
-    .diff-easy{background:rgba(74,222,128,.1);color:#4ade80;}
-    .diff-medium{background:rgba(250,204,21,.1);color:#facc15;}
-    .diff-hard{background:rgba(248,113,113,.1);color:#f87171;}
-
-    /* SVG spatial */
-    .spatial-svg{max-width:100%;height:auto;}
-    .svg-container{display:flex;justify-content:center;margin:0.5rem 0;}
-
-    /* Reaction */
-    .reaction-area{text-align:center;padding:2rem 0;}
-    .rt-circle{
-      width:120px;height:120px;border-radius:50%;
-      background:var(--surface);border:2px solid var(--border-soft);
-      display:inline-flex;align-items:center;justify-content:center;
-      cursor:pointer;font-size:13px;color:var(--muted);
-      font-weight:500;user-select:none;transition:all .1s;
-    }
-    .rt-circle.ready{background:var(--correct-bg);border-color:var(--correct);color:var(--correct);box-shadow:0 0 28px rgba(74,222,128,.3);}
-    .rt-circle.too-early{background:var(--wrong-bg);border-color:var(--wrong);color:var(--wrong);}
-    .rt-status{font-size:13px;color:var(--muted);margin-top:1rem;}
-    .rt-results{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:1rem;}
-    .rt-pill{
-      font-size:12px;padding:4px 12px;border-radius:20px;
-      background:var(--surface);border:1px solid var(--border-soft);color:var(--muted);
-    }
-    .rt-pill.done{border-color:var(--correct);color:var(--correct);}
-
-    /* Memory */
-    .seq-display{display:flex;justify-content:center;gap:10px;margin:1.5rem 0;flex-wrap:wrap;}
-    .seq-dot{
-      width:52px;height:52px;border-radius:50%;
-      background:var(--surface);border:1px solid var(--border-soft);
-      display:flex;align-items:center;justify-content:center;
-      font-size:18px;font-weight:600;color:var(--muted);transition:all .15s;
-    }
-    .seq-dot.lit{background:rgba(148,245,255,.12);border-color:var(--accent);color:var(--accent);box-shadow:0 0 14px rgba(148,245,255,.2);}
-    .seq-dot.correct-dot{background:var(--correct-bg);border-color:var(--correct);color:var(--correct);}
-    .seq-dot.wrong-dot{background:var(--wrong-bg);border-color:var(--wrong);color:var(--wrong);}
-    .seq-input-row{display:flex;justify-content:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap;}
-    .seq-btn{
-      width:48px;height:48px;border-radius:50%;
-      border:1px solid var(--border-soft);background:var(--surface);
-      font-size:16px;font-weight:600;cursor:pointer;
-      color:var(--text);font-family:inherit;transition:all .1s;
-    }
-    .seq-btn:hover{background:var(--surface-hover);border-color:var(--border);}
-    .mem-level-badge{
-      text-align:center;font-size:12px;color:rgba(148,245,255,.4);
-      margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em;
-    }
-
-    /* Stroop */
-    .stroop-word{font-size:40px;font-weight:700;text-align:center;padding:1.5rem 0;line-height:1;}
-
-    /* Buttons */
-    .btn{
-      display:inline-block;padding:10px 22px;border-radius:8px;
-      border:1px solid var(--border);background:var(--surface);
-      color:var(--text);font-size:14px;font-family:inherit;cursor:pointer;transition:all .15s;
-    }
-    .btn:hover{background:var(--surface-hover);border-color:rgba(148,245,255,.4);}
-    .btn-accent{background:rgba(148,245,255,.1);border-color:var(--accent-border);color:var(--accent);}
-    .btn-accent:hover{background:rgba(148,245,255,.18);}
-
-    /* RESULTS */
-    #page-results{flex-direction:column;align-items:center;padding:96px 24px 120px;}
-    .results-inner{width:100%;max-width:580px;}
-    .results-title{font-size:clamp(1.4rem,3vw,1.9rem);color:var(--accent);text-shadow:0 0 14px var(--accent-soft);margin-bottom:1.5rem;}
-    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
-    .stat-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;padding:1rem;text-align:center;}
-    .stat-val{font-size:22px;font-weight:700;color:var(--accent);text-shadow:0 0 8px var(--accent-soft);}
-    .stat-unit{font-size:12px;color:var(--muted);}
-    .stat-label{font-size:10px;color:rgba(148,245,255,.4);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;}
-    .results-section{margin-bottom:1.5rem;}
-    .results-section-title{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:rgba(148,245,255,.4);margin-bottom:12px;}
-    .domain-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;}
-    .domain-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:12px;padding:1rem 1.25rem;}
-    .domain-name{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
-    .domain-score{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px;}
-    .domain-label{font-size:11px;color:var(--muted);}
-    .domain-bar{height:3px;background:var(--border-soft);border-radius:2px;margin-top:8px;}
-    .domain-bar-fill{height:3px;border-radius:2px;}
-    .r-bar-wrap{margin-bottom:10px;}
-    .r-bar-row{display:flex;justify-content:space-between;margin-bottom:4px;}
-    .r-bar-row span{font-size:13px;color:var(--muted);}
-    .r-bar-row strong{font-size:13px;font-weight:600;color:var(--accent);}
-    .r-bar{height:4px;background:var(--border-soft);border-radius:2px;}
-    .r-bar-fill{height:4px;border-radius:2px;}
-    .interpret{
-      background:var(--surface);border:1px solid var(--border-soft);
-      border-radius:12px;padding:1.25rem 1.5rem;
-      font-size:13px;color:var(--muted);line-height:1.7;margin:0 0 1.5rem;
-    }
-    .interpret-title{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:rgba(148,245,255,.4);margin-bottom:8px;}
-    .interpret p{margin-bottom:.75rem;}
-    .interpret p:last-child{margin-bottom:0;}
-    .interpret strong{color:var(--text);}
-    .interpret em{color:rgba(148,245,255,.35);font-size:12px;}
-    .percentile-note{
-      background:rgba(148,245,255,.05);border:1px solid var(--border);
-      border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;
-      font-size:12px;color:rgba(148,245,255,.6);line-height:1.6;
-    }
-    .divider{border:none;border-top:1px solid var(--border-soft);margin:1.5rem 0;}
-    .btn-row{display:flex;gap:10px;flex-wrap:wrap;}
-
-    footer{
-      position:fixed;bottom:22px;left:0;right:0;
-      display:flex;justify-content:center;gap:14px;
-      z-index:2;font-size:.95rem;color:var(--muted);padding:0 16px;text-align:center;
-    }
-    footer a{color:var(--accent);text-decoration:none;transition:opacity .25s;}
-    footer a:hover{opacity:.8;}
-
-    @media(max-width:500px){
-      .stat-grid{grid-template-columns:1fr 1fr;}
-      .domain-grid{grid-template-columns:1fr;}
-      .options{grid-template-columns:1fr;}
-      .options-3{grid-template-columns:1fr 1fr;}
-      header.brand span{display:none;}
-    }
+    .page.active{display:flex;flex-direction:column;}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(15,23,42,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1);}
+    .nb{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;}
+    .nb img{height:36px;filter:drop-shadow(0 0 6px var(--as));}
+    .nb span{font-weight:700;font-size:1.1rem;color:#e8f3ff;letter-spacing:.3px;}
+    .nr{display:flex;align-items:center;gap:12px;}
+    .nu{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);}
+    .av{width:32px;height:32px;border-radius:50%;background:var(--as);border:1px solid var(--ab);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--accent);overflow:hidden;}
+    .av img{width:32px;height:32px;border-radius:50%;object-fit:cover;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;border:1px solid var(--b1);background:var(--s1);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap;}
+    .btn:hover{background:var(--s2);border-color:var(--ba);}
+    .bta{background:rgba(148,245,255,.1);border-color:var(--ab);color:var(--accent);}
+    .bta:hover{background:rgba(148,245,255,.18);}
+    .btp{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600;font-size:14px;box-shadow:0 0 20px rgba(148,245,255,.2);}
+    .btp:hover{background:#7eeeff;box-shadow:0 0 28px rgba(148,245,255,.35);}
+    .btg{background:white;color:#1f2937;border-color:#d1d5db;font-weight:500;}
+    .btg:hover{background:#f9fafb;}
+    .btd{border-color:rgba(248,113,113,.3);color:var(--no);}
+    .btd:hover{background:var(--nob);}
+    .btlg{padding:12px 28px;font-size:15px;}
+    .btsm{padding:6px 14px;font-size:12px;}
+    #page-home{align-items:center;justify-content:center;padding:64px 24px 80px;text-align:center;}
+    .hero{max-width:760px;margin:0 auto;}
+    .eyebrow{display:inline-block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);background:var(--as);border:1px solid var(--ab);padding:5px 14px;border-radius:20px;margin-bottom:1.5rem;}
+    .htitle{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-bottom:1.25rem;background:linear-gradient(135deg,#e2e8f0 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .hsub{font-size:clamp(1rem,1.8vw,1.2rem);color:var(--muted);line-height:1.7;max-width:560px;margin:0 auto 2.5rem;}
+    .hctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:4rem;}
+    .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;text-align:left;}
+    .fc{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.25rem 1.4rem;transition:border-color .2s,background .2s;}
+    .fc:hover{background:var(--s2);border-color:var(--ba);}
+    .fci{font-size:20px;margin-bottom:10px;}
+    .fct{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px;letter-spacing:.02em;}
+    .fcd{font-size:12px;color:var(--muted);line-height:1.55;}
+    #page-auth{align-items:center;justify-content:center;padding:64px 24px;}
+    .acard{width:100%;max-width:420px;background:var(--s1);border:1px solid var(--b1);border-radius:18px;padding:2rem 2.25rem;}
+    .alogo{display:flex;align-items:center;gap:10px;margin-bottom:1.75rem;}
+    .alogo img{height:36px;filter:drop-shadow(0 0 6px var(--as));}
+    .alogo span{font-weight:700;font-size:1.1rem;color:#e8f3ff;}
+    .atitle{font-size:1.3rem;font-weight:600;color:var(--text);margin-bottom:.4rem;}
+    .asub{font-size:13px;color:var(--muted);margin-bottom:1.75rem;}
+    .adiv{display:flex;align-items:center;gap:12px;margin:1.25rem 0;font-size:12px;color:rgba(255,255,255,.2);}
+    .adiv::before,.adiv::after{content:"";flex:1;height:1px;background:var(--b1);}
+    .fg{margin-bottom:1rem;}
+    .fl{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;letter-spacing:.03em;}
+    .fi{width:100%;padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid var(--b1);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;transition:border-color .15s;outline:none;}
+    .fi:focus{border-color:var(--ab);box-shadow:0 0 0 3px rgba(148,245,255,.08);}
+    .fi::placeholder{color:rgba(255,255,255,.2);}
+    .aerr{font-size:12px;color:var(--no);background:var(--nob);border:1px solid rgba(248,113,113,.2);border-radius:6px;padding:8px 12px;margin-bottom:1rem;display:none;}
+    .asw{font-size:13px;color:var(--muted);margin-top:1.25rem;text-align:center;}
+    .asw a{color:var(--accent);cursor:pointer;text-decoration:none;}
+    .asw a:hover{text-decoration:underline;}
+    #page-dashboard{padding:64px 0 80px;}
+    .di{max-width:900px;margin:0 auto;padding:2rem 24px 0;}
+    .dg{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;flex-wrap:wrap;gap:12px;}
+    .dg h2{font-size:1.6rem;font-weight:600;color:var(--text);margin-bottom:.2rem;}
+    .dg p{font-size:14px;color:var(--muted);}
+    .sl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.4);margin-bottom:12px;font-weight:600;}
+    .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:2rem;}
+    .sc{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.1rem 1.25rem;}
+    .sv{font-size:26px;font-weight:700;color:var(--accent);line-height:1.1;margin-bottom:2px;}
+    .su{font-size:13px;color:var(--muted);}
+    .slb{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:rgba(148,245,255,.35);margin-top:4px;}
+    .blc{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:1.5rem;margin-bottom:2rem;}
+    .blh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px;}
+    .blds{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;}
+    .bld{background:rgba(255,255,255,.03);border:1px solid var(--b1);border-radius:10px;padding:.9rem 1rem;}
+    .bdl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;}
+    .bdv{font-size:20px;font-weight:700;color:var(--text);}
+    .bds{font-size:11px;color:var(--muted);margin-top:2px;}
+    .bdb{height:3px;background:var(--b1);border-radius:2px;margin-top:8px;}
+    .bdbf{height:3px;border-radius:2px;}
+    .hcard{background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:2rem;}
+    .hh{padding:1.25rem 1.5rem;border-bottom:1px solid var(--b1);}
+    .hr{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;transition:background .15s;}
+    .hr:last-child{border-bottom:none;}
+    .hr:hover{background:var(--s2);}
+    .ht{font-weight:500;color:var(--text);}
+    .hd{color:var(--muted);font-size:12px;}
+    .hs{font-weight:600;color:var(--accent);background:var(--as);padding:3px 10px;border-radius:6px;font-size:12px;}
+    .he{padding:2rem;text-align:center;color:var(--muted);font-size:13px;}
+    .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:2rem;}
+    .tlc{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:1.5rem;cursor:pointer;transition:all .2s;}
+    .tlc:hover{background:var(--s2);border-color:var(--ba);transform:translateY(-2px);}
+    .tlci{font-size:28px;margin-bottom:12px;}
+    .tlcb{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:20px;margin-bottom:8px;}
+    .bb{background:rgba(148,245,255,.1);color:var(--accent);}
+    .bg{background:rgba(74,222,128,.1);color:var(--ok);}
+    .tlct{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;}
+    .tlcd{font-size:12px;color:var(--muted);line-height:1.55;}
+    .tlcm{font-size:11px;color:rgba(148,245,255,.35);margin-top:10px;line-height:1.7;}
+    #page-run{align-items:center;justify-content:flex-start;padding:80px 24px 80px;}
+    .ri{width:100%;max-width:580px;margin:0 auto;}
+    .bb2{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:inherit;margin-bottom:1.75rem;transition:color .2s;padding:0;}
+    .bb2:hover{color:var(--accent);}
+    .ph{margin-bottom:1.5rem;}
+    .pl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.4);margin-bottom:4px;}
+    .pt{font-size:1.25rem;font-weight:600;color:var(--accent);}
+    .pd{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5;}
+    .tr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
+    .tl{font-size:13px;color:var(--muted);}
+    .tv{font-size:14px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;}
+    .tw{color:var(--no);}
+    .pb{height:2px;background:var(--b1);border-radius:2px;margin-bottom:1.5rem;}
+    .pf{height:2px;background:var(--accent);border-radius:2px;transition:width .4s;box-shadow:0 0 8px var(--as);}
+    .qb{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:2rem 1.5rem;text-align:center;margin-bottom:1.25rem;min-height:120px;display:flex;align-items:center;justify-content:center;}
+    .qt{font-size:1.15rem;font-weight:500;color:var(--text);line-height:1.5;white-space:pre-line;}
+    .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;}
+    .opts3{grid-template-columns:1fr 1fr 1fr;}
+    .ob{padding:13px 10px;border:1px solid var(--b1);border-radius:10px;background:var(--s1);color:var(--text);font-size:14px;font-family:inherit;cursor:pointer;transition:all .12s;line-height:1.3;}
+    .ob:hover:not(:disabled){background:var(--s2);border-color:var(--ba);}
+    .ob.correct{background:var(--okb);border-color:var(--ok);color:var(--ok);}
+    .ob.wrong{background:var(--nob);border-color:var(--no);color:var(--no);}
+    .ob:disabled{cursor:default;}
+    .db{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:4px;margin-bottom:.75rem;}
+    .de{background:rgba(74,222,128,.1);color:var(--ok);}
+    .dm{background:rgba(250,204,21,.1);color:var(--am);}
+    .dh{background:rgba(248,113,113,.1);color:var(--no);}
+    .ht2{font-size:12px;color:rgba(148,245,255,.4);text-align:center;min-height:16px;font-style:italic;}
+    .ra{text-align:center;padding:2rem 0;}
+    .rtc{width:120px;height:120px;border-radius:50%;background:var(--s1);border:2px solid var(--b1);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--muted);font-weight:500;user-select:none;transition:all .1s;}
+    .rtc.ready{background:var(--okb);border-color:var(--ok);color:var(--ok);box-shadow:0 0 28px rgba(74,222,128,.25);}
+    .rtc.early{background:var(--nob);border-color:var(--no);color:var(--no);}
+    .rts{font-size:13px;color:var(--muted);margin-top:1rem;}
+    .rtp{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:.75rem;}
+    .rtpi{font-size:12px;padding:4px 12px;border-radius:20px;background:var(--s1);border:1px solid var(--b1);color:var(--muted);}
+    .rtpi.done{border-color:var(--ok);color:var(--ok);}
+    .sd{display:flex;justify-content:center;gap:10px;margin:1.5rem 0;flex-wrap:wrap;}
+    .sdot{width:52px;height:52px;border-radius:50%;background:var(--s1);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;color:var(--muted);transition:all .15s;}
+    .sdot.lit{background:rgba(148,245,255,.1);border-color:var(--accent);color:var(--accent);box-shadow:0 0 12px rgba(148,245,255,.2);}
+    .sdot.cd{background:var(--okb);border-color:var(--ok);color:var(--ok);}
+    .sdot.wd{background:var(--nob);border-color:var(--no);color:var(--no);}
+    .sir{display:flex;justify-content:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap;}
+    .sb{width:48px;height:48px;border-radius:50%;border:1px solid var(--b1);background:var(--s1);font-size:16px;font-weight:600;cursor:pointer;color:var(--text);font-family:inherit;transition:all .1s;}
+    .sb:hover{background:var(--s2);border-color:var(--ba);}
+    .mli{text-align:center;font-size:12px;color:rgba(148,245,255,.4);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em;}
+    .sw2{font-size:40px;font-weight:700;text-align:center;padding:1.5rem 0;line-height:1;}
+    #page-results{align-items:center;justify-content:flex-start;padding:80px 24px 80px;}
+    .resi{width:100%;max-width:620px;margin:0 auto;}
+    .rh{margin-bottom:1.75rem;}
+    .rt2{font-size:1.7rem;font-weight:700;color:var(--accent);margin-bottom:.25rem;}
+    .rsub{font-size:13px;color:var(--muted);}
+    .rsg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.75rem;}
+    .rs{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:1rem;text-align:center;}
+    .rsv{font-size:22px;font-weight:700;color:var(--accent);}
+    .rsu{font-size:12px;color:var(--muted);}
+    .rsl{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:rgba(148,245,255,.35);margin-top:3px;}
+    .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.75rem;}
+    .dc{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:1rem 1.1rem;}
+    .dn{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px;}
+    .dsc{font-size:20px;font-weight:700;color:var(--text);}
+    .dl{font-size:11px;color:var(--muted);margin-top:2px;}
+    .dbar{height:3px;background:var(--b1);border-radius:2px;margin-top:8px;}
+    .dbarf{height:3px;border-radius:2px;}
+    .rbl{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:rgba(148,245,255,.35);margin-bottom:10px;}
+    .rbw{margin-bottom:10px;}
+    .rbr{display:flex;justify-content:space-between;margin-bottom:4px;}
+    .rbr span{font-size:13px;color:var(--muted);}
+    .rbr strong{font-size:13px;font-weight:600;color:var(--accent);}
+    .rb{height:4px;background:var(--b1);border-radius:2px;}
+    .rbf{height:4px;border-radius:2px;}
+    .ib{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:1.25rem 1.5rem;font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1.5rem;}
+    .ib strong{color:var(--text);}
+    .ib em{color:rgba(148,245,255,.35);font-size:12px;}
+    .bban{background:rgba(148,245,255,.06);border:1px solid var(--ab);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:13px;color:rgba(148,245,255,.8);line-height:1.6;}
+    .div{border:none;border-top:1px solid var(--b1);margin:1.5rem 0;}
+    .br{display:flex;gap:10px;flex-wrap:wrap;}
+    .spin{width:40px;height:40px;border-radius:50%;border:2px solid var(--b1);border-top-color:var(--accent);animation:sp .8s linear infinite;margin:0 auto;}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    .ls{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--bg);flex-direction:column;gap:16px;}
+    .ls p{font-size:13px;color:var(--muted);}
+    footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;gap:14px;z-index:5;font-size:13px;color:var(--muted);padding:12px 16px;background:linear-gradient(to top,rgba(15,23,42,1),rgba(15,23,42,0));}
+    footer a{color:var(--accent);text-decoration:none;transition:opacity .2s;}
+    footer a:hover{opacity:.75;}
+    @media(max-width:520px){.rsg{grid-template-columns:1fr 1fr;}.opts{grid-template-columns:1fr;}.opts3{grid-template-columns:1fr 1fr;}.nb span{display:none;}.sgrid{grid-template-columns:1fr 1fr;}}
   </style>
 </head>
 <body>
 <div class="glow" aria-hidden="true"></div>
-<header class="brand">
-  <img src="assets/cognistate-logo.png" alt="CogniState logo" />
-  <span>CogniState</span>
-</header>
+<div class="ls" id="ls"><div class="spin"></div><p>Laster CogniState...</p></div>
+
+<nav id="mn" style="display:none">
+  <div class="nb" onclick="showHome()">
+    <img src="assets/cognistate-logo.png" alt="CogniState" />
+    <span>CogniState</span>
+  </div>
+  <div class="nr" id="nr">
+    <button class="btn btsm" onclick="showAuth('login')">Logg inn</button>
+    <button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>
+  </div>
+</nav>
 
 <!-- HOME -->
-<div id="page-home" class="page active">
-  <section class="hero">
-    <h1 class="title">CogniState</h1>
-    <p class="tagline">CogniState arbeider med å <strong>kartlegge og forbedre beslutningsevne</strong> gjennom moderne teknologi, datadrevet innsikt og kognitiv analyse.</p>
-    <div class="hero-buttons">
-      <button class="cta-primary" onclick="goTo('page-tests')">Start kognitiv test</button>
-      <a class="cta-secondary" href="mailto:contact@cognistate.io">Kontakt oss</a>
+<div id="page-home" class="page">
+  <div style="max-width:860px;margin:0 auto;padding:80px 24px 80px;text-align:center;width:100%">
+    <div class="eyebrow">Kognitiv analyse &amp; kartlegging</div>
+    <h1 class="htitle">Forstå din<br>kognitive kapasitet</h1>
+    <p class="hsub">CogniState kartlegger beslutningsevne, arbeidsminne og analytisk tenkning — og gir deg datadrevet innsikt over tid.</p>
+    <div class="hctas">
+      <button class="btn btp btlg" onclick="showAuth('register')">Start gratis</button>
+      <button class="btn btlg" onclick="showAuth('login')">Logg inn</button>
     </div>
-    <div class="feature-grid">
-      <div class="feature-card"><div class="feature-icon">🧩</div><div class="feature-title">Logikk &amp; resonnering</div><div class="feature-desc">Induktiv og deduktiv tenkning, tallmønstre og abstrakt problemløsning.</div></div>
-      <div class="feature-card"><div class="feature-icon">🔷</div><div class="feature-title">Romlig tenkning</div><div class="feature-desc">Mental rotasjon og visuospatial prosessering — avgjørende for tekniske yrker.</div></div>
-      <div class="feature-card"><div class="feature-icon">💾</div><div class="feature-title">Arbeidsminne</div><div class="feature-desc">Adaptiv sekvenstest som måler din korttidskapasitet nøyaktig.</div></div>
-      <div class="feature-card"><div class="feature-icon">🎯</div><div class="feature-title">Impulskontroll</div><div class="feature-desc">Stroop-interferens og reaksjonstid avdekker kognitiv kontroll under press.</div></div>
+    <div class="fgrid">
+      <div class="fc"><div class="fci">🧩</div><div class="fct">Logikk &amp; resonnering</div><div class="fcd">20 kalibrerte oppgaver innen induktiv og deduktiv tenkning, tallmønstre og abstrakt problemløsning.</div></div>
+      <div class="fc"><div class="fci">🔷</div><div class="fct">Romlig tenkning</div><div class="fcd">Mental rotasjon og visuospatial prosessering — avgjørende for tekniske og analytiske yrker.</div></div>
+      <div class="fc"><div class="fci">💾</div><div class="fct">Arbeidsminne</div><div class="fcd">Adaptiv sekvenstest som tilpasser seg deg og måler minnespennkapasitet nøyaktig.</div></div>
+      <div class="fc"><div class="fci">📈</div><div class="fct">Historikk &amp; utvikling</div><div class="fcd">Alle resultater lagres sikkert. Baseline registreres automatisk og du kan spore utviklingen din.</div></div>
     </div>
-  </section>
+  </div>
 </div>
 
-<!-- TESTS -->
-<div id="page-tests" class="page">
-  <div class="tests-inner">
-    <button class="back-btn" onclick="goTo('page-home')">← Tilbake</button>
-    <h2 class="section-title">Velg test</h2>
-    <p class="section-sub">Begge testene er anonyme. Ingen data lagres eller sendes noen steder.</p>
+<!-- AUTH -->
+<div id="page-auth" class="page">
+  <div class="acard">
+    <div class="alogo"><img src="assets/cognistate-logo.png" alt="CogniState" /><span>CogniState</span></div>
+    <h2 class="atitle" id="at">Logg inn</h2>
+    <p class="asub" id="as2">Velkommen tilbake.</p>
+    <div class="aerr" id="aerr"></div>
+    <button class="btn btg" style="width:100%;justify-content:center;gap:10px;margin-bottom:.5rem" onclick="loginGoogle()">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Fortsett med Google
+    </button>
+    <div class="adiv">eller</div>
+    <div class="fg"><label class="fl">E-postadresse</label><input class="fi" type="email" id="ae" placeholder="navn@eksempel.no" /></div>
+    <div class="fg" id="ang" style="display:none"><label class="fl">Fullt navn</label><input class="fi" type="text" id="an" placeholder="Ditt navn" /></div>
+    <div class="fg"><label class="fl">Passord</label><input class="fi" type="password" id="ap" placeholder="Minimum 6 tegn" /></div>
+    <button class="btn btp" style="width:100%;justify-content:center" id="asb" onclick="submitAuth()">Logg inn</button>
+    <div class="asw" id="asw">Ingen konto? <a onclick="toggleAuth()">Registrer deg gratis</a></div>
+  </div>
+</div>
 
-    <div class="test-card" onclick="startLevelTest()">
-      <div class="test-card-icon">🧠</div>
-      <div class="test-card-body">
-        <span class="test-card-badge badge-blue">Kognitiv profil · ca. 10 min</span>
-        <div class="test-card-title">Nivåanalyse</div>
-        <div class="test-card-desc">20 oppgaver med stigende vanskelighetsgrad innen logikk, tallresonnering og romlig tenkning. Gir en domenebasert kognitiv profil.</div>
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page">
+  <div class="di">
+    <div class="dg">
+      <div><h2 id="dn2">Hei!</h2><p id="dp">Her er din kognitive oversikt.</p></div>
+    </div>
+    <div class="sl" style="margin-bottom:14px">Start en test</div>
+    <div class="tgrid">
+      <div class="tlc" onclick="startLevelTest()">
+        <div class="tlci">🧠</div>
+        <span class="tlcb bb">Kognitiv profil · ca. 10 min</span>
+        <div class="tlct">Nivåanalyse</div>
+        <div class="tlcd">20 oppgaver med stigende vanskelighetsgrad. Gir full domeneprofil og baseline.</div>
+        <div class="tlcm">Logikk · Tallresonnering · Romlig · Abstrakt</div>
       </div>
-      <span class="test-card-arrow">→</span>
-    </div>
-    <div class="test-modules">
-      <span>Inneholder:</span> Induktiv logikk · Deduktiv resonnering · Tallmønstre · Romlig rotasjon · Abstrakt tenkning
-    </div>
-
-    <div class="test-card" onclick="startNowTest()">
-      <div class="test-card-icon">⚡</div>
-      <div class="test-card-body">
-        <span class="test-card-badge badge-green">Dagsform · ca. 4 min</span>
-        <div class="test-card-title">Kognitiv ytelse nå</div>
-        <div class="test-card-desc">Rask vurdering av reaksjonstid, arbeidsminnekapasitet og konsentrasjon. Ideell for daglig sjekk.</div>
+      <div class="tlc" onclick="startNowTest()">
+        <div class="tlci">⚡</div>
+        <span class="tlcb bg">Dagsform · ca. 4 min</span>
+        <div class="tlct">Kognitiv ytelse nå</div>
+        <div class="tlcd">Rask vurdering av reaksjonstid, arbeidsminne og konsentrasjon.</div>
+        <div class="tlcm">Reaksjonstid · Arbeidsminne · Stroop</div>
       </div>
-      <span class="test-card-arrow">→</span>
     </div>
-    <div class="test-modules">
-      <span>Inneholder:</span> Reaksjonstid (5 forsøk) · Adaptivt arbeidsminne · Stroop-interferens (12 runder)
+    <div id="dbs" style="display:none">
+      <div class="sl">Baseline</div>
+      <div class="blc" id="dbc"></div>
     </div>
-
-    <p style="font-size:12px;color:rgba(255,255,255,.2);margin-top:1.5rem;line-height:1.7;">⚠ CogniState-testene er ikke klinisk validerte diagnostiske verktøy. De er basert på etablerte kognitive paradigmer og gir en indikasjon — ikke en diagnose. Søk fagprofesjonell vurdering ved behov.</p>
+    <div id="dss" style="display:none">
+      <div class="sl">Oversikt</div>
+      <div class="sgrid" id="dsg"></div>
+    </div>
+    <div class="sl">Testhistorikk</div>
+    <div class="hcard">
+      <div class="hh"><div class="sl" style="margin-bottom:0">Siste resultater</div></div>
+      <div id="dh"><div class="he">Ingen tester ennå. Start din første test ovenfor!</div></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:3rem">
+      <button class="btn btd btsm" onclick="logout()">Logg ut</button>
+    </div>
   </div>
 </div>
 
 <!-- RUN -->
 <div id="page-run" class="page">
-  <div class="run-inner">
-    <button class="back-btn" onclick="abortTest()">← Avbryt</button>
-
-    <!-- Nivå-test -->
+  <div class="ri">
+    <button class="bb2" onclick="abortTest()">← Avbryt</button>
     <div id="run-level" style="display:none">
-      <div class="top-row">
-        <span class="top-label">Oppgave <span id="lq-num">1</span> av <span id="lq-total">20</span></span>
-        <span class="timer-val" id="lq-timer">2:30</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" id="lq-progress" style="width:2%"></div></div>
-      <div id="lq-diff-badge"></div>
-      <div class="question-box" id="lq-qbox"><div class="question-text" id="lq-question"></div></div>
-      <div class="options" id="lq-options"></div>
-      <p class="hint-text" id="lq-hint"></p>
+      <div class="tr"><span class="tl">Oppgave <span id="lqn">1</span> av 20</span><span class="tv" id="lqt">2:30</span></div>
+      <div class="pb"><div class="pf" id="lqp" style="width:2%"></div></div>
+      <div id="lqd"></div>
+      <div class="qb"><div class="qt" id="lqq"></div></div>
+      <div class="opts" id="lqo"></div>
+      <p class="ht2" id="lqh"></p>
     </div>
-
-    <!-- Reaksjonstid -->
     <div id="run-reaction" style="display:none">
-      <div class="phase-header">
-        <div class="phase-label">Del 1 av 3</div>
-        <div class="phase-title">Reaksjonstid</div>
-        <div class="phase-desc">Trykk på sirkelen så fort den blir grønn. 5 forsøk — vi fjerner beste og dårligste og tar snittet av de 3 midterste.</div>
-      </div>
-      <div class="reaction-area">
-        <div class="rt-circle" id="rt-target" onclick="handleReaction()">Vent...</div>
-        <p class="rt-status" id="rt-status"></p>
-        <div class="rt-results" id="rt-results"></div>
-      </div>
+      <div class="ph"><div class="pl">Del 1 av 3</div><div class="pt">Reaksjonstid</div><div class="pd">Trykk på sirkelen så fort den blir grønn. 5 forsøk — trimmed mean av de 3 midterste.</div></div>
+      <div class="ra"><div class="rtc" id="rtc" onclick="handleReaction()">Vent...</div><p class="rts" id="rts"></p><div class="rtp" id="rtp"></div></div>
     </div>
-
-    <!-- Arbeidsminne -->
     <div id="run-memory" style="display:none">
-      <div class="phase-header">
-        <div class="phase-label">Del 2 av 3</div>
-        <div class="phase-title">Arbeidsminne</div>
-        <div class="phase-desc" id="mem-instruction">Se tallene som lyser opp — husk rekkefølgen. Sekvensen øker automatisk.</div>
-      </div>
-      <div class="mem-level-badge" id="mem-level-badge">Nivå 3</div>
-      <div class="seq-display" id="mem-display"></div>
-      <div class="seq-input-row" id="mem-input" style="display:none"></div>
-      <div style="text-align:center;margin-top:.75rem">
-        <button class="btn btn-accent" id="mem-btn" onclick="memNext()">Start</button>
-      </div>
+      <div class="ph"><div class="pl">Del 2 av 3</div><div class="pt">Arbeidsminne</div><div class="pd" id="mi">Husk tallrekkefølgen. Sekvensen tilpasser seg automatisk.</div></div>
+      <div class="mli" id="mlb">Nivå 3</div>
+      <div class="sd" id="mds"></div>
+      <div class="sir" id="mins" style="display:none"></div>
+      <div style="text-align:center;margin-top:.75rem"><button class="btn bta" id="mb" onclick="memNext()">Start</button></div>
     </div>
-
-    <!-- Stroop -->
     <div id="run-stroop" style="display:none">
-      <div class="phase-header">
-        <div class="phase-label">Del 3 av 3</div>
-        <div class="phase-title">Konsentrasjon — Stroop</div>
-        <div class="phase-desc">Velg <strong style="color:var(--text)">fargen ordet er skrevet i</strong>, ikke hva ordet betyr. Reager raskt og nøyaktig.</div>
-      </div>
-      <div class="progress-bar" style="margin-top:1rem">
-        <div class="progress-fill" id="st-progress" style="width:0%"></div>
-      </div>
-      <div class="question-box" style="min-height:130px">
-        <div class="stroop-word" id="st-word"></div>
-      </div>
-      <div class="options options-3" id="st-options"></div>
-      <p class="hint-text" id="st-count"></p>
+      <div class="ph"><div class="pl">Del 3 av 3</div><div class="pt">Konsentrasjon — Stroop</div><div class="pd">Velg <strong style="color:var(--text)">fargen ordet er skrevet i</strong>, ikke hva ordet betyr.</div></div>
+      <div class="pb" style="margin-top:1rem"><div class="pf" id="stp" style="width:0%"></div></div>
+      <div class="qb" style="min-height:130px"><div class="sw2" id="stw"></div></div>
+      <div class="opts opts3" id="sto"></div>
+      <p class="ht2" id="stc"></p>
     </div>
   </div>
 </div>
 
 <!-- RESULTS -->
 <div id="page-results" class="page">
-  <div class="results-inner">
-    <button class="back-btn" onclick="goTo('page-tests')">← Ny test</button>
-    <h2 class="results-title" id="res-title"></h2>
-    <div class="stat-grid" id="res-stats"></div>
-    <div class="domain-grid" id="res-domains"></div>
-    <div class="results-section">
-      <div class="results-section-title">Delresultater</div>
-      <div id="res-breakdown"></div>
-    </div>
-    <div class="percentile-note" id="res-percentile"></div>
-    <div class="interpret" id="res-interpret"></div>
-    <div class="divider"></div>
-    <div class="btn-row">
-      <button class="btn btn-accent" onclick="goTo('page-home')">Hjem</button>
-      <button class="btn" onclick="goTo('page-tests')">Ta en ny test</button>
+  <div class="resi">
+    <button class="bb2" onclick="goToDash()">← Dashboard</button>
+    <div class="rh"><div class="rt2" id="restit"></div><div class="rsub" id="ressub"></div></div>
+    <div class="bban" id="resbb" style="display:none"></div>
+    <div class="rsg" id="resst"></div>
+    <div class="dgrid" id="resdom"></div>
+    <div style="margin-bottom:1.25rem"><div class="rbl">Delresultater</div><div id="resbr"></div></div>
+    <div class="ib" id="resib"></div>
+    <div class="div"></div>
+    <div class="br">
+      <button class="btn bta" onclick="goToDash()">Dashboard</button>
+      <button class="btn" onclick="startLevelTest()">Nivåtest igjen</button>
+      <button class="btn" onclick="startNowTest()">Dagsformtest</button>
     </div>
   </div>
 </div>
 
 <footer>
-  <a href="https://instagram.com/cognistate" target="_blank" rel="noopener">Instagram: @cognistate</a>
-  <span>•</span>
+  <a href="https://instagram.com/cognistate" target="_blank" rel="noopener">@cognistate</a>
+  <span style="color:var(--b1)">•</span>
   <a href="mailto:contact@cognistate.io">contact@cognistate.io</a>
 </footer>
 
-<script>
-/* ===== NAVIGASJON ===== */
-function goTo(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app=initializeApp({apiKey:"AIzaSyCyx9X7Gg6WVpgEX5OrmGu1q31nXVnvaw0",authDomain:"cognistate.firebaseapp.com",projectId:"cognistate",storageBucket:"cognistate.firebasestorage.app",messagingSenderId:"671593867260",appId:"1:671593867260:web:93e3851b5652ef1c5bf479"});
+const auth=getAuth(app),db=getFirestore(app),gp=new GoogleAuthProvider();
+let cu=null,am='login';
+
+function goTo(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+window.showHome=()=>goTo('page-home');
+window.goToDash=()=>{loadDash();goTo('page-dashboard');};
+window.showAuth=(mode)=>{
+  am=mode;
+  document.getElementById('at').textContent=mode==='login'?'Logg inn':'Opprett konto';
+  document.getElementById('as2').textContent=mode==='login'?'Velkommen tilbake.':'Kom i gang — gratis.';
+  document.getElementById('asb').textContent=mode==='login'?'Logg inn':'Opprett konto';
+  document.getElementById('asb').disabled=false;
+  document.getElementById('ang').style.display=mode==='register'?'block':'none';
+  document.getElementById('asw').innerHTML=mode==='login'?'Ingen konto? <a onclick="toggleAuth()">Registrer deg gratis</a>':'Har du konto? <a onclick="toggleAuth()">Logg inn</a>';
+  document.getElementById('aerr').style.display='none';
+  goTo('page-auth');
+};
+window.toggleAuth=()=>window.showAuth(am==='login'?'register':'login');
+window.loginGoogle=async()=>{try{const r=await signInWithPopup(auth,gp);await ensureUser(r.user);}catch(e){showErr(e.message);}};
+window.submitAuth=async()=>{
+  const email=document.getElementById('ae').value.trim();
+  const pw=document.getElementById('ap').value;
+  const btn=document.getElementById('asb');
+  btn.textContent=am==='login'?'Logger inn...':'Oppretter...';btn.disabled=true;
+  try{
+    if(am==='login'){await signInWithEmailAndPassword(auth,email,pw);}
+    else{
+      const name=document.getElementById('an').value.trim();
+      const c=await createUserWithEmailAndPassword(auth,email,pw);
+      if(name)await updateProfile(c.user,{displayName:name});
+      await ensureUser(c.user,name);
+    }
+  }catch(e){showErr(fe(e.code));btn.textContent=am==='login'?'Logg inn':'Opprett konto';btn.disabled=false;}
+};
+window.logout=async()=>await signOut(auth);
+function showErr(m){const el=document.getElementById('aerr');el.textContent=m;el.style.display='block';}
+function fe(c){return({'auth/user-not-found':'Ingen konto med denne e-posten.','auth/wrong-password':'Feil passord.','auth/email-already-in-use':'E-posten er allerede i bruk.','auth/weak-password':'Passordet må være minst 6 tegn.','auth/invalid-email':'Ugyldig e-postadresse.','auth/invalid-credential':'Feil e-post eller passord.','auth/popup-closed-by-user':'Innlogging avbrutt.'}[c])||'Noe gikk galt. Prøv igjen.';}
+
+async function ensureUser(user,name){
+  const ref=doc(db,'users',user.uid);
+  const snap=await getDoc(ref);
+  if(!snap.exists())await setDoc(ref,{uid:user.uid,email:user.email,name:name||user.displayName||user.email.split('@')[0],createdAt:serverTimestamp(),baseline:null});
 }
-function abortTest(){clearInterval(lqTimer);goTo('page-tests');}
 
-/* ===== NIVÅ-TEST: 20 OPPGAVER ===== */
-// Vanskelighetsgrad: 1=lett, 2=middels, 3=hard
-// Kategorier: logic, number, spatial, deductive, abstract
+async function saveResult(type,data){
+  if(!cu)return;
+  await addDoc(collection(db,'results'),{uid:cu.uid,type,...data,createdAt:serverTimestamp()});
+  const uref=doc(db,'users',cu.uid);
+  const snap=await getDoc(uref);
+  const ud=snap.data();
+  if(!ud.baseline)await setDoc(uref,{baseline:{[type]:data}},{merge:true});
+  else if(!ud.baseline[type])await setDoc(uref,{baseline:{...ud.baseline,[type]:data}},{merge:true});
+}
+
+async function loadDash(){
+  if(!cu)return;
+  const snap=await getDoc(doc(db,'users',cu.uid));
+  const ud=snap.data();
+  const name=(ud?.name||cu.displayName||'deg').split(' ')[0];
+  document.getElementById('dn2').textContent='Hei, '+name+'!';
+  if(ud?.baseline){renderBaseline(ud.baseline);document.getElementById('dbs').style.display='block';}
+  const q=query(collection(db,'results'),where('uid','==',cu.uid),orderBy('createdAt','desc'),limit(10));
+  const res=await getDocs(q);
+  let total=0,bestL=0,bestN=0,rows=[];
+  res.forEach(d=>{
+    const dd=d.data();total++;
+    if(dd.type==='level'&&dd.pct>bestL)bestL=dd.pct;
+    if(dd.type==='now'&&dd.overall>bestN)bestN=dd.overall;
+    const date=dd.createdAt?.toDate?dd.createdAt.toDate():new Date();
+    rows.push({label:dd.type==='level'?'Nivåanalyse':'Dagsform',score:dd.type==='level'?dd.pct+'%':dd.overall+'/100',date:date.toLocaleDateString('no',{day:'numeric',month:'short',year:'numeric'})});
+  });
+  if(total>0){
+    document.getElementById('dss').style.display='block';
+    document.getElementById('dsg').innerHTML=`<div class="sc"><div class="sv">${total}</div><div class="slb">Tester gjennomført</div></div><div class="sc"><div class="sv">${bestL}<span class="su">%</span></div><div class="slb">Beste nivåscore</div></div><div class="sc"><div class="sv">${bestN}<span class="su">/100</span></div><div class="slb">Beste dagsform</div></div>`;
+  }
+  document.getElementById('dh').innerHTML=rows.length?rows.map(r=>`<div class="hr"><div class="ht">${r.label}</div><div class="hd">${r.date}</div><div class="hs">${r.score}</div></div>`).join(''):'<div class="he">Ingen tester ennå. Start din første test ovenfor!</div>';
+}
+
+function renderBaseline(bl){
+  let html='';
+  const colors={logic:'#94f5ff',number:'#4ade80',spatial:'#a78bfa',abstract:'#facc15'};
+  const cats={logic:'Logikk',number:'Tall',spatial:'Romlig',abstract:'Abstrakt'};
+  if(bl.level){
+    html+=`<div style="margin-bottom:1rem"><div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Nivåanalyse — baseline</div><div class="blds">${Object.entries(cats).map(([k,l])=>{if(!bl.level.domains||!bl.level.domains[k])return'';const p=bl.level.domains[k];return`<div class="bld"><div class="bdl">${l}</div><div class="bdv">${p}%</div><div class="bdb"><div class="bdbf" style="width:${p}%;background:${colors[k]}"></div></div></div>`;}).join('')}</div></div>`;
+  }
+  if(bl.now){
+    const b=bl.now;
+    html+=`<div><div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Dagsform — baseline</div><div class="blds"><div class="bld"><div class="bdl">Reaksjon</div><div class="bdv">${b.avgRT}ms</div></div><div class="bld"><div class="bdl">Minnespenn</div><div class="bdv">${b.memSpan}</div></div><div class="bld"><div class="bdl">Stroop</div><div class="bdv">${b.stroopPct}%</div></div><div class="bld"><div class="bdl">Total</div><div class="bdv">${b.overall}/100</div></div></div></div>`;
+  }
+  document.getElementById('dbc').innerHTML=`<div class="blh"><div><div style="font-size:15px;font-weight:600;color:var(--text)">Din kognitive baseline</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Første registrerte resultat per testtype</div></div></div>${html}`;
+}
+
+onAuthStateChanged(auth,async user=>{
+  document.getElementById('ls').style.display='none';
+  document.getElementById('mn').style.display='flex';
+  cu=user;
+  if(user){
+    const init=(user.displayName||user.email||'?')[0].toUpperCase();
+    document.getElementById('nr').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span>${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
+    await loadDash();goTo('page-dashboard');
+  } else {
+    document.getElementById('nr').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
+    goTo('page-home');
+  }
+});
+
+window.abortTest=()=>{clearInterval(lqTmr);goToDash();};
+
+/* NIVÅ-TEST */
 const LQ=[
-  // LETT (1-7)
-  {cat:'number',diff:1,
-   q:"Hvilken tall kommer neste?\n2 · 4 · 6 · 8 · ?",
-   opts:["9","10","11","12"],ans:1,
-   hint:"Aritmetisk rekke: +2 hvert ledd"},
-  {cat:'logic',diff:1,
-   q:"Alle fugler har vinger.\nSpurven er en fugl.\nHar spurven vinger?",
-   opts:["Ja","Nei","Vet ikke","Muligens"],ans:0,
-   hint:"Grunnleggende syllogisme: premiss → konklusjon"},
-  {cat:'number',diff:1,
-   q:"Hva er 25% av 80?",
-   opts:["15","20","25","30"],ans:1,
-   hint:"25% = ¼ · 80"},
-  {cat:'abstract',diff:1,
-   q:"Hvilket ord hører ikke hjemme?\nMars · Venus · Jupiter · Månen · Saturn",
-   opts:["Mars","Venus","Jupiter","Månen","Saturn"],ans:3,
-   hint:"Alle er planeter — unntatt én"},
-  {cat:'logic',diff:1,
-   q:"ABBA : BAAB\nCDDC : ?",
-   opts:["DCCD","CDDC","DCDC","CCDD"],ans:0,
-   hint:"Ytterste og innerste tegn byttes"},
-  {cat:'number',diff:1,
-   q:"En butikk gir 20% rabatt på en vare til 250 kr.\nHva er ny pris?",
-   opts:["180 kr","190 kr","200 kr","210 kr"],ans:2,
-   hint:"250 · 0,80 = ?"},
-  {cat:'spatial',diff:1,
-   q:"En terning har 6 sider.\nHvis motstående sider alltid summerer til 7 —\nhvilken side er mot siden med 2?",
-   opts:["3","4","5","6"],ans:2,
-   hint:"2 + ? = 7"},
-
-  // MIDDELS (8-14)
-  {cat:'number',diff:2,
-   q:"Hvilken tall kommer neste?\n1 · 1 · 2 · 3 · 5 · 8 · 13 · ?",
-   opts:["18","19","20","21"],ans:3,
-   hint:"Fibonacci: hvert tall er summen av de to forrige"},
-  {cat:'logic',diff:2,
-   q:"Ingen reptiler er varmblodige.\nAlle krokodiller er reptiler.\nKan krokodiller være varmblodige?",
-   opts:["Ja","Nei","Av og til","Vet ikke"],ans:1,
-   hint:"Universell negasjon overføres via syllogisme"},
-  {cat:'spatial',diff:2,
-   q:"Du ser et objekt ovenfra som en sirkel.\nFra siden ser du et rektangel.\nHva er objektet mest sannsynlig?",
-   opts:["Kule","Sylinder","Kjegle","Kube"],ans:1,
-   hint:"Topp: sirkel · Side: rektangel"},
-  {cat:'number',diff:2,
-   q:"3 malere maler 3 hus på 3 dager.\nHvor mange dager bruker 6 malere på 6 hus?",
-   opts:["3","6","9","12"],ans:0,
-   hint:"Kapasitet skalerer proporsjonalt — rate er konstant"},
-  {cat:'abstract',diff:2,
-   q:"Tallrekken: 2 · 6 · 12 · 20 · 30 · ?\nHva er neste tall?",
-   opts:["38","40","42","44"],ans:2,
-   hint:"Differansene: 4, 6, 8, 10 — hva er neste differanse?"},
-  {cat:'logic',diff:2,
-   q:"Hvis det regner, tar Maria paraply.\nMaria har ikke paraply.\nHva kan vi slutte?",
-   opts:["Det regner","Det regner ikke","Maria er inne","Ingenting sikkert"],ans:1,
-   hint:"Modus tollens: ¬Q → ¬P"},
-  {cat:'spatial',diff:2,
-   q:"Et kvadrat roteres 45° med klokken.\nDeretter speiles det om den vertikale aksen.\nHva er resultatet?",
-   opts:["En rombus pekende opp","Et kvadrat","En rombus pekende ned","Et speil av originalen"],ans:0,
-   hint:"Rotasjon gir rombus — speiling endrer retning men ikke form"},
-
-  // HARD (15-20)
-  {cat:'number',diff:3,
-   q:"Tallrekken: 1 · 4 · 9 · 16 · 25 · ?\nOg den neste etter det?",
-   opts:["36 · 49","34 · 47","36 · 48","35 · 49"],ans:0,
-   hint:"Perfekte kvadrattall: n²"},
-  {cat:'abstract',diff:3,
-   q:"Hvis KODE er 11-15-4-5 (A=1, B=2...)\nHva er LOGIKK?",
-   opts:["12-15-7-9-11-11","11-14-6-9-10-10","12-15-7-9-11-11","13-16-8-10-12-12"],ans:0,
-   hint:"L=12, O=15, G=7, I=9, K=11, K=11"},
-  {cat:'logic',diff:3,
-   q:"5 venner sitter i en rad.\nAna sitter ikke ved siden av Bo.\nCa sitter mellom Ana og Di.\nEd sitter ytterst til høyre.\nHvem sitter ytterst til venstre?",
-   opts:["Ana","Bo","Ca","Di"],ans:1,
-   hint:"Plasser Ed til høyre, Ca i midten mellom Ana og Di"},
-  {cat:'spatial',diff:3,
-   q:"En kube brettes ut til et kors-mønster (1 topp, 4 sider, 1 bunn).\nDu merker toppen med ★.\nHvilken side er direkte overfor ★ når den er brettet sammen?",
-   opts:["Den fremste","Den bakre","Bunnen","Den venstre"],ans:2,
-   hint:"I standard kors-utbretting er topp og bunn direkte overfor hverandre"},
-  {cat:'number',diff:3,
-   q:"Et tog reiser 120 km/t.\nEt annet tog reiser mot det med 80 km/t.\nDe starter 500 km fra hverandre.\nHvor mange minutter tar det før de møtes?",
-   opts:["150 min","160 min","175 min","180 min"],ans:0,
-   hint:"Relativ hastighet = 200 km/t · Tid = 500/200 timer"},
-  {cat:'abstract',diff:3,
-   q:"I en logisk sekvens:\nHvis A er sant, er B falskt.\nHvis B er falskt, er C sant.\nHvis C er sant, er D falskt.\nA er sant — hva er D?",
-   opts:["Sant","Falskt","Ukjent","Avhenger av E"],ans:1,
-   hint:"Kjed premissene: A→¬B → C → ¬D"}
+  {cat:'number',diff:1,q:"Hvilken tall kommer neste?\n2 · 4 · 6 · 8 · ?",opts:["9","10","11","12"],ans:1,hint:"Aritmetisk rekke: +2 hvert ledd"},
+  {cat:'logic',diff:1,q:"Alle fugler har vinger.\nSpurven er en fugl.\nHar spurven vinger?",opts:["Ja","Nei","Vet ikke","Muligens"],ans:0,hint:"Grunnleggende syllogisme"},
+  {cat:'number',diff:1,q:"Hva er 25% av 80?",opts:["15","20","25","30"],ans:1,hint:"25% = ¼ · 80"},
+  {cat:'abstract',diff:1,q:"Hvilket ord hører ikke hjemme?\nMars · Venus · Jupiter · Månen · Saturn",opts:["Mars","Venus","Jupiter","Månen","Saturn"],ans:3,hint:"Alle er planeter — unntatt én"},
+  {cat:'logic',diff:1,q:"ABBA : BAAB\nCDDC : ?",opts:["DCCD","CDDC","DCDC","CCDD"],ans:0,hint:"Ytterste og innerste tegn byttes"},
+  {cat:'number',diff:1,q:"En butikk gir 20% rabatt på kr 250.\nHva er ny pris?",opts:["180 kr","190 kr","200 kr","210 kr"],ans:2,hint:"250 · 0,80 = 200"},
+  {cat:'spatial',diff:1,q:"En terning: motstående sider summerer alltid til 7.\nHvilken side er mot siden med 2?",opts:["3","4","5","6"],ans:2,hint:"2 + 5 = 7"},
+  {cat:'number',diff:2,q:"Hvilken tall kommer neste?\n1 · 1 · 2 · 3 · 5 · 8 · 13 · ?",opts:["18","19","20","21"],ans:3,hint:"Fibonacci: sum av de to forrige"},
+  {cat:'logic',diff:2,q:"Ingen reptiler er varmblodige.\nAlle krokodiller er reptiler.\nKan krokodiller være varmblodige?",opts:["Ja","Nei","Av og til","Vet ikke"],ans:1,hint:"Universell negasjon via syllogisme"},
+  {cat:'spatial',diff:2,q:"Ovenfra: sirkel. Fra siden: rektangel.\nHva er objektet?",opts:["Kule","Sylinder","Kjegle","Kube"],ans:1,hint:"Topp: sirkel · Side: rektangel"},
+  {cat:'number',diff:2,q:"3 malere maler 3 hus på 3 dager.\nHvor mange dager bruker 6 malere på 6 hus?",opts:["3","6","9","12"],ans:0,hint:"Kapasitet skalerer proporsjonalt"},
+  {cat:'abstract',diff:2,q:"Tallrekken: 2 · 6 · 12 · 20 · 30 · ?\nHva er neste tall?",opts:["38","40","42","44"],ans:2,hint:"Differansene: 4, 6, 8, 10, 12..."},
+  {cat:'logic',diff:2,q:"Hvis det regner, tar Maria paraply.\nMaria har ikke paraply.\nHva kan vi slutte?",opts:["Det regner","Det regner ikke","Maria er inne","Ingenting sikkert"],ans:1,hint:"Modus tollens: ¬Q → ¬P"},
+  {cat:'spatial',diff:2,q:"Et kvadrat roteres 45° med klokken.\nDeretter speiles om vertikal akse.\nResultat?",opts:["Rombus pekende opp","Et kvadrat","Rombus pekende ned","Speil av original"],ans:0,hint:"Rotasjon → rombus, speiling endrer ikke form"},
+  {cat:'number',diff:3,q:"Tallrekken: 1 · 4 · 9 · 16 · 25 · ?\nOg den etter det?",opts:["36 · 49","34 · 47","36 · 48","35 · 49"],ans:0,hint:"Kvadrattall: n²"},
+  {cat:'abstract',diff:3,q:"KODE = 11-15-4-5 (A=1...)\nHva er LOGIKK?",opts:["12-15-7-9-11-11","11-14-6-9-10-10","12-16-8-10-12-12","13-16-8-10-12-12"],ans:0,hint:"L=12, O=15, G=7, I=9, K=11"},
+  {cat:'logic',diff:3,q:"5 venner i rad. Ana ikke ved siden av Bo.\nCa mellom Ana og Di. Ed ytterst høyre.\nHvem er ytterst venstre?",opts:["Ana","Bo","Ca","Di"],ans:1,hint:"Plasser Ed høyre, Ca mellom Ana og Di"},
+  {cat:'spatial',diff:3,q:"Kube brettes ut til kors (topp, 4 sider, bunn).\nDu merker toppen ★.\nHvilken side er direkte overfor ★?",opts:["Fremste","Bakre","Bunnen","Venstre"],ans:2,hint:"Topp og bunn er alltid overfor hverandre"},
+  {cat:'number',diff:3,q:"Tog A: 120 km/t. Tog B mot A: 80 km/t.\nStart: 500 km fra hverandre.\nMinutter til de møtes?",opts:["150 min","160 min","175 min","180 min"],ans:0,hint:"Relativ fart 200 km/t · 500/200 = 2,5 t = 150 min"},
+  {cat:'abstract',diff:3,q:"A → ¬B\n¬B → C\nC → ¬D\nA er sant — hva er D?",opts:["Sant","Falskt","Ukjent","Avhenger av E"],ans:1,hint:"Kjed: A→¬B→C→¬D"}
 ];
+let lqI=0,lqS=0,lqT=[],lqDS={logic:0,number:0,spatial:0,abstract:0},lqDT={logic:0,number:0,spatial:0,abstract:0},lqTmr=null,lqTL=150,lqA=false,lqSt=0;
 
-let lqIdx=0,lqScore=0,lqTimes=[],lqDomainScores={logic:0,number:0,spatial:0,abstract:0,deductive:0},
-    lqDomainTotal={logic:0,number:0,spatial:0,abstract:0,deductive:0},
-    lqTimer=null,lqTimeLeft=150,lqAnswered=false,lqStart=0;
-
-function startLevelTest(){
-  lqIdx=0;lqScore=0;lqTimes=[];
-  lqDomainScores={logic:0,number:0,spatial:0,abstract:0,deductive:0};
-  lqDomainTotal={logic:0,number:0,spatial:0,abstract:0,deductive:0};
+window.startLevelTest=()=>{
+  lqI=0;lqS=0;lqT=[];lqDS={logic:0,number:0,spatial:0,abstract:0};lqDT={logic:0,number:0,spatial:0,abstract:0};
   ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-level').style.display='block';
-  goTo('page-run');
-  showLQ();
-}
-
+  goTo('page-run');showLQ();
+};
 function showLQ(){
-  lqAnswered=false;
-  const q=LQ[lqIdx];
-  document.getElementById('lq-num').textContent=lqIdx+1;
-  document.getElementById('lq-total').textContent=LQ.length;
-  document.getElementById('lq-question').textContent=q.q;
-  document.getElementById('lq-hint').textContent='';
-  document.getElementById('lq-progress').style.width=Math.max(2,Math.round((lqIdx/LQ.length)*100))+'%';
-  const db=document.getElementById('lq-diff-badge');
-  db.innerHTML=q.diff===1?'<span class="difficulty-badge diff-easy">Lett</span>':
-    q.diff===2?'<span class="difficulty-badge diff-medium">Middels</span>':
-    '<span class="difficulty-badge diff-hard">Krevende</span>';
-  const opts=document.getElementById('lq-options');
-  opts.className='options'+(q.opts.length===3?' options-3':'');
-  opts.innerHTML='';
-  q.opts.forEach((o,i)=>{
-    const b=document.createElement('button');
-    b.className='option-btn';b.textContent=o;
-    b.onclick=()=>answerLQ(i,b);
-    opts.appendChild(b);
+  lqA=false;const q=LQ[lqI];
+  document.getElementById('lqn').textContent=lqI+1;
+  document.getElementById('lqq').textContent=q.q;
+  document.getElementById('lqh').textContent='';
+  document.getElementById('lqp').style.width=Math.max(2,Math.round((lqI/LQ.length)*100))+'%';
+  document.getElementById('lqd').innerHTML=q.diff===1?'<span class="db de">Lett</span>':q.diff===2?'<span class="db dm">Middels</span>':'<span class="db dh">Krevende</span>';
+  const opts=document.getElementById('lqo');
+  opts.className='opts'+(q.opts.length===3?' opts3':'');opts.innerHTML='';
+  q.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>ansLQ(i,b);opts.appendChild(b);});
+  lqTL=150;lqSt=Date.now();clearInterval(lqTmr);lqTmr=setInterval(()=>{lqTL--;updLQT();if(lqTL<=0){clearInterval(lqTmr);nxtLQ();}},1000);updLQT();
+}
+function updLQT(){const m=Math.floor(lqTL/60),s=lqTL%60;const el=document.getElementById('lqt');el.textContent=m+':'+(s<10?'0':'')+s;el.className=lqTL<=20?'tv tw':'tv';}
+function ansLQ(i,btn){
+  if(lqA)return;lqA=true;clearInterval(lqTmr);
+  lqT.push((Date.now()-lqSt)/1000);
+  const q=LQ[lqI];lqDT[q.cat]=(lqDT[q.cat]||0)+1;
+  document.querySelectorAll('.ob').forEach(b=>b.disabled=true);
+  if(i===q.ans){lqS++;lqDS[q.cat]=(lqDS[q.cat]||0)+1;btn.classList.add('correct');}
+  else{btn.classList.add('wrong');document.querySelectorAll('.ob')[q.ans].classList.add('correct');}
+  document.getElementById('lqh').textContent=q.hint;setTimeout(nxtLQ,1400);
+}
+function nxtLQ(){lqI++;if(lqI>=LQ.length)showLvlRes();else showLQ();}
+async function showLvlRes(){
+  const pct=Math.round((lqS/LQ.length)*100);
+  const avg=lqT.length?Math.round(lqT.reduce((a,b)=>a+b,0)/lqT.length):0;
+  const iq=pct>=95?'~130+':pct>=85?'~120–130':pct>=70?'~110–120':pct>=55?'~100–110':pct>=40?'~90–100':'~under 90';
+  const cats={logic:'Logikk',number:'Tallresonnering',spatial:'Romlig',abstract:'Abstrakt'};
+  const colors={logic:'#94f5ff',number:'#4ade80',spatial:'#a78bfa',abstract:'#facc15'};
+  let dh='',dbr='',domains={},str=[],dev=[];
+  Object.entries(cats).forEach(([k,l])=>{
+    if(!lqDT[k])return;
+    const dp=Math.round((lqDS[k]/lqDT[k])*100);domains[k]=dp;
+    const dl=dp>=80?'Sterk':dp>=60?'Over snitt':dp>=40?'Gjennomsnitt':'Utviklingspotensial';
+    dh+=`<div class="dc"><div class="dn">${l}</div><div class="dsc">${dp}<span style="font-size:13px;color:var(--muted)">%</span></div><div class="dl">${dl} · ${lqDS[k]}/${lqDT[k]}</div><div class="dbar"><div class="dbarf" style="width:${dp}%;background:${colors[k]}"></div></div></div>`;
+    dbr+=rBar(l+' — '+dl,dp,colors[k]);
+    if(dp>=70)str.push(l.toLowerCase());else if(dp<50)dev.push(l.toLowerCase());
   });
-  lqTimeLeft=150;lqStart=Date.now();
-  clearInterval(lqTimer);
-  lqTimer=setInterval(tickLQ,1000);
-  updateLQTimer();
-}
-
-function tickLQ(){
-  lqTimeLeft--;
-  updateLQTimer();
-  if(lqTimeLeft<=0){clearInterval(lqTimer);nextLQ();}
-}
-function updateLQTimer(){
-  const m=Math.floor(lqTimeLeft/60),s=lqTimeLeft%60;
-  const el=document.getElementById('lq-timer');
-  el.textContent=m+':'+(s<10?'0':'')+s;
-  el.className=lqTimeLeft<=20?'timer-val timer-warn':'timer-val';
-}
-function answerLQ(i,btn){
-  if(lqAnswered)return;
-  lqAnswered=true;clearInterval(lqTimer);
-  const elapsed=(Date.now()-lqStart)/1000;
-  lqTimes.push(elapsed);
-  const q=LQ[lqIdx];
-  lqDomainTotal[q.cat]=(lqDomainTotal[q.cat]||0)+1;
-  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
-  if(i===q.ans){
-    lqScore++;
-    lqDomainScores[q.cat]=(lqDomainScores[q.cat]||0)+1;
-    btn.classList.add('correct');
-  } else {
-    btn.classList.add('wrong');
-    document.querySelectorAll('.option-btn')[q.ans].classList.add('correct');
-  }
-  document.getElementById('lq-hint').textContent=q.hint;
-  setTimeout(nextLQ,1400);
-}
-function nextLQ(){
-  lqIdx++;
-  if(lqIdx>=LQ.length){showLevelResults();return;}
-  showLQ();
-}
-
-function showLevelResults(){
-  const pct=Math.round((lqScore/LQ.length)*100);
-  const avg=lqTimes.length?Math.round(lqTimes.reduce((a,b)=>a+b,0)/lqTimes.length):0;
-  // IQ-indikator basert på normalkurve-tilnærming
-  let iq=pct>=95?'~130+':pct>=85?'~120–130':pct>=70?'~110–120':pct>=55?'~100–110':pct>=40?'~90–100':pct>=25?'~80–90':'~under 80';
-  // Percentil-estimat
-  let pctile=pct>=95?'topp 2%':pct>=85?'topp 15%':pct>=70?'topp 30%':pct>=55?'omtrent gjennomsnitt':pct>=40?'under gjennomsnitt':'lavere kvartal';
-  // Domenescorer
-  const cats={logic:'Logikk',number:'Tallresonnering',spatial:'Romlig tenkning',abstract:'Abstrakt'};
-  let domainHTML='';
-  let domainBreakdown='';
-  const colors={'logic':'#94f5ff','number':'#4ade80','spatial':'#a78bfa','abstract':'#facc15'};
-  Object.entries(cats).forEach(([k,label])=>{
-    if(!lqDomainTotal[k])return;
-    const dp=Math.round((lqDomainScores[k]/lqDomainTotal[k])*100);
-    const dlabel=dp>=80?'Sterk':dp>=60?'Over snitt':dp>=40?'Gjennomsnitt':'Utviklingspotensial';
-    domainHTML+=`<div class="domain-card">
-      <div class="domain-name">${label}</div>
-      <div class="domain-score">${dp}<span style="font-size:14px;color:var(--muted)">%</span></div>
-      <div class="domain-label">${dlabel} · ${lqDomainScores[k]}/${lqDomainTotal[k]}</div>
-      <div class="domain-bar"><div class="domain-bar-fill" style="width:${dp}%;background:${colors[k]};box-shadow:0 0 4px ${colors[k]}"></div></div>
-    </div>`;
-    domainBreakdown+=rBar(label+' — '+dlabel,dp,colors[k]);
-  });
-  // Tolkning
-  let strengths=[], develop=[];
-  Object.entries(cats).forEach(([k,label])=>{
-    if(!lqDomainTotal[k])return;
-    const dp=Math.round((lqDomainScores[k]/lqDomainTotal[k])*100);
-    if(dp>=70)strengths.push(label.toLowerCase());
-    else if(dp<50)develop.push(label.toLowerCase());
-  });
-  let interpText=`<div class="interpret-title">Tolkning</div>`;
-  interpText+=`<p>Du svarte riktig på <strong>${lqScore} av ${LQ.length} oppgaver</strong> (${pct}%), med et gjennomsnitt på <strong>${avg} sekunder</strong> per oppgave.</p>`;
-  if(strengths.length)interpText+=`<p><strong>Styrker:</strong> Du presterer godt innen ${strengths.join(' og ')}, noe som tyder på solid analytisk grunnlag i disse domenene.</p>`;
-  if(develop.length)interpText+=`<p><strong>Utviklingspotensial:</strong> ${develop.map(d=>d.charAt(0).toUpperCase()+d.slice(1)).join(' og ')} er områder der målrettet øving kan gi rask fremgang.</p>`;
-  interpText+=`<p><em>Viktig: Kognitive evner er formbare. Denne testen måler prestasjon akkurat nå, ikke et fast tak. Søvn, trening og øving påvirker alle domenene betydelig.</em></p>`;
-
-  document.getElementById('res-title').textContent='Kognitiv profil';
-  document.getElementById('res-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-val">${lqScore}<span class="stat-unit">/${LQ.length}</span></div><div class="stat-label">Riktige</div></div>
-    <div class="stat-card"><div class="stat-val">${pct}<span class="stat-unit">%</span></div><div class="stat-label">Poengsum</div></div>
-    <div class="stat-card"><div class="stat-val">${avg}<span class="stat-unit">s</span></div><div class="stat-label">Snitt/svar</div></div>
-    <div class="stat-card"><div class="stat-val" style="font-size:14px">${iq}</div><div class="stat-label">IQ-indikator</div></div>`;
-  document.getElementById('res-domains').innerHTML=domainHTML;
-  document.getElementById('res-breakdown').innerHTML=domainBreakdown;
-  document.getElementById('res-percentile').textContent=`📊 Basert på oppgavesammensetningen tilsvarer ${pct}% omtrent ${pctile} i en normalfordelt populasjon. IQ-indikatoren er ikke en klinisk skåre, men en veiledende referanse.`;
-  document.getElementById('res-interpret').innerHTML=interpText;
+  let interp=`<strong>Du svarte riktig på ${lqS} av ${LQ.length} oppgaver</strong> (${pct}%), gjennomsnitt ${avg}s per oppgave.`;
+  if(str.length)interp+=` Styrker: ${str.join(', ')}.`;
+  if(dev.length)interp+=` Utviklingspotensial: ${dev.join(', ')}.`;
+  interp+=`<br><br><em>IQ-indikatoren er veiledende, ikke klinisk. Kognitive evner er formbare — søvn, trening og øving påvirker alle domenene.</em>`;
+  await saveResult('level',{pct,avg,score:lqS,total:LQ.length,iq,domains});
+  const snap=cu?await getDoc(doc(db,'users',cu.uid)):null;
+  const isBase=snap&&snap.exists()&&!snap.data()?.baseline?.level;
+  document.getElementById('restit').textContent='Kognitiv profil';
+  document.getElementById('ressub').textContent=new Date().toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('resbb').style.display=isBase?'block':'none';
+  if(isBase)document.getElementById('resbb').textContent='✓ Første resultat lagret som din kognitive baseline.';
+  document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${lqS}<span class="rsu">/${LQ.length}</span></div><div class="rsl">Riktige</div></div><div class="rs"><div class="rsv">${pct}<span class="rsu">%</span></div><div class="rsl">Poengsum</div></div><div class="rs"><div class="rsv">${avg}<span class="rsu">s</span></div><div class="rsl">Snitt/svar</div></div><div class="rs"><div class="rsv" style="font-size:14px">${iq}</div><div class="rsl">IQ-indikator</div></div>`;
+  document.getElementById('resdom').innerHTML=dh;
+  document.getElementById('resbr').innerHTML=dbr;
+  document.getElementById('resib').innerHTML=`<div style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:rgba(148,245,255,.35);margin-bottom:8px">Tolkning</div><p>${interp}</p>`;
   goTo('page-results');
 }
 
-/* ===== DAGSFORM-TEST ===== */
-let rtTimes=[],rtRound=0,rtReady=false,rtTimeout=null,rtStart=0;
-let memLevel=3,memSeq=[],memInput=[],memPhase='idle',memScore=0,memTotal=0,memMaxLevel=3;
-let stCorrect=0,stTotal=12,stIdx=0,stData=[],stStartTime=0,stTotalTime=0;
+/* DAGSFORM */
+let rtT=[],rtR=0,rtRdy=false,rtTO=null,rtSt=0;
+let mLv=3,mSeq=[],mInp=[],mPh='idle',mSc=0,mTot=0,mMax=3;
+let stC=0,stTot=12,stI=0,stD=[],stTT=0;
+const SW=[{word:'Rød',color:'#f87171',label:'Rød'},{word:'Blå',color:'#60a5fa',label:'Blå'},{word:'Grønn',color:'#4ade80',label:'Grønn'},{word:'Gul',color:'#facc15',label:'Gul'},{word:'Lilla',color:'#c084fc',label:'Lilla'},{word:'Oransje',color:'#fb923c',label:'Oransje'}];
 
-const SW=[
-  {word:'Rød',  color:'#f87171',label:'Rød'},
-  {word:'Blå',  color:'#60a5fa',label:'Blå'},
-  {word:'Grønn',color:'#4ade80',label:'Grønn'},
-  {word:'Gul',  color:'#facc15',label:'Gul'},
-  {word:'Lilla',color:'#c084fc',label:'Lilla'},
-  {word:'Oransje',color:'#fb923c',label:'Oransje'}
-];
-
-function startNowTest(){
-  rtTimes=[];rtRound=0;rtReady=false;
-  memLevel=3;memSeq=[];memInput=[];memScore=0;memTotal=0;memPhase='idle';memMaxLevel=3;
-  stCorrect=0;stIdx=0;stData=[];stTotalTime=0;
+window.startNowTest=()=>{
+  rtT=[];rtR=0;rtRdy=false;mLv=3;mSeq=[];mInp=[];mSc=0;mTot=0;mPh='idle';mMax=3;stC=0;stI=0;stD=[];stTT=0;
   ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-reaction').style.display='block';
-  goTo('page-run');
-  startRT();
+  goTo('page-run');startRT();
+};
+function startRT(){document.getElementById('rts').textContent='Klar — vent på grønn sirkel';document.getElementById('rtp').innerHTML='';schedRT();}
+function schedRT(){const t=document.getElementById('rtc');t.className='rtc';t.textContent='Vent...';rtRdy=false;rtTO=setTimeout(()=>{t.className='rtc ready';t.textContent='NÅ!';rtRdy=true;rtSt=Date.now();},1000+Math.random()*3000);}
+window.handleReaction=function(){
+  if(!rtRdy){clearTimeout(rtTO);const t=document.getElementById('rtc');t.className='rtc early';t.textContent='For tidlig';document.getElementById('rts').textContent='Vent til sirkelen er grønn!';setTimeout(schedRT,1200);return;}
+  const rt=Date.now()-rtSt;rtT.push(rt);rtR++;
+  const t=document.getElementById('rtc');t.className='rtc';t.textContent=rt+'ms';
+  const p=document.createElement('div');p.className='rtpi done';p.textContent='#'+rtR+': '+rt+'ms';
+  document.getElementById('rtp').appendChild(p);
+  document.getElementById('rts').textContent=rtR<5?'Runde '+(rtR+1)+' av 5...':'Ferdig!';
+  if(rtR>=5){setTimeout(startMem,1200);return;}
+  setTimeout(schedRT,800);
+};
+function startMem(){
+  document.getElementById('run-reaction').style.display='none';document.getElementById('run-memory').style.display='block';
+  mLv=3;mPh='idle';mMax=3;document.getElementById('mb').textContent='Start';
+  document.getElementById('mi').textContent='Se tallene — husk rekkefølgen nøyaktig.';
+  document.getElementById('mlb').textContent='Nivå 3';
+  renderMD([]);document.getElementById('mins').style.display='none';
 }
-
-/* --- Reaksjonstid (trimmed mean) --- */
-function startRT(){
-  rtRound=0;rtTimes=[];
-  document.getElementById('rt-status').textContent='Klar — vent på grønn sirkel';
-  document.getElementById('rt-results').innerHTML='';
-  scheduleRT();
-}
-function scheduleRT(){
-  const t=document.getElementById('rt-target');
-  t.className='rt-circle';t.textContent='Vent...';rtReady=false;
-  rtTimeout=setTimeout(()=>{
-    t.className='rt-circle ready';t.textContent='NÅ!';
-    rtReady=true;rtStart=Date.now();
-  },1000+Math.random()*3000);
-}
-function handleReaction(){
-  if(!rtReady){
-    clearTimeout(rtTimeout);
-    const t=document.getElementById('rt-target');
-    t.className='rt-circle too-early';t.textContent='For tidlig';
-    document.getElementById('rt-status').textContent='Vent til sirkelen er grønn!';
-    setTimeout(scheduleRT,1200);return;
-  }
-  const rt=Date.now()-rtStart;
-  rtTimes.push(rt);rtRound++;
-  const t=document.getElementById('rt-target');
-  t.className='rt-circle';t.textContent=rt+'ms';
-  const pills=document.getElementById('rt-results');
-  const p=document.createElement('div');
-  p.className='rt-pill done';p.textContent='#'+rtRound+': '+rt+'ms';
-  pills.appendChild(p);
-  document.getElementById('rt-status').textContent=rtRound<5?'Runde '+(rtRound+1)+' av 5...':'Ferdig!';
-  if(rtRound>=5){setTimeout(startMemory,1200);return;}
-  setTimeout(scheduleRT,800);
-}
-
-/* --- Arbeidsminne (adaptivt, Corsi-inspirert) --- */
-function startMemory(){
-  document.getElementById('run-reaction').style.display='none';
-  document.getElementById('run-memory').style.display='block';
-  memLevel=3;memPhase='idle';memMaxLevel=3;
-  document.getElementById('mem-btn').textContent='Start';
-  document.getElementById('mem-instruction').textContent='Se tallene som vises — husk rekkefølgen nøyaktig.';
-  document.getElementById('mem-level-badge').textContent='Nivå 3';
-  renderMemDisplay([]);
-  document.getElementById('mem-input').style.display='none';
-}
-function memNext(){
-  if(memPhase==='idle'||memPhase==='correct'||memPhase==='wrong'){
-    if(memTotal>=5){document.getElementById('mem-btn').style.display='none';setTimeout(startStroop,800);return;}
-    memTotal++;
-    memSeq=Array.from({length:memLevel},()=>Math.floor(Math.random()*9)+1);
-    memPhase='show';
-    document.getElementById('mem-btn').style.display='none';
-    document.getElementById('mem-input').style.display='none';
-    document.getElementById('mem-instruction').textContent='Husk tallene...';
-    document.getElementById('mem-level-badge').textContent='Nivå '+memLevel+' · '+memLevel+' tall';
-    renderMemDisplay(Array(memLevel).fill(''));
+window.memNext=function(){
+  if(mPh==='idle'||mPh==='correct'||mPh==='wrong'){
+    if(mTot>=5){document.getElementById('mb').style.display='none';setTimeout(startStroop,800);return;}
+    mTot++;mSeq=Array.from({length:mLv},()=>Math.floor(Math.random()*9)+1);mPh='show';
+    document.getElementById('mb').style.display='none';document.getElementById('mins').style.display='none';
+    document.getElementById('mi').textContent='Husk tallene...';
+    document.getElementById('mlb').textContent='Nivå '+mLv+' · '+mLv+' tall';
+    renderMD(Array(mLv).fill(''));
     let i=0;
-    function showNext(){
-      document.querySelectorAll('.seq-dot').forEach(d=>{d.classList.remove('lit');d.textContent='';});
-      if(i<memSeq.length){
-        const dots=document.querySelectorAll('.seq-dot');
-        if(dots[i]){dots[i].classList.add('lit');dots[i].textContent=memSeq[i];}
-        i++;setTimeout(showNext,650);
-      } else {
-        setTimeout(()=>{
-          memPhase='recall';memInput=[];
-          document.getElementById('mem-instruction').textContent='Skriv inn tallene i riktig rekkefølge:';
-          renderMemDisplay(Array(memLevel).fill('_'));
-          renderMemInputBtns();
-          document.getElementById('mem-btn').textContent='Bekreft';
-          document.getElementById('mem-btn').style.display='';
-        },400);
-      }
-    }
-    showNext();
-  } else if(memPhase==='recall'){
-    const ok=memInput.join(',')===memSeq.join(',');
-    const dots=document.querySelectorAll('.seq-dot');
-    memSeq.forEach((v,i)=>{
-      if(dots[i]){
-        dots[i].textContent=v;
-        dots[i].classList.remove('lit');
-        dots[i].classList.add(ok?'correct-dot':'wrong-dot');
-      }
-    });
-    if(ok){
-      memScore++;memPhase='correct';
-      memLevel=Math.min(memLevel+1,9);
-      memMaxLevel=Math.max(memMaxLevel,memLevel-1);
-      document.getElementById('mem-instruction').textContent='Riktig! '+(memTotal<5?'Neste...':'Ferdig!');
-    } else {
-      memPhase='wrong';
-      memLevel=Math.max(3,memLevel-1);
-      document.getElementById('mem-instruction').textContent='Feil. Riktig rekkefølge: '+memSeq.join(' → ');
-    }
-    document.getElementById('mem-input').style.display='none';
-    if(memTotal>=5){
-      document.getElementById('mem-btn').style.display='none';
-      setTimeout(startStroop,1500);
-    } else {
-      document.getElementById('mem-btn').textContent='Neste';
-    }
+    function sn(){document.querySelectorAll('.sdot').forEach(d=>{d.classList.remove('lit');d.textContent='';});if(i<mSeq.length){const dots=document.querySelectorAll('.sdot');if(dots[i]){dots[i].classList.add('lit');dots[i].textContent=mSeq[i];}i++;setTimeout(sn,650);}else{setTimeout(()=>{mPh='recall';mInp=[];document.getElementById('mi').textContent='Skriv inn rekkefølgen:';renderMD(Array(mLv).fill('_'));renderMIB();document.getElementById('mb').textContent='Bekreft';document.getElementById('mb').style.display='';},400);}}
+    sn();
+  }else if(mPh==='recall'){
+    const ok=mInp.join(',')===mSeq.join(',');
+    const dots=document.querySelectorAll('.sdot');
+    mSeq.forEach((v,i)=>{if(dots[i]){dots[i].textContent=v;dots[i].classList.remove('lit');dots[i].classList.add(ok?'cd':'wd');}});
+    if(ok){mSc++;mPh='correct';mLv=Math.min(mLv+1,9);mMax=Math.max(mMax,mLv-1);document.getElementById('mi').textContent='Riktig! '+(mTot<5?'Neste...':'Ferdig!');}
+    else{mPh='wrong';mLv=Math.max(3,mLv-1);document.getElementById('mi').textContent='Feil. Riktig: '+mSeq.join(' → ');}
+    document.getElementById('mins').style.display='none';
+    if(mTot>=5){document.getElementById('mb').style.display='none';setTimeout(startStroop,1500);}
+    else document.getElementById('mb').textContent='Neste';
   }
-}
-function renderMemDisplay(arr){
-  document.getElementById('mem-display').innerHTML=arr.map(v=>
-    `<div class="seq-dot">${v==='_'?'':v}</div>`
-  ).join('');
-}
-function renderMemInputBtns(){
-  const d=document.getElementById('mem-input');
-  d.style.display='flex';
-  d.innerHTML=Array.from({length:9},(_,i)=>
-    `<button class="seq-btn" onclick="addMem(${i+1})">${i+1}</button>`
-  ).join('')+`<button class="seq-btn" style="font-size:12px" onclick="clearMem()">↩</button>`;
-}
-function addMem(n){
-  if(memInput.length>=memSeq.length)return;
-  memInput.push(n);
-  const dots=document.querySelectorAll('.seq-dot');
-  if(dots[memInput.length-1]){dots[memInput.length-1].textContent=n;dots[memInput.length-1].classList.add('lit');}
-}
-function clearMem(){
-  memInput=[];
-  renderMemDisplay(Array(memSeq.length).fill('_'));
-}
-
-/* --- Stroop (6 farger, 12 runder) --- */
+};
+function renderMD(arr){document.getElementById('mds').innerHTML=arr.map(v=>`<div class="sdot">${v==='_'?'':v}</div>`).join('');}
+function renderMIB(){const d=document.getElementById('mins');d.style.display='flex';d.innerHTML=Array.from({length:9},(_,i)=>`<button class="sb" onclick="addM(${i+1})">${i+1}</button>`).join('')+`<button class="sb" style="font-size:12px" onclick="clrM()">↩</button>`;}
+window.addM=n=>{if(mInp.length>=mSeq.length)return;mInp.push(n);const dots=document.querySelectorAll('.sdot');if(dots[mInp.length-1]){dots[mInp.length-1].textContent=n;dots[mInp.length-1].classList.add('lit');}};
+window.clrM=()=>{mInp=[];renderMD(Array(mSeq.length).fill('_'));};
 function startStroop(){
-  document.getElementById('run-memory').style.display='none';
-  document.getElementById('run-stroop').style.display='block';
-  stCorrect=0;stIdx=0;stTotalTime=0;
-  // Garanter at alle items er kongruente eller inkongruente, ikke tilfeldig
-  stData=Array.from({length:stTotal},(_, i)=>{
-    const w=SW[Math.floor(Math.random()*SW.length)];
-    // Annenhver: inkongruent (word ≠ ink) for å sikre mix
-    let ink;
-    if(i%2===0){
-      // inkongruent
-      const others=SW.filter(s=>s.label!==w.word);
-      ink=others[Math.floor(Math.random()*others.length)];
-    } else {
-      ink=w; // kongruent
-    }
-    return{word:w.word,ink:ink.color,inkLabel:ink.label,congruent:(w.word===ink.label)};
-  });
-  showStroop();
+  document.getElementById('run-memory').style.display='none';document.getElementById('run-stroop').style.display='block';
+  stC=0;stI=0;stTT=0;
+  stD=Array.from({length:stTot},(_, i)=>{const w=SW[Math.floor(Math.random()*SW.length)];let ink=i%2===0?SW.filter(s=>s.label!==w.word)[Math.floor(Math.random()*(SW.length-1))]:w;return{word:w.word,ink:ink.color,inkLabel:ink.label};});
+  showStrp();
 }
-function showStroop(){
-  if(stIdx>=stTotal){showNowResults();return;}
-  document.getElementById('st-progress').style.width=Math.round((stIdx/stTotal)*100)+'%';
-  document.getElementById('st-count').textContent='Runde '+(stIdx+1)+' av '+stTotal;
-  const s=stData[stIdx];
-  const el=document.getElementById('st-word');
-  el.textContent=s.word;el.style.color=s.ink;
-  stStartTime=Date.now();
-  // Vis 6 farger som alternativer
+function showStrp(){
+  if(stI>=stTot){showNowRes();return;}
+  document.getElementById('stp').style.width=Math.round((stI/stTot)*100)+'%';
+  document.getElementById('stc').textContent='Runde '+(stI+1)+' av '+stTot;
+  const s=stD[stI];const el=document.getElementById('stw');el.textContent=s.word;el.style.color=s.ink;
   const shown=SW.slice().sort(()=>Math.random()-.5).slice(0,4);
-  if(!shown.find(s2=>s2.label===s.inkLabel))shown[3]=SW.find(s2=>s2.label===s.inkLabel);
-  const opts=document.getElementById('st-options');
-  opts.className='options options-3';
-  opts.innerHTML=shown.map(sw=>
-    `<button class="option-btn" onclick="answerStroop('${sw.label}')">${sw.label}</button>`
-  ).join('');
+  if(!shown.find(x=>x.label===s.inkLabel))shown[3]=SW.find(x=>x.label===s.inkLabel);
+  document.getElementById('sto').innerHTML=shown.map(sw=>`<button class="ob" onclick="ansStrp('${sw.label}')">${sw.label}</button>`).join('');
 }
-function answerStroop(label){
-  const rt=Date.now()-stStartTime;
-  stTotalTime+=rt;
-  const s=stData[stIdx];
-  const btns=document.querySelectorAll('#st-options .option-btn');
-  btns.forEach(b=>b.disabled=true);
-  const shownLabels=Array.from(btns).map(b=>b.textContent);
-  const selectedIdx=shownLabels.indexOf(label);
-  const correctIdx=shownLabels.indexOf(s.inkLabel);
-  if(label===s.inkLabel){
-    stCorrect++;
-    if(btns[selectedIdx])btns[selectedIdx].classList.add('correct');
-  } else {
-    if(btns[selectedIdx])btns[selectedIdx].classList.add('wrong');
-    if(btns[correctIdx]&&correctIdx>=0)btns[correctIdx].classList.add('correct');
-  }
-  stIdx++;
-  setTimeout(showStroop,500);
-}
+window.ansStrp=label=>{
+  const s=stD[stI];const btns=document.querySelectorAll('#sto .ob');btns.forEach(b=>b.disabled=true);
+  const lbls=Array.from(btns).map(b=>b.textContent);
+  if(label===s.inkLabel){stC++;btns[lbls.indexOf(label)]?.classList.add('correct');}
+  else{btns[lbls.indexOf(label)]?.classList.add('wrong');btns[lbls.indexOf(s.inkLabel)]?.classList.add('correct');}
+  stI++;setTimeout(showStrp,500);
+};
+// alias for html onclick
+window.answerStroop=window.ansStrp;
 
-/* --- Dagsform-resultater --- */
-function showNowResults(){
-  // Reaksjonstid: trimmed mean (fjern beste og verste)
-  const sorted=[...rtTimes].sort((a,b)=>a-b);
-  const trimmed=sorted.slice(1,-1);
+async function showNowRes(){
+  const sorted=[...rtT].sort((a,b)=>a-b);const trimmed=sorted.slice(1,-1);
   const avgRT=Math.round(trimmed.reduce((a,b)=>a+b,0)/trimmed.length);
-  const minRT=Math.min(...rtTimes),maxRT=Math.max(...rtTimes);
-
-  // Arbeidsminne-score basert på maks nivå nådd
-  const memPct=Math.round((memScore/memTotal)*100);
-  const memSpan=memMaxLevel;
-
-  // Stroop
-  const stroopPct=Math.round((stCorrect/stTotal)*100);
-  const avgStroopRT=Math.round(stTotalTime/stTotal);
-
-  // Normaliserte delscorer (basert på populasjonsreferanser)
-  const rtScore=avgRT<180?98:avgRT<220?90:avgRT<270?75:avgRT<330?60:avgRT<400?45:avgRT<500?30:15;
-  const memScore2=memSpan>=7?95:memSpan>=6?82:memSpan>=5?68:memSpan>=4?52:35;
-  const stroopScore=stroopPct>=92?95:stroopPct>=83?80:stroopPct>=75?65:stroopPct>=58?50:35;
-  const overall=Math.round((rtScore*0.3+memScore2*0.35+stroopScore*0.35));
-
-  // Etiketter
-  const rtLbl=avgRT<220?'Eksepsjonell':avgRT<270?'Rask':avgRT<330?'Over snitt':avgRT<400?'Gjennomsnitt':'Under snitt';
-  const memLbl=memSpan>=7?'Eksepsjonell':memSpan>=6?'Over snitt':memSpan>=5?'Gjennomsnitt':memSpan>=4?'Under snitt':'Lav';
-  const stLbl=stroopPct>=90?'Eksepsjonell':stroopPct>=80?'God':stroopPct>=65?'Gjennomsnitt':'Utviklingspotensial';
-
-  let txt='';
-  if(overall>=80)txt='Du er i svært god kognitiv form akkurat nå. Alle tre domenene presterer sterkt, noe som indikerer god søvnkvalitet, lavt stressnivå og høy hjerneberedskap.';
-  else if(overall>=65)txt='God dagsform. De fleste domenene presterer over snittet. Mulige forbedringer i ett eller to domener kan tyde på lett tretthet eller distraksjon.';
-  else if(overall>=50)txt='Gjennomsnittlig dagsform. Kognitiv ytelse er påvirket av søvn, mat, stress og stimulans. En kort pause, et glass vann eller litt bevegelse kan gjøre en merkbar forskjell.';
-  else txt='Lav ytelse i dag. Dette er helt normalt og oftest forbigående. Prioriter søvn, reduser skjermtid og prøv testen igjen etter hvile.';
-
-  document.getElementById('res-title').textContent='Dagsform — resultat';
-  document.getElementById('res-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-val">${avgRT}<span class="stat-unit">ms</span></div><div class="stat-label">Reaksjon (snitt)</div></div>
-    <div class="stat-card"><div class="stat-val">${memSpan}</div><div class="stat-label">Minnespenn</div></div>
-    <div class="stat-card"><div class="stat-val">${stroopPct}<span class="stat-unit">%</span></div><div class="stat-label">Stroop</div></div>
-    <div class="stat-card"><div class="stat-val">${overall}</div><div class="stat-label">Total score</div></div>`;
-
-  document.getElementById('res-domains').innerHTML=`
-    <div class="domain-card">
-      <div class="domain-name">Reaksjonstid</div>
-      <div class="domain-score">${rtLbl}</div>
-      <div class="domain-label">${avgRT}ms snitt · min ${minRT}ms · maks ${maxRT}ms</div>
-      <div class="domain-bar"><div class="domain-bar-fill" style="width:${rtScore}%;background:#94f5ff;box-shadow:0 0 4px #94f5ff"></div></div>
-    </div>
-    <div class="domain-card">
-      <div class="domain-name">Arbeidsminne</div>
-      <div class="domain-score">${memLbl}</div>
-      <div class="domain-label">Minnespenn ${memSpan} · ${memScore}/${memTotal} riktige</div>
-      <div class="domain-bar"><div class="domain-bar-fill" style="width:${memScore2}%;background:#4ade80;box-shadow:0 0 4px #4ade80"></div></div>
-    </div>
-    <div class="domain-card">
-      <div class="domain-name">Impulskontroll</div>
-      <div class="domain-score">${stLbl}</div>
-      <div class="domain-label">${stCorrect}/${stTotal} riktige · snitt ${avgStroopRT}ms</div>
-      <div class="domain-bar"><div class="domain-bar-fill" style="width:${stroopScore}%;background:#a78bfa;box-shadow:0 0 4px #a78bfa"></div></div>
-    </div>
-    <div class="domain-card">
-      <div class="domain-name">Samlet dagsform</div>
-      <div class="domain-score">${overall}/100</div>
-      <div class="domain-label">${overall>=80?'Topp 20%':overall>=65?'Over snitt':overall>=50?'Gjennomsnitt':'Under snitt'}</div>
-      <div class="domain-bar"><div class="domain-bar-fill" style="width:${overall}%;background:#facc15;box-shadow:0 0 4px #facc15"></div></div>
-    </div>`;
-
-  document.getElementById('res-breakdown').innerHTML=
-    rBar('Reaksjonstid — '+rtLbl,rtScore,'#94f5ff')+
-    rBar('Arbeidsminne — '+memLbl,memScore2,'#4ade80')+
-    rBar('Impulskontroll (Stroop) — '+stLbl,stroopScore,'#a78bfa');
-
-  document.getElementById('res-percentile').textContent=
-    `📊 Reaksjonstid under 250ms er i topp ~15%. Minnespenn på 7+ er over normalområdet (5±2). Stroop-nøyaktighet over 80% regnes som god impulskontroll.`;
-
-  document.getElementById('res-interpret').innerHTML=
-    `<div class="interpret-title">Tolkning</div><p>${txt}</p>
-    <p><em>Metodikk: Reaksjonstid beregnes med trimmed mean (fjerner beste og dårligste). Arbeidsminne er basert på adaptivt digitalt minnespenn (Corsi-prinsipp). Stroop måler kognitiv interferens — evnen til å undertrykke automatiske responser.</em></p>`;
+  const minRT=Math.min(...rtT);
+  const memSpan=mMax,memPct=Math.round((mSc/mTot)*100),stroopPct=Math.round((stC/stTot)*100);
+  const rtSc=avgRT<180?98:avgRT<220?90:avgRT<270?75:avgRT<330?60:avgRT<400?45:30;
+  const mSc2=memSpan>=7?95:memSpan>=6?82:memSpan>=5?68:memSpan>=4?52:35;
+  const stSc=stroopPct>=92?95:stroopPct>=83?80:stroopPct>=75?65:stroopPct>=58?50:35;
+  const overall=Math.round(rtSc*.3+mSc2*.35+stSc*.35);
+  const rtL=avgRT<220?'Eksepsjonell':avgRT<270?'Rask':avgRT<330?'Over snitt':avgRT<400?'Gjennomsnitt':'Under snitt';
+  const mL=memSpan>=7?'Eksepsjonell':memSpan>=6?'Over snitt':memSpan>=5?'Gjennomsnitt':'Under snitt';
+  const stL=stroopPct>=90?'Eksepsjonell':stroopPct>=80?'God':stroopPct>=65?'Gjennomsnitt':'Utviklingspotensial';
+  const txt=overall>=80?'Du er i svært god kognitiv form. Alle domenene presterer sterkt.':overall>=65?'God dagsform. De fleste domenene er over snittet.':overall>=50?'Gjennomsnittlig dagsform. En pause eller bevegelse kan hjelpe.':'Lav ytelse i dag. Prioriter søvn — prøv igjen etter hvile.';
+  await saveResult('now',{avgRT,memSpan,memPct,stroopPct,overall,rtScore:rtSc,memScore:mSc2,stroopScore:stSc});
+  const snap=cu?await getDoc(doc(db,'users',cu.uid)):null;
+  const isBase=snap&&snap.exists()&&!snap.data()?.baseline?.now;
+  document.getElementById('restit').textContent='Dagsform';
+  document.getElementById('ressub').textContent=new Date().toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('resbb').style.display=isBase?'block':'none';
+  if(isBase)document.getElementById('resbb').textContent='✓ Første dagsform-resultat lagret som din baseline.';
+  document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${avgRT}<span class="rsu">ms</span></div><div class="rsl">Reaksjon</div></div><div class="rs"><div class="rsv">${memSpan}</div><div class="rsl">Minnespenn</div></div><div class="rs"><div class="rsv">${stroopPct}<span class="rsu">%</span></div><div class="rsl">Stroop</div></div><div class="rs"><div class="rsv">${overall}</div><div class="rsl">Total</div></div>`;
+  document.getElementById('resdom').innerHTML=`<div class="dc"><div class="dn">Reaksjonstid</div><div class="dsc">${rtL}</div><div class="dl">${avgRT}ms · min ${minRT}ms</div><div class="dbar"><div class="dbarf" style="width:${rtSc}%;background:#94f5ff"></div></div></div><div class="dc"><div class="dn">Arbeidsminne</div><div class="dsc">${mL}</div><div class="dl">Spenn ${memSpan} · ${mSc}/${mTot}</div><div class="dbar"><div class="dbarf" style="width:${mSc2}%;background:#4ade80"></div></div></div><div class="dc"><div class="dn">Impulskontroll</div><div class="dsc">${stL}</div><div class="dl">${stC}/${stTot} riktige</div><div class="dbar"><div class="dbarf" style="width:${stSc}%;background:#a78bfa"></div></div></div><div class="dc"><div class="dn">Samlet</div><div class="dsc">${overall}/100</div><div class="dl">${overall>=80?'Topp 20%':overall>=65?'Over snitt':overall>=50?'Gjennomsnitt':'Under snitt'}</div><div class="dbar"><div class="dbarf" style="width:${overall}%;background:#facc15"></div></div></div>`;
+  document.getElementById('resbr').innerHTML=rBar('Reaksjonstid — '+rtL,rtSc,'#94f5ff')+rBar('Arbeidsminne — '+mL,mSc2,'#4ade80')+rBar('Impulskontroll — '+stL,stSc,'#a78bfa');
+  document.getElementById('resib').innerHTML=`<div style="font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:rgba(148,245,255,.35);margin-bottom:8px">Tolkning</div><p>${txt}</p><p style="margin-top:.75rem"><em>Metodikk: Reaksjonstid: trimmed mean (fjerner beste/dårligste). Arbeidsminne: adaptivt digitalt minnespenn (Corsi-prinsipp). Stroop: kognitiv interferens og impulskontroll.</em></p>`;
   goTo('page-results');
 }
 
-function rBar(label,pct,color){
-  pct=Math.max(0,Math.min(100,pct||0));
-  return `<div class="r-bar-wrap">
-    <div class="r-bar-row"><span>${label}</span></div>
-    <div class="r-bar"><div class="r-bar-fill" style="width:${pct}%;background:${color};box-shadow:0 0 4px ${color}"></div></div>
-  </div>`;
-}
+function rBar(l,p,c){p=Math.max(0,Math.min(100,p||0));return`<div class="rbw"><div class="rbr"><span>${l}</span></div><div class="rb"><div class="rbf" style="width:${p}%;background:${c}"></div></div></div>`;}
 </script>
 </body>
 </html>
-
-
 
