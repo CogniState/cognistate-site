@@ -615,6 +615,8 @@ window.goToDash=()=>{loadDash();goTo('page-dashboard');};
 window.goToInsights=()=>{loadInsights();goTo('page-insights');};
 
 window.showAuth=(mode)=>{
+  // If already logged in, go to dashboard instead
+  if(cu){goToDash();return;}
   am=mode;
   document.getElementById('at').textContent=mode==='login'?'Logg inn':'Opprett konto';
   document.getElementById('as2').textContent=mode==='login'?'Velkommen tilbake.':'Kom i gang — gratis.';
@@ -640,13 +642,15 @@ window.submitAuth=async()=>{
   try{
     if(am==='login'){
       await auth.signInWithEmailAndPassword(email,pw);
-      // onAuthStateChanged will handle redirect
+      await loadDash();
+      goTo('page-dashboard');
     }else{
       const name=document.getElementById('an').value.trim();
       const c=await auth.createUserWithEmailAndPassword(email,pw);
       if(name)await c.user.updateProfile({displayName:name});
       await ensureUser(c.user,name);
-      // onAuthStateChanged will handle redirect
+      await loadDash();
+      goTo('page-dashboard');
     }
   }catch(e){showErr(fe(e.code));btn.textContent=am==='login'?'Logg inn':'Opprett konto';btn.disabled=false;}
 };
@@ -848,31 +852,23 @@ auth.getRedirectResult().then(async result=>{
 setTimeout(()=>{document.getElementById('ls').style.display='none';},5000);
 
 auth.onAuthStateChanged(async user=>{
+  // Hide loading spinner
   document.getElementById('ls').style.display='none';
   document.getElementById('mn').style.display='flex';
   cu=user;
+
   if(user){
+    // User is logged in — always show dashboard, never auth page
     document.getElementById('navlinks').style.display='flex';
     const init=(user.displayName||user.email||'?')[0].toUpperCase();
     document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span style="font-size:13px">${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
-    // Always go to dashboard when logged in, regardless of current page
-    const activePage=document.querySelector('.page.active')?.id;
-    if(activePage==='page-home'||activePage==='page-auth'||!activePage){
-      await loadDash();
-      goTo('page-dashboard');
-    } else {
-      await loadDash();
-    }
+    await loadDash();
+    goTo('page-dashboard');
   }else{
+    // Not logged in — show home page, never dashboard
     document.getElementById('navlinks').style.display='none';
     document.getElementById('nr2').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
-    // If on protected page, redirect to home
-    const activePage=document.querySelector('.page.active')?.id;
-    if(activePage==='page-dashboard'||activePage==='page-insights'||activePage==='page-results'){
-      goTo('page-home');
-    } else if(activePage!=='page-auth'){
-      goTo('page-home');
-    }
+    goTo('page-home');
   }
 });
 
