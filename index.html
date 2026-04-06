@@ -614,7 +614,7 @@
 
 const app=firebase.initializeApp({apiKey:"AIzaSyCyx9X7Gg6WVpgEX5OrmGu1q31nXVnvaw0",authDomain:"cognistate.firebaseapp.com",projectId:"cognistate",storageBucket:"cognistate.firebasestorage.app",messagingSenderId:"671593867260",appId:"1:671593867260:web:93e3851b5652ef1c5bf479"});
 const auth=firebase.auth(),db=firebase.firestore(),gp=new firebase.auth.GoogleAuthProvider();
-let cu=null,am='login',scoreChart=null,handlingAuth=false;
+let cu=null,am='login',scoreChart=null;
 
 function goTo(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);setNavActive(id);}
 function setNavActive(id){document.querySelectorAll('.navlink').forEach(l=>l.classList.remove('active'));if(id==='page-dashboard')document.querySelectorAll('.navlink')[0]?.classList.add('active');if(id==='page-insights')document.querySelectorAll('.navlink')[1]?.classList.add('active');}
@@ -651,22 +651,18 @@ window.submitAuth=async()=>{
   btn.disabled=true;
   document.getElementById('aerr').style.display='none';
   try{
-    handlingAuth=true;
     if(am==='login'){
-      const r=await auth.signInWithEmailAndPassword(email,pw);
-      cu=r.user;
+      await auth.signInWithEmailAndPassword(email,pw);
     }else{
       const name=document.getElementById('an').value.trim();
       const r=await auth.createUserWithEmailAndPassword(email,pw);
-      cu=r.user;
-      if(name) await cu.updateProfile({displayName:name});
-      await ensureUser(cu,name);
+      if(name) await r.user.updateProfile({displayName:name});
+      await ensureUser(r.user,name);
     }
-    setNav(cu);
-    await loadDash();
-    goTo('page-dashboard');
+    // Full page reload — Firebase remembers the session
+    // onAuthStateChanged will route to dashboard on reload
+    window.location.reload();
   }catch(e){
-    handlingAuth=false;
     const msg=fe(e.code);
     showErr(msg||'Innlogging feilet. Sjekk e-post og passord.');
     btn.textContent=am==='login'?'Logg inn':'Opprett konto';
@@ -878,14 +874,11 @@ auth.onAuthStateChanged(async user=>{
   document.getElementById('ls').style.display='none';
   cu=user;
   setNav(user);
-  const ap=document.querySelector('.page.active')?.id;
   if(user){
     await loadDash();
     goTo('page-dashboard');
   }else{
-    if(ap!=='page-auth'&&ap!=='page-home'){
-      goTo('page-home');
-    }
+    goTo('page-home');
   }
 });
 
