@@ -1426,7 +1426,10 @@ async function showNowRes(){
   const stL=stroopPct>=90&&stroopInterference<100?'Eksepsjonell':stroopPct>=80?'God':stroopPct>=65?'Gjennomsnitt':'Utviklingspotensial';
 
   const resultData={avgRT,minRT,rtVar,memSpan,fwdPct,bwdPct,memCombined,stroopPct,stroopInterference,avgCongrRT,avgIncongrRT,overall,rtScore:rtScAdj,memScore:mSc2,stroopScore:stSc};
-  await saveResult('now',resultData);
+
+  // Navigate first, save in background
+  goTo('page-results');
+  try{ await saveResult('now',resultData); }catch(e){console.log('saveResult error:',e);}
 
   const snap=cu?await getDoc(db.collection('users').doc(cu.uid)):null;
   const ud=snap?.data();
@@ -1458,14 +1461,11 @@ async function showNowRes(){
 
   document.getElementById('resbr').innerHTML=rBar('Reaksjonstid — '+rtL,rtScAdj,'#94f5ff')+rBar('Fremover-minne — '+fwdPct+'%',fwdPct,'#4ade80')+rBar('Baklengs-minne — '+bwdPct+'%',bwdPct,'#a78bfa')+rBar('Stroop-impulskontroll — '+stL,stSc,'#facc15');
   document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px">Analyserer...</span></div>';
-  goTo('page-results');
 
   const insight=generateInsight('now',resultData,bl);
   document.getElementById('ai-body').innerHTML=insight;
 
-  if(cu){
-    await db.collection('insights').add({uid:cu.uid,type:'now',overall,avgRT,memSpan,stroopPct,aiInsight:insight,score:null,pct:null,domains:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  }
+  if(cu){ try{ await db.collection('insights').add({uid:cu.uid,type:'now',overall,avgRT,memSpan,stroopPct,aiInsight:insight,score:null,pct:null,domains:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()}); }catch(e){console.log('insights error:',e);} }
 }
 
 function rBar(l,p,c){p=Math.max(0,Math.min(100,p||0));return`<div class="rbw"><div class="rbr"><span>${l}</span></div><div class="rb"><div class="rbf" style="width:${p}%;background:${c}"></div></div></div>`;}
