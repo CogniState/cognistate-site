@@ -658,7 +658,7 @@ window.submitAuth=async()=>{
     btn.disabled=false;
   }
 };
-window.logout=async()=>await auth.signOut();
+
 function showErr(m){const el=document.getElementById('aerr');el.textContent=m;el.style.display='block';}
 function fe(c){return({'auth/user-not-found':'Ingen konto med denne e-posten.','auth/wrong-password':'Feil passord.','auth/email-already-in-use':'E-posten er allerede i bruk.','auth/weak-password':'Passordet må være minst 6 tegn.','auth/invalid-email':'Ugyldig e-postadresse.','auth/invalid-credential':'Feil e-post eller passord.','auth/popup-closed-by-user':'Innlogging avbrutt.'}[c])||'Noe gikk galt. Prøv igjen.';}
 
@@ -856,25 +856,28 @@ auth.getRedirectResult().then(async result=>{
 setTimeout(()=>{document.getElementById('ls').style.display='none';},5000);
 
 auth.onAuthStateChanged(async user=>{
-  // Hide loading spinner
   document.getElementById('ls').style.display='none';
   document.getElementById('mn').style.display='flex';
   cu=user;
 
   if(user){
-    // User is logged in — always show dashboard, never auth page
     document.getElementById('navlinks').style.display='flex';
     const init=(user.displayName||user.email||'?')[0].toUpperCase();
     document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span style="font-size:13px">${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
     await loadDash();
     goTo('page-dashboard');
   }else{
-    // Not logged in — show home page, never dashboard
     document.getElementById('navlinks').style.display='none';
     document.getElementById('nr2').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
-    goTo('page-home');
+    // Only go to home if not already on a public page
+    const ap=document.querySelector('.page.active')?.id;
+    if(!ap||ap==='page-dashboard'||ap==='page-insights'||ap==='page-results'||ap==='page-run'){
+      goTo('page-home');
+    }
   }
 });
+
+window.logout=async()=>await auth.signOut();
 
 window.abortTest=()=>{clearInterval(lqTmr);goToDash();};
 
