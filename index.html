@@ -752,6 +752,10 @@ function generateInsight(type, data, baseline){
 /* ===== DASHBOARD ===== */
 async function loadDash(){
   if(!cu)return;
+  const displayName=(cu.displayName||cu.email||'deg').split(' ')[0];
+  document.getElementById('dn2').textContent='Hei, '+displayName+'!';
+  document.getElementById('onboarding-box').style.display='block';
+  try{
   const snap=await getDoc(db.collection('users').doc(cu.uid));
   const ud=snap.data();
   const name=(ud?.name||cu.displayName||'deg').split(' ')[0];
@@ -825,6 +829,7 @@ async function loadDash(){
   if(rows.length===0){
     document.getElementById('onboarding-box').style.display='block';
   }
+  }catch(e){console.log('loadDash error:',e);}
 }
 
 /* ===== INSIGHTS PAGE ===== */
@@ -1196,7 +1201,9 @@ async function showLvlRes(){
   });
 
   const resultData={pct,avg,score:lqS,total:LQ_ACTIVE.length,iq,domains};
-  await saveResult('level',resultData);
+  // Navigate to results first, then save in background
+  goTo('page-results');
+  try{ await saveResult('level',resultData); }catch(e){console.log('saveResult error:',e);}
 
   const snap=cu?await getDoc(db.collection('users').doc(cu.uid)):null;
   const ud=snap?.data();
@@ -1223,16 +1230,12 @@ async function showLvlRes(){
 
   document.getElementById('resbr').innerHTML=dbr;
   document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px">Analyserer...</span></div>';
-  goTo('page-results');
-
   // Generate AI insight
   const insight=generateInsight('level',resultData,bl);
   document.getElementById('ai-body').innerHTML=insight;
 
   // Save insight to Firestore
-  if(cu){
-    await db.collection('insights').add({uid:cu.uid,type:'level',score:lqS,pct,domains,iq,avg,aiInsight:insight,overall:pct,avgRT:null,memSpan:null,stroopPct:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  }
+  if(cu){ try{ await db.collection('insights').add({uid:cu.uid,type:'level',score:lqS,pct,domains,iq,avg,aiInsight:insight,overall:pct,avgRT:null,memSpan:null,stroopPct:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()}); }catch(e){console.log('insights error:',e);} }
 }
 
 /* ===== DAGSFORM-TEST ===== */
