@@ -614,7 +614,7 @@
 
 const app=firebase.initializeApp({apiKey:"AIzaSyCyx9X7Gg6WVpgEX5OrmGu1q31nXVnvaw0",authDomain:"cognistate.firebaseapp.com",projectId:"cognistate",storageBucket:"cognistate.firebasestorage.app",messagingSenderId:"671593867260",appId:"1:671593867260:web:93e3851b5652ef1c5bf479"});
 const auth=firebase.auth(),db=firebase.firestore(),gp=new firebase.auth.GoogleAuthProvider();
-let cu=null,am='login',scoreChart=null,authInProgress=false,manualNav=false;
+let cu=null,am='login',scoreChart=null,handlingAuth=false;
 
 function goTo(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);setNavActive(id);}
 function setNavActive(id){document.querySelectorAll('.navlink').forEach(l=>l.classList.remove('active'));if(id==='page-dashboard')document.querySelectorAll('.navlink')[0]?.classList.add('active');if(id==='page-insights')document.querySelectorAll('.navlink')[1]?.classList.add('active');}
@@ -644,34 +644,31 @@ window.loginGoogle=async()=>{
   }catch(e){showErr(e.message);}
 };
 window.submitAuth=async()=>{
-  const email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;
+  const email=document.getElementById('ae').value.trim();
+  const pw=document.getElementById('ap').value;
   const btn=document.getElementById('asb');
   btn.textContent=am==='login'?'Logger inn...':'Oppretter...';
   btn.disabled=true;
   document.getElementById('aerr').style.display='none';
-  authInProgress=true;
   try{
+    handlingAuth=true;
     if(am==='login'){
-      const cred=await auth.signInWithEmailAndPassword(email,pw);
-      cu=cred.user;
+      const r=await auth.signInWithEmailAndPassword(email,pw);
+      cu=r.user;
     }else{
       const name=document.getElementById('an').value.trim();
-      const c=await auth.createUserWithEmailAndPassword(email,pw);
-      if(name)await c.user.updateProfile({displayName:name});
-      await ensureUser(c.user,name);
-      cu=c.user;
+      const r=await auth.createUserWithEmailAndPassword(email,pw);
+      cu=r.user;
+      if(name) await cu.updateProfile({displayName:name});
+      await ensureUser(cu,name);
     }
-    // Update nav
-    const init=(cu.displayName||cu.email||'?')[0].toUpperCase();
-    document.getElementById('navlinks').style.display='flex';
-    document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${cu.photoURL?`<img src="${cu.photoURL}" alt="">`:init}</div><span style="font-size:13px">${cu.displayName||cu.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
-    manualNav=true;
+    setNav(cu);
     await loadDash();
     goTo('page-dashboard');
   }catch(e){
-    authInProgress=false;
+    handlingAuth=false;
     const msg=fe(e.code);
-    if(msg){showErr(msg);}
+    showErr(msg||'Innlogging feilet. Sjekk e-post og passord.');
     btn.textContent=am==='login'?'Logg inn':'Opprett konto';
     btn.disabled=false;
   }
@@ -865,37 +862,43 @@ async function loadInsights(){
 }
 
 /* ===== AUTH STATE ===== */
-// Handle redirect result on page load
-auth.getRedirectResult().then(async result=>{
-  if(result?.user) await ensureUser(result.user);
-}).catch(()=>{});
-
-// Fallback: hide spinner after 5s no matter what
-setTimeout(()=>{document.getElementById('ls').style.display='none';},5000);
-
-auth.onAuthStateChanged(async user=>{
-  // Ignore if manual login is in progress
-  if(authInProgress) return;
-
-  document.getElementById('ls').style.display='none';
+function setNav(user){
   document.getElementById('mn').style.display='flex';
-  cu=user;
-
   if(user){
     document.getElementById('navlinks').style.display='flex';
     const init=(user.displayName||user.email||'?')[0].toUpperCase();
     document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span style="font-size:13px">${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
-    manualNav=true;
-    await loadDash();
-    goTo('page-dashboard');
   }else{
     document.getElementById('navlinks').style.display='none';
     document.getElementById('nr2').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
-    goTo('page-home');
+  }
+}
+
+auth.onAuthStateChanged(async user=>{
+  document.getElementById('ls').style.display='none';
+  cu=user;
+  setNav(user);
+  const ap=document.querySelector('.page.active')?.id;
+  if(user){
+    await loadDash();
+    goTo('page-dashboard');
+  }else{
+    if(ap!=='page-auth'&&ap!=='page-home'){
+      goTo('page-home');
+    }
   }
 });
 
-window.logout=async()=>await auth.signOut();
+window.logout=async()=>{
+  handlingAuth=false;
+  cu=null;
+  await auth.signOut();
+};
+
+// Handle Google redirect on mobile
+auth.getRedirectResult().then(async r=>{
+  if(r&&r.user) await ensureUser(r.user);
+}).catch(()=>{});
 
 window.abortTest=()=>{clearInterval(lqTmr);goToDash();};
 
