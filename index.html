@@ -639,20 +639,24 @@ window.submitAuth=async()=>{
   const email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;
   const btn=document.getElementById('asb');
   btn.textContent=am==='login'?'Logger inn...':'Oppretter...';btn.disabled=true;
+  document.getElementById('aerr').style.display='none';
   try{
     if(am==='login'){
       await auth.signInWithEmailAndPassword(email,pw);
-      await loadDash();
-      goTo('page-dashboard');
+      // onAuthStateChanged handles redirect automatically
     }else{
       const name=document.getElementById('an').value.trim();
       const c=await auth.createUserWithEmailAndPassword(email,pw);
       if(name)await c.user.updateProfile({displayName:name});
       await ensureUser(c.user,name);
-      await loadDash();
-      goTo('page-dashboard');
+      // onAuthStateChanged handles redirect automatically
     }
-  }catch(e){showErr(fe(e.code));btn.textContent=am==='login'?'Logg inn':'Opprett konto';btn.disabled=false;}
+  }catch(e){
+    const msg=fe(e.code);
+    if(msg){showErr(msg);}
+    btn.textContent=am==='login'?'Logg inn':'Opprett konto';
+    btn.disabled=false;
+  }
 };
 window.logout=async()=>await auth.signOut();
 function showErr(m){const el=document.getElementById('aerr');el.textContent=m;el.style.display='block';}
