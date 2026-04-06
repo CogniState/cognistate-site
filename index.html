@@ -877,11 +877,12 @@ function setNav(user){
 
 auth.onAuthStateChanged(async user=>{
   document.getElementById('ls').style.display='none';
+  document.getElementById('mn').style.display='flex';
   cu=user;
   setNav(user);
   if(user){
-    await loadDash();
     goTo('page-dashboard');
+    loadDash();
   }else{
     goTo('page-home');
   }
