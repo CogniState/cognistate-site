@@ -1249,7 +1249,15 @@ const SW=[{word:'Rød',color:'#f87171',label:'Rød'},{word:'Blå',color:'#60a5fa
 
 window.startNowTest=()=>{
   rtT=[];rtR=0;rtRdy=false;
-  mLv=5;mSeq=[];mInp=[];mFwdSc=0;mFwdTot=0;mBwdSc=0;mBwdTot=0;mMax=5;mRound=0;mMode='forward';
+
+  // Start memory level based on baseline memSpan
+  // If no baseline: start at 5 (default)
+  // If baseline exists: start at baseline memSpan - 1 (gives room to show decline or improvement)
+  // Clamped between 3 and 8
+  const baselineSpan=window._baselineMemSpan||5;
+  const startLv=Math.min(8,Math.max(3,baselineSpan-1));
+
+  mLv=startLv;mSeq=[];mInp=[];mFwdSc=0;mFwdTot=0;mBwdSc=0;mBwdTot=0;mMax=startLv;mRound=0;mMode='forward';
   stC=0;stI=0;stD=[];stCongrRT=[];stIncongrRT=[];
   ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-reaction').style.display='block';
