@@ -514,6 +514,14 @@
   </div>
 </div>
 
+<!-- LOADING PAGE -->
+<div id="page-loading" class="page" style="align-items:center;justify-content:center;min-height:100vh">
+  <div style="text-align:center">
+    <div class="spin" style="margin:0 auto 1rem"></div>
+    <p style="font-size:14px;color:var(--muted)">Logger inn...</p>
+  </div>
+</div>
+
 <!-- INSIGHTS -->
 <div id="page-insights" class="page">
   <div class="ii">
@@ -638,19 +646,27 @@ window.loginGoogle=async()=>{
 window.submitAuth=async()=>{
   const email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;
   const btn=document.getElementById('asb');
-  btn.textContent=am==='login'?'Logger inn...':'Oppretter...';btn.disabled=true;
+  btn.textContent=am==='login'?'Logger inn...':'Oppretter...';
+  btn.disabled=true;
   document.getElementById('aerr').style.display='none';
   try{
     if(am==='login'){
-      await auth.signInWithEmailAndPassword(email,pw);
-      // onAuthStateChanged handles redirect automatically
+      const cred=await auth.signInWithEmailAndPassword(email,pw);
+      cu=cred.user;
     }else{
       const name=document.getElementById('an').value.trim();
       const c=await auth.createUserWithEmailAndPassword(email,pw);
       if(name)await c.user.updateProfile({displayName:name});
       await ensureUser(c.user,name);
-      // onAuthStateChanged handles redirect automatically
+      cu=c.user;
     }
+    // Update nav
+    const init=(cu.displayName||cu.email||'?')[0].toUpperCase();
+    document.getElementById('navlinks').style.display='flex';
+    document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${cu.photoURL?`<img src="${cu.photoURL}" alt="">`:init}</div><span style="font-size:13px">${cu.displayName||cu.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
+    // Navigate directly to dashboard
+    await loadDash();
+    goTo('page-dashboard');
   }catch(e){
     const msg=fe(e.code);
     if(msg){showErr(msg);}
