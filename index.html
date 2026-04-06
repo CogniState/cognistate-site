@@ -869,11 +869,7 @@ auth.onAuthStateChanged(async user=>{
   }else{
     document.getElementById('navlinks').style.display='none';
     document.getElementById('nr2').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
-    // Only go to home if not already on a public page
-    const ap=document.querySelector('.page.active')?.id;
-    if(!ap||ap==='page-dashboard'||ap==='page-insights'||ap==='page-results'||ap==='page-run'){
-      goTo('page-home');
-    }
+    goTo('page-home');
   }
 });
 
