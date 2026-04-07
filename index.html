@@ -554,6 +554,17 @@
       <div class="opts" id="lqo"></div>
       <p class="ht2" id="lqh"></p>
     </div>
+    <!-- Instruction screen shown before each phase -->
+    <div id="run-instruction" style="display:none">
+      <div style="text-align:center;padding:2rem 0">
+        <div id="instr-icon" style="font-size:40px;margin-bottom:1.25rem"></div>
+        <div id="instr-phase" style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.4);margin-bottom:.5rem"></div>
+        <div id="instr-title" style="font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:1rem"></div>
+        <div id="instr-body" style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:2rem;max-width:420px;margin-left:auto;margin-right:auto"></div>
+        <button class="btn btp" style="font-size:15px;padding:12px 32px" id="instr-btn" onclick="startPhaseFromInstruction()">Jeg er klar →</button>
+      </div>
+    </div>
+
     <div id="run-reaction" style="display:none">
       <div class="ph"><div class="pl">Del 1 av 3</div><div class="pt">Reaksjonstid</div><div class="pd">Trykk på sirkelen så fort den blir grønn. 5 forsøk — trimmed mean av de 3 midterste.</div></div>
       <div class="ra"><div class="rtc" id="rtc" onclick="handleReaction()">Vent...</div><p class="rts" id="rts"></p><div class="rtp" id="rtp"></div></div>
@@ -917,6 +928,23 @@ auth.getRedirectResult().then(async r=>{
 
 window.abortTest=()=>{clearInterval(lqTmr);goToDash();};
 
+let _nextPhase = null;
+
+function showInstruction(icon, phase, title, body, onStart){
+  _nextPhase = onStart;
+  document.getElementById('instr-icon').textContent = icon;
+  document.getElementById('instr-phase').textContent = phase;
+  document.getElementById('instr-title').textContent = title;
+  document.getElementById('instr-body').innerHTML = body;
+  ['run-level','run-reaction','run-memory','run-stroop','run-instruction'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('run-instruction').style.display='block';
+}
+
+window.startPhaseFromInstruction=()=>{
+  document.getElementById('run-instruction').style.display='none';
+  if(_nextPhase) _nextPhase();
+};
+
 /* ===== SVG HELPERS ===== */
 function mkSVG(content,size=110){return`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto">${content}</svg>`;}
 const C='#e2e8f0',CD='#94a3b8',CA='#94f5ff',CB='rgba(255,255,255,0.06)',CS='rgba(148,245,255,0.15)';
@@ -1128,7 +1156,6 @@ function showLQ(){
   document.getElementById('lqd').innerHTML=q.diff===1?'<span class="db de">Lett</span>':q.diff===2?'<span class="db dm">Middels</span>':'<span class="db dh">Krevende</span>';
 
   if(q.svg){
-    // SVG spatial question
     document.getElementById('lqq').innerHTML='';
     const qbox=document.getElementById('lqq');
     qbox.style.fontSize='14px';
@@ -1144,14 +1171,40 @@ function showLQ(){
       opts.appendChild(b);
     });
   } else {
-    // Text question
     document.getElementById('lqq').textContent=q.q;
     document.getElementById('lqq').style.fontSize='';
     const opts=document.getElementById('lqo');
     opts.className='opts'+(q.opts.length===3?' opts3':'');opts.innerHTML='';
     q.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='ob';b.textContent=o;b.onclick=()=>ansLQ(i,b);opts.appendChild(b);});
   }
-  lqTL=q.svg?180:150;lqSt=Date.now();clearInterval(lqTmr);lqTmr=setInterval(()=>{lqTL--;updLQT();if(lqTL<=0){clearInterval(lqTmr);nxtLQ();}},1000);updLQT();
+
+  // Reading phase — show question and options but disable buttons for 3 seconds
+  // Timer does NOT start until reading phase is over
+  const readTime = q.svg ? 4000 : 3000; // SVG needs more reading time
+  document.querySelectorAll('.ob').forEach(b=>b.disabled=true);
+
+  // Show reading countdown
+  document.getElementById('lqt').textContent='Les...';
+  document.getElementById('lqt').className='tv';
+
+  let readLeft = Math.round(readTime/1000);
+  const readInterval = setInterval(()=>{
+    readLeft--;
+    if(readLeft>0){
+      document.getElementById('lqt').textContent='Les... '+readLeft+'s';
+    }
+  },1000);
+
+  setTimeout(()=>{
+    clearInterval(readInterval);
+    // Enable buttons and start timer
+    document.querySelectorAll('.ob').forEach(b=>b.disabled=false);
+    lqTL=q.svg?180:150;
+    lqSt=Date.now();
+    clearInterval(lqTmr);
+    lqTmr=setInterval(()=>{lqTL--;updLQT();if(lqTL<=0){clearInterval(lqTmr);nxtLQ();}},1000);
+    updLQT();
+  }, readTime);
 }
 function updLQT(){const m=Math.floor(lqTL/60),s=lqTL%60;const el=document.getElementById('lqt');el.textContent=m+':'+(s<10?'0':'')+s;el.className=lqTL<=20?'tv tw':'tv';}
 function ansLQ(i,btn){
@@ -1265,19 +1318,16 @@ const SW=[{word:'Rød',color:'#f87171',label:'Rød'},{word:'Blå',color:'#60a5fa
 
 window.startNowTest=()=>{
   rtT=[];rtR=0;rtRdy=false;
-
-  // Start memory level based on baseline memSpan
-  // If no baseline: start at 5 (default)
-  // If baseline exists: start at baseline memSpan - 1 (gives room to show decline or improvement)
-  // Clamped between 3 and 8
   const baselineSpan=window._baselineMemSpan||5;
   const startLv=Math.min(8,Math.max(3,baselineSpan-1));
-
   mLv=startLv;mSeq=[];mInp=[];mFwdSc=0;mFwdTot=0;mBwdSc=0;mBwdTot=0;mMax=startLv;mRound=0;mMode='forward';
   stC=0;stI=0;stD=[];stCongrRT=[];stIncongrRT=[];
-  ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
-  document.getElementById('run-reaction').style.display='block';
-  goTo('page-run');startRT();
+  goTo('page-run');
+  showInstruction(
+    '⚡','Del 1 av 3','Reaksjonstid',
+    'En sirkel vises på skjermen. Vent til den blir <strong style="color:#4ade80">grønn</strong> — trykk da så raskt du kan.<br><br>Du får 5 forsøk. Vi fjerner beste og dårligste og beregner snittet av de 3 midterste.<br><br><strong style="color:var(--text)">Ikke trykk for tidlig — det gir straff.</strong>',
+    ()=>{ ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none'); document.getElementById('run-reaction').style.display='block'; startRT(); }
+  );
 };
 
 /* --- Reaksjonstid --- */
@@ -1310,7 +1360,15 @@ window.memNext=function(){
     if(mRound>=totalRounds){document.getElementById('mb').style.display='none';setTimeout(startStroop,800);return;}
     // Switch to backward after round 4
     if(mRound===4&&mMode==='forward'){
-      mMode='backward';mLv=Math.max(3,mMax-1);// backward slightly easier than fwd max
+      mMode='backward';mLv=Math.max(3,mMax-1);
+      // Show instruction before backward phase
+      mPh='idle';
+      showInstruction(
+        '🔄','Del 2 av 3 — bytte','Arbeidsminne — baklengs',
+        'Nå endres oppgaven. Du ser fortsatt tallrekker, men denne gangen skal du skrive dem inn i <strong style="color:var(--text)">omvendt rekkefølge</strong>.<br><br>Eksempel: vises <strong style="color:var(--accent)">3 · 7 · 2</strong>, skriv inn <strong style="color:var(--accent)">2 · 7 · 3</strong>.<br><br>Dette måler en annen type arbeidsminne enn fremover-testen.',
+        ()=>{ mRound++; window.memNext(); }
+      );
+      return;
     }
     mRound++;
     mSeq=Array.from({length:mLv},()=>Math.floor(Math.random()*9)+1);
