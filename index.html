@@ -287,6 +287,7 @@
     <div class="navlinks" id="navlinks" style="display:none">
       <button class="navlink" onclick="goToDash()">Dashboard</button>
       <button class="navlink" onclick="goToInsights()">Innsikt</button>
+      <button class="navlink" id="admin-nav-btn" style="display:none" onclick="goToAdmin()">Team</button>
     </div>
     <div id="nr2">
       <button class="btn btsm" onclick="showAuth('login')">Logg inn</button>
@@ -514,6 +515,14 @@
   </div>
 </div>
 
+<!-- ADMIN PAGE -->
+<div id="page-admin" class="page">
+  <div style="max-width:900px;margin:0 auto;padding:80px 24px 80px;width:100%">
+    <button class="bb2" onclick="goToDash()">← Dashboard</button>
+    <div id="admin-content"><div class="spin" style="margin:2rem auto"></div></div>
+  </div>
+</div>
+
 <!-- LOADING PAGE -->
 <div id="page-loading" class="page" style="align-items:center;justify-content:center;min-height:100vh">
   <div style="text-align:center">
@@ -621,6 +630,7 @@ function setNavActive(id){document.querySelectorAll('.navlink').forEach(l=>l.cla
 window.showHome=()=>goTo('page-home');
 window.goToDash=()=>{loadDash();goTo('page-dashboard');};
 window.goToInsights=()=>{loadInsights();goTo('page-insights');};
+window.goToAdmin=()=>{goTo('page-admin');showAdminDash();};
 
 window.showAuth=(mode)=>{
   // If already logged in, go to dashboard instead
@@ -869,6 +879,12 @@ function setNav(user){
     document.getElementById('navlinks').style.display='flex';
     const init=(user.displayName||user.email||'?')[0].toUpperCase();
     document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span style="font-size:13px">${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
+    // Show admin nav if user is admin
+    db.collection('users').doc(user.uid).get().then(snap=>{
+      const role=snap.data()?.role;
+      const adminBtn=document.getElementById('admin-nav-btn');
+      if(adminBtn) adminBtn.style.display=role==='admin'?'':'none';
+    }).catch(()=>{});
   }else{
     document.getElementById('navlinks').style.display='none';
     document.getElementById('nr2').innerHTML=`<button class="btn btsm" onclick="showAuth('login')">Logg inn</button><button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>`;
@@ -1477,6 +1493,178 @@ async function showNowRes(){
 }
 
 function rBar(l,p,c){p=Math.max(0,Math.min(100,p||0));return`<div class="rbw"><div class="rbr"><span>${l}</span></div><div class="rb"><div class="rbf" style="width:${p}%;background:${c}"></div></div></div>`;}
+/* ===== TEAM / ADMIN ===== */
+
+// Create a team (called when admin registers)
+async function createTeam(name){
+  if(!cu) return null;
+  const ref = await db.collection('teams').add({
+    name, adminUid:cu.uid, adminEmail:cu.email,
+    adminName:cu.displayName||cu.email,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+    memberCount:0
+  });
+  await db.collection('users').doc(cu.uid).set({role:'admin',teamId:ref.id},{merge:true});
+  return ref.id;
+}
+
+// Generate invite link
+async function generateInvite(teamId){
+  const code = Math.random().toString(36).substring(2,10).toUpperCase();
+  const expires = new Date(Date.now()+7*24*60*60*1000); // 7 days
+  const snap = await db.collection('teams').doc(teamId).get();
+  await db.collection('invites').doc(code).set({
+    teamId, teamName:snap.data().name,
+    adminEmail:cu.email, expiresAt:expires,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  return code;
+}
+
+// Join team via invite code
+async function joinTeam(code){
+  const invSnap = await db.collection('invites').doc(code.toUpperCase()).get();
+  if(!invSnap.exists) return {ok:false,msg:'Ugyldig invitasjonskode.'};
+  const inv = invSnap.data();
+  if(inv.expiresAt.toDate()<new Date()) return {ok:false,msg:'Invitasjonskoden er utløpt.'};
+  const teamId = inv.teamId;
+  // Add member to team
+  await db.collection('teams').doc(teamId).collection('members').doc(cu.uid).set({
+    uid:cu.uid, joinedAt:firebase.firestore.FieldValue.serverTimestamp(),
+    hasTestedToday:false
+  });
+  // Update user role
+  await db.collection('users').doc(cu.uid).set({role:'member',teamId},{merge:true});
+  return {ok:true,teamId,teamName:inv.teamName};
+}
+
+// Load admin dashboard data (anonymized)
+async function loadAdminDash(teamId){
+  const membersSnap = await db.collection('teams').doc(teamId).collection('members').get();
+  const memberUids = membersSnap.docs.map(d=>d.id);
+  if(memberUids.length===0) return {memberCount:0,testedToday:0,avgScore:null,avgBaseline:null,belowBaseline:0};
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  let testedToday=0,scores=[],baselines=[];
+
+  // Get recent results for all members (last 7 days)
+  for(const uid of memberUids){
+    const userSnap = await db.collection('users').doc(uid).get();
+    const ud = userSnap.data();
+    // Check if tested today
+    const todayRes = await db.collection('results')
+      .where('uid','==',uid)
+      .where('type','==','now')
+      .orderBy('createdAt','desc')
+      .limit(1)
+      .get();
+    if(!todayRes.empty){
+      const lastTest = todayRes.docs[0].data();
+      const lastDate = lastTest.createdAt?.toDate?lastTest.createdAt.toDate():new Date(0);
+      if(lastDate>=today) testedToday++;
+      if(lastTest.overall) scores.push(lastTest.overall);
+    }
+    if(ud?.baseline?.now?.overall) baselines.push(ud.baseline.now.overall);
+  }
+
+  const avgScore = scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
+  const avgBaseline = baselines.length?Math.round(baselines.reduce((a,b)=>a+b,0)/baselines.length):null;
+  const pctOfBaseline = avgScore&&avgBaseline?Math.round((avgScore/avgBaseline)*100):null;
+  const belowBaseline = scores.filter((s,i)=>baselines[i]&&s<baselines[i]*0.8).length;
+
+  return {memberCount:memberUids.length,testedToday,avgScore,avgBaseline,pctOfBaseline,belowBaseline,notTestedToday:memberUids.length-testedToday};
+}
+
+// Show admin dashboard page
+window.showAdminDash=async()=>{
+  const userSnap = await db.collection('users').doc(cu.uid).get();
+  const ud = userSnap.data();
+  const teamId = ud?.teamId;
+  if(!teamId){
+    document.getElementById('admin-content').innerHTML=renderCreateTeam();
+    return;
+  }
+  const teamSnap = await db.collection('teams').doc(teamId).get();
+  const team = teamSnap.data();
+  const data = await loadAdminDash(teamId);
+  const code = await generateInvite(teamId);
+  const inviteUrl = window.location.origin+'?invite='+code;
+  document.getElementById('admin-content').innerHTML=renderAdminStats(team,data,inviteUrl);
+};
+
+function renderCreateTeam(){
+  return `<div style="max-width:480px">
+    <h2 style="font-size:1.3rem;font-weight:600;color:var(--text);margin-bottom:.5rem">Opprett team</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem">Gi teamet et navn og inviter medlemmer via en unik lenke.</p>
+    <div style="margin-bottom:1rem">
+      <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:6px">Teamnavn</label>
+      <input id="team-name-inp" class="fi" type="text" placeholder="f.eks. Lederteam, Analyse, Salg"/>
+    </div>
+    <button class="btn btp" onclick="submitCreateTeam()">Opprett team →</button>
+  </div>`;
+}
+
+window.submitCreateTeam=async()=>{
+  const name=document.getElementById('team-name-inp').value.trim();
+  if(!name) return;
+  const teamId=await createTeam(name);
+  await showAdminDash();
+};
+
+function renderAdminStats(team,data,inviteUrl){
+  const pctColor=data.pctOfBaseline>=90?'#4ade80':data.pctOfBaseline>=70?'#facc15':'#f87171';
+  const statusText=data.pctOfBaseline>=90?'Teamet er i god kognitiv form i dag.':
+    data.pctOfBaseline>=70?'Teamet er noe under toppnivå. Vurder krevende beslutninger med forsiktighet.':
+    data.pctOfBaseline?'Teamet er betydelig under baseline. Unngå kritiske beslutninger i dag.':'Ikke nok data ennå.';
+
+  return `
+  <div style="margin-bottom:2rem">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.4);margin-bottom:.5rem">${team.name}</div>
+    <h2 style="font-size:1.4rem;font-weight:600;color:var(--text);margin-bottom:.25rem">Team-oversikt</h2>
+    <p style="font-size:13px;color:var(--muted)">All data er anonymisert. Du ser aldri individuelle resultater.</p>
+  </div>
+
+  ${data.pctOfBaseline?`<div style="background:${data.pctOfBaseline>=90?'rgba(74,222,128,.08)':data.pctOfBaseline>=70?'rgba(250,204,21,.07)':'rgba(248,113,113,.07)'};border:1px solid ${data.pctOfBaseline>=90?'rgba(74,222,128,.2)':data.pctOfBaseline>=70?'rgba(250,204,21,.2)':'rgba(248,113,113,.2)'};border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:13px;color:${pctColor}">${statusText}</div>`:''}
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:2rem">
+    <div class="sc"><div class="sv">${data.memberCount}</div><div class="slb">Teammedlemmer</div></div>
+    <div class="sc"><div class="sv">${data.testedToday}<span class="su">/${data.memberCount}</span></div><div class="slb">Testet i dag</div></div>
+    <div class="sc"><div class="sv" style="color:${pctColor}">${data.pctOfBaseline?data.pctOfBaseline+'%':'—'}</div><div class="slb">% av baseline</div></div>
+    <div class="sc"><div class="sv">${data.testedToday>=3?data.avgScore||'—':'—'}</div><div class="slb">Snitt score i dag</div></div>
+  </div>
+
+  ${data.testedToday<3?`<div style="background:rgba(148,245,255,.05);border:1px solid rgba(148,245,255,.15);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:13px;color:rgba(148,245,255,.7)">
+    For lite data i dag til å vise teamets score. Resultater vises når minst 3 medlemmer har testet.
+  </div>`:''}
+
+  <div style="margin-bottom:2rem">
+    <div class="sl">Inviter nye medlemmer</div>
+    <div style="background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:1.25rem">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem">Del denne lenken med teammedlemmer. Lenken er gyldig i 7 dager.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="fi" type="text" value="${inviteUrl}" id="invite-url" readonly style="flex:1;font-size:12px"/>
+        <button class="btn bta" onclick="navigator.clipboard.writeText(document.getElementById('invite-url').value);this.textContent='Kopiert!'">Kopier</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Handle invite code on page load
+async function checkInvite(){
+  const params=new URLSearchParams(window.location.search);
+  const code=params.get('invite');
+  if(!code||!cu) return;
+  // Show join team dialog
+  const result=await joinTeam(code);
+  if(result.ok){
+    alert('Du har blitt med i teamet: '+result.teamName);
+    window.history.replaceState({},'',window.location.pathname);
+  }else{
+    alert(result.msg);
+  }
+}
+
 </script>
 </body>
 </html>
