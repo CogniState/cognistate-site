@@ -1271,9 +1271,8 @@ async function showLvlRes(){
   });
 
   const resultData={pct,avg,score:lqS,total:LQ_ACTIVE.length,iq,domains};
-  // Navigate to results first, then save in background
+  // Navigate to results first
   goTo('page-results');
-  try{ await saveResult('level',resultData); }catch(e){console.log('saveResult error:',e);}
 
   const snap=cu?await db.collection('users').doc(cu.uid).get():null;
   const ud=snap?.data();
@@ -1305,7 +1304,11 @@ async function showLvlRes(){
   document.getElementById('ai-body').innerHTML=insight;
 
   // Save insight to Firestore
-  if(cu){ try{ await db.collection('insights').add({uid:cu.uid,type:'level',score:lqS,pct,domains,iq,avg,aiInsight:insight,overall:pct,avgRT:null,memSpan:null,stroopPct:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()}); }catch(e){console.log('insights error:',e);} }
+  // Save in background
+  if(cu){
+    saveResult('level',resultData).catch(e=>console.log('saveResult:',e));
+    db.collection('insights').add({uid:cu.uid,type:'level',score:lqS,pct,domains,iq,avg,aiInsight:insight,overall:pct,avgRT:null,memSpan:null,stroopPct:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>console.log('insights:',e));
+  }
 }
 
 /* ===== DAGSFORM-TEST ===== */
@@ -1509,9 +1512,8 @@ async function showNowRes(){
 
   const resultData={avgRT,minRT,rtVar,memSpan,fwdPct,bwdPct,memCombined,stroopPct,stroopInterference,avgCongrRT,avgIncongrRT,overall,rtScore:rtScAdj,memScore:mSc2,stroopScore:stSc};
 
-  // Navigate first, save in background
+  // Navigate first
   goTo('page-results');
-  try{ await saveResult('now',resultData); }catch(e){console.log('saveResult error:',e);}
 
   const snap=cu?await db.collection('users').doc(cu.uid).get():null;
   const ud=snap?.data();
@@ -1547,7 +1549,11 @@ async function showNowRes(){
   const insight=generateInsight('now',resultData,bl);
   document.getElementById('ai-body').innerHTML=insight;
 
-  if(cu){ try{ await db.collection('insights').add({uid:cu.uid,type:'now',overall,avgRT,memSpan,stroopPct,aiInsight:insight,score:null,pct:null,domains:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()}); }catch(e){console.log('insights error:',e);} }
+  // Save everything in background - never block UI
+  if(cu){
+    saveResult('now',resultData).catch(e=>console.log('saveResult:',e));
+    db.collection('insights').add({uid:cu.uid,type:'now',overall,avgRT,memSpan,stroopPct,aiInsight:insight,score:null,pct:null,domains:null,createdAt:firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>console.log('insights:',e));
+  }
 }
 
 function rBar(l,p,c){p=Math.max(0,Math.min(100,p||0));return`<div class="rbw"><div class="rbr"><span>${l}</span></div><div class="rb"><div class="rbf" style="width:${p}%;background:${c}"></div></div></div>`;}
