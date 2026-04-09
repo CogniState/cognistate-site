@@ -639,7 +639,7 @@ let cu=null,am='login',scoreChart=null;
 function goTo(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);setNavActive(id);}
 function setNavActive(id){document.querySelectorAll('.navlink').forEach(l=>l.classList.remove('active'));if(id==='page-dashboard')document.querySelectorAll('.navlink')[0]?.classList.add('active');if(id==='page-insights')document.querySelectorAll('.navlink')[1]?.classList.add('active');}
 window.showHome=()=>goTo('page-home');
-window.goToDash=()=>{loadDash();goTo('page-dashboard');};
+window.goToDash=async()=>{goTo('page-dashboard');await loadDash();};
 window.goToInsights=()=>{loadInsights();goTo('page-insights');};
 window.goToAdmin=()=>{goTo('page-admin');showAdminDash();};
 
@@ -782,8 +782,15 @@ async function loadDash(){
   const name=(ud?.name||cu.displayName||'deg').split(' ')[0];
   document.getElementById('dn2').textContent='Hei, '+name+'!';
 
-  const q=db.collection('results').where('uid','==',cu.uid).orderBy('createdAt','desc').limit(20);
-  const res=await q.get();
+  let res;
+  try{
+    const q=db.collection('results').where('uid','==',cu.uid).orderBy('createdAt','desc').limit(20);
+    res=await q.get();
+  }catch(e){
+    // Fallback without ordering if index missing
+    const q=db.collection('results').where('uid','==',cu.uid).limit(20);
+    res=await q.get();
+  }
   let rows=[],chartNow=[],chartLevel=[],latestNow=null,latestLevel=null;
 
   res.forEach(d=>{
