@@ -777,7 +777,7 @@ async function loadDash(){
   document.getElementById('dn2').textContent='Hei, '+displayName+'!';
   document.getElementById('onboarding-box').style.display='block';
   try{
-  const snap=await getDoc(db.collection('users').doc(cu.uid));
+  const snap=await db.collection('users').doc(cu.uid).get();
   const ud=snap.data();
   const name=(ud?.name||cu.displayName||'deg').split(' ')[0];
   document.getElementById('dn2').textContent='Hei, '+name+'!';
@@ -1275,7 +1275,7 @@ async function showLvlRes(){
   goTo('page-results');
   try{ await saveResult('level',resultData); }catch(e){console.log('saveResult error:',e);}
 
-  const snap=cu?await getDoc(db.collection('users').doc(cu.uid)):null;
+  const snap=cu?await db.collection('users').doc(cu.uid).get():null;
   const ud=snap?.data();
   const bl=ud?.baseline;
   const isBase=!bl?.level||bl.level.pct===pct;
@@ -1513,7 +1513,7 @@ async function showNowRes(){
   goTo('page-results');
   try{ await saveResult('now',resultData); }catch(e){console.log('saveResult error:',e);}
 
-  const snap=cu?await getDoc(db.collection('users').doc(cu.uid)):null;
+  const snap=cu?await db.collection('users').doc(cu.uid).get():null;
   const ud=snap?.data();
   const bl=ud?.baseline;
   const isBase=!bl?.now||bl.now.overall===overall;
