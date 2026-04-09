@@ -1366,7 +1366,7 @@ window.memNext=function(){
       showInstruction(
         '🔄','Del 2 av 3 — bytte','Arbeidsminne — baklengs',
         'Nå endres oppgaven. Du ser fortsatt tallrekker, men denne gangen skal du skrive dem inn i <strong style="color:var(--text)">omvendt rekkefølge</strong>.<br><br>Eksempel: vises <strong style="color:var(--accent)">3 · 7 · 2</strong>, skriv inn <strong style="color:var(--accent)">2 · 7 · 3</strong>.<br><br>Dette måler en annen type arbeidsminne enn fremover-testen.',
-        ()=>{ mRound++; window.memNext(); }
+        ()=>{ document.getElementById('run-memory').style.display='block'; mRound++; window.memNext(); }
       );
       return;
     }
