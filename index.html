@@ -863,8 +863,14 @@ async function loadDash(){
 /* ===== INSIGHTS PAGE ===== */
 async function loadInsights(){
   if(!cu)return;
-  const q=db.collection('insights').where('uid','==',cu.uid).orderBy('createdAt','desc').limit(20);
-  const res=await q.get();
+  let res;
+  try{
+    const q=db.collection('insights').where('uid','==',cu.uid).orderBy('createdAt','desc').limit(20);
+    res=await q.get();
+  }catch(e){
+    const q=db.collection('insights').where('uid','==',cu.uid).limit(20);
+    res=await q.get();
+  }
   const list=document.getElementById('insights-list');
   if(res.empty){list.innerHTML='<div class="insights-empty">Ingen innsikter ennå.<br>Ta din første test for å generere personlige analyser.</div>';return;}
   list.innerHTML='';
@@ -873,7 +879,7 @@ async function loadInsights(){
     const date=dd.createdAt?.toDate?dd.createdAt.toDate():new Date();
     const dateStr=date.toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
     const icon=dd.type==='level'?'🧠':'⚡';
-    const scoreStr=dd.type==='level'?`${dd.score}% poengsum`:`${dd.overall}/100 total`;
+    const scoreStr=dd.type==='level'?`${dd.pct||dd.score}% poengsum`:`${dd.overall}/100 total`;
     let tags='';
     if(dd.type==='now'){
       if(dd.overall>=80)tags+='<span class="ic-tag tag-good">God form</span>';
@@ -1108,23 +1114,33 @@ window.startLevelTest=async()=>{
 };
 
 async function generateAIQuestions(){
-  const prompt=`Generer 12 kognitive testspørsmål på norsk. Returner KUN gyldig JSON, ingen annen tekst.
+  // Use random seed to ensure variety
+  const seed = Math.random().toString(36).substring(2,8);
+  const prompt=`Generer 12 UNIKE kognitive testspørsmål på norsk. Seed: ${seed}. Returner KUN gyldig JSON, ingen annen tekst.
 
 Format (array med 12 objekter):
 [
-  {"cat":"logic","diff":1,"q":"Spørsmålstekst","opts":["A","B","C","D"],"ans":0,"hint":"Kort hint"},
+  {"cat":"logic","diff":2,"q":"Spørsmålstekst","opts":["A","B","C","D"],"ans":0,"hint":"Kort hint"},
   ...
 ]
 
-Regler:
-- cat: "logic", "number", eller "abstract" (4 av hver)
-- diff: 1=lett, 2=middels, 3=krevende (4 av hver)
-- opts: alltid 4 alternativer
+Strenge regler:
+- cat: "logic", "number", eller "abstract" (4 av hver kategori)
+- diff: 2=middels (4 stk), 3=krevende (8 stk) — INGEN lette spørsmål
+- opts: alltid 4 alternativer, alle plausible og fristende
 - ans: indeks (0-3) for riktig svar
-- hint: kort forklaring av løsningen
-- Varier spørsmålstyper: syllogismer, tallrekker, analogi, kode/mønster, matematisk resonnering
-- Aldri de samme spørsmålene to ganger — vær kreativ
-- Spørsmål skal passe for studenter og bedriftsansatte`;
+- hint: forklaring av løsningen
+
+Krav til vanskelighetsgrad:
+- Middels (diff:2): krever aktiv tenkning, ikke opplagte svar
+- Krevende (diff:3): krever dyp resonnering, flere steg, eller uvanlig vinklet
+
+Krav til variasjon — bruk ULIKE strukturer hver gang:
+- Logikk: syllogismer, negasjonslogikk, rekkefølgeproblemer, betingede utsagn, analogi
+- Tall: tallrekker med ikke-opplagte mønstre, prosentregning, proporsjonalitet, geometri, kombinatorikk
+- Abstrakt: kode-dekoding, kategorisering, sekvenslogikk, romlig tenkning beskrevet i tekst
+
+Viktig: Aldri gjenta samme spørsmålstype to ganger på rad. Gjør svarene vanskelige å gjette.`;
 
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
@@ -1141,12 +1157,19 @@ Regler:
     const clean=text.replace(/```json|```/g,'').trim();
     const generated=JSON.parse(clean);
     if(Array.isArray(generated)&&generated.length>=10){
+      // Remove duplicates by question text similarity
+      const seen = new Set();
+      const unique = generated.filter(q=>{
+        const key = q.q.substring(0,30).toLowerCase();
+        if(seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
       // Combine: AI questions + static spatial questions
       const spatialQs=LQ_STATIC.filter(q=>q.cat==='spatial');
-      // Shuffle AI questions
-      const shuffled=generated.sort(()=>Math.random()-.5);
+      const shuffled=unique.sort(()=>Math.random()-.5);
       LQ_ACTIVE=[...shuffled,...spatialQs].sort(()=>Math.random()-.5);
-      console.log('AI questions generated successfully');
+      console.log('AI questions generated:', unique.length, 'unique questions');
       return;
     }
   }catch(e){
@@ -1278,13 +1301,22 @@ async function showLvlRes(){
   });
 
   const resultData={pct,avg,score:lqS,total:LQ_ACTIVE.length,iq,domains};
-  // Navigate to results first
+  // Navigate immediately - never wait for Firestore
   goTo('page-results');
 
-  const snap=cu?await db.collection('users').doc(cu.uid).get():null;
-  const ud=snap?.data();
-  const bl=ud?.baseline;
-  const isBase=!bl?.level||bl.level.pct===pct;
+  // Fetch baseline non-blocking
+  let bl=null, isBase=true;
+  try{
+    if(cu){
+      const snap=await Promise.race([
+        db.collection('users').doc(cu.uid).get(),
+        new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),3000))
+      ]);
+      const ud=snap?.data();
+      bl=ud?.baseline;
+      isBase=!bl?.level||bl.level.pct===pct;
+    }
+  }catch(e){console.log('baseline fetch:',e);}
 
   document.getElementById('restit').textContent='Kognitiv profil';
   document.getElementById('ressub').textContent=new Date().toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
@@ -1519,13 +1551,21 @@ async function showNowRes(){
 
   const resultData={avgRT,minRT,rtVar,memSpan,fwdPct,bwdPct,memCombined,stroopPct,stroopInterference,avgCongrRT,avgIncongrRT,overall,rtScore:rtScAdj,memScore:mSc2,stroopScore:stSc};
 
-  // Navigate first
+  // Navigate immediately
   goTo('page-results');
 
-  const snap=cu?await db.collection('users').doc(cu.uid).get():null;
-  const ud=snap?.data();
-  const bl=ud?.baseline;
-  const isBase=!bl?.now||bl.now.overall===overall;
+  let bl=null, isBase=true;
+  try{
+    if(cu){
+      const snap=await Promise.race([
+        db.collection('users').doc(cu.uid).get(),
+        new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),3000))
+      ]);
+      const ud=snap?.data();
+      bl=ud?.baseline;
+      isBase=!bl?.now||bl.now.overall===overall;
+    }
+  }catch(e){console.log('baseline fetch:',e);}
 
   document.getElementById('restit').textContent='Dagsform';
   document.getElementById('ressub').textContent=new Date().toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
