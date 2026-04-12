@@ -152,7 +152,7 @@
     display: inline-flex; align-items: center; gap: 6px;
     background: none; border: none; color: var(--sub);
     font-family: inherit; font-size: 13px; cursor: pointer;
-    padding: 4px 0; transition: color .15s;
+    padding: 4px 0; transition: color .15s; align-self: flex-start;
   }
   .bb2:hover { color: var(--text); }
 
@@ -337,6 +337,7 @@
   .sl {
     font-size: 11px; font-weight: 600; text-transform: uppercase;
     letter-spacing: .08em; color: var(--muted); margin-bottom: 14px;
+    margin-top: 28px;
   }
 
   /* Chart card */
@@ -406,18 +407,18 @@
     display: flex; flex-direction: column; align-items: center;
   }
   .ri > * { width: 100%; }
-  .tr2 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .tr2 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 100%; }
   .tl2 { font-size: 12.5px; color: var(--muted); }
   .tv { font-size: 15px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
-  .pb { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 28px; }
+  .pb { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 28px; width: 100%; }
   .pf { height: 2px; background: var(--accent); border-radius: 1px; transition: width .4s ease; }
-  .db { display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 10.5px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; margin-bottom: 14px; }
+  .db { display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 10.5px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; margin-bottom: 14px; align-self: flex-start; }
   .de { background: rgba(61,217,179,.1); color: var(--accent2); }
   .dm { background: rgba(240,180,41,.08); color: var(--am); }
   .dh { background: rgba(240,101,101,.08); color: var(--no); }
-  .qb { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 20px; }
-  .qt { font-size: 16px; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
-  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; }
+  .qb { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 20px; width: 100%; }
+  .qt { font-size: 16px; line-height: 1.6; color: var(--text); white-space: pre-wrap; text-align: left; }
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; width: 100%; }
   .opts3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
   .ob {
     background: var(--bg2); border: 1px solid var(--border);
@@ -429,7 +430,7 @@
   .ob:disabled { opacity: .5; cursor: not-allowed; }
   .ob.correct { background: var(--okb); border-color: rgba(61,217,179,.4); color: var(--ok); }
   .ob.wrong { background: var(--nob); border-color: rgba(240,101,101,.3); color: var(--no); }
-  .lqh { font-size: 12px; color: var(--muted); font-style: italic; min-height: 18px; margin-bottom: 8px; }
+  .lqh { font-size: 12px; color: var(--muted); font-style: italic; min-height: 18px; margin-bottom: 8px; width: 100%; text-align: left; }
 
   /* Reaction time */
   .rtw { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px; padding: 40px 0; min-height: 300px; }
@@ -447,7 +448,7 @@
   .rts { font-size: 13.5px; color: var(--sub); text-align: center; }
 
   /* Memory */
-  .mw { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+  .mw { display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%; text-align: center; }
   .mi { font-size: 14px; color: var(--sub); text-align: center; }
   .mlb { font-size: 12px; color: var(--muted); text-align: center; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
   .md { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 8px 0; min-height: 52px; }
@@ -461,7 +462,7 @@
   .sb2:hover { background: var(--bg3); border-color: rgba(91,141,239,.3); }
 
   /* Stroop */
-  .stw { text-align: center; }
+  .stw { text-align: center; width: 100%; }
   .stword { font-size: 2.5rem; font-weight: 700; margin: 24px 0; letter-spacing: -1px; }
   .sto { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
   .ob-stroop {
@@ -476,7 +477,7 @@
 
   /* ======= RESULTS ======= */
   #page-results { align-items: center; }
-  .resi { width: 100%; max-width: 620px; margin: 0 auto; padding: 82px 24px 100px; }
+  .resi { width: 100%; max-width: 620px; margin: 0 auto; padding: 82px 24px 100px; display: flex; flex-direction: column; }
   .rh { margin-bottom: 24px; }
   .rt2 { font-size: 1.7rem; font-weight: 600; letter-spacing: -.5px; margin-bottom: 4px; }
   .rsub { font-size: 13px; color: var(--sub); }
@@ -616,6 +617,10 @@
   /* ======= MOBILE ======= */
   @media (max-width: 600px) {
     .rsg { grid-template-columns: 1fr 1fr; }
+    .domain-profile { grid-template-columns: 1fr 1fr; }
+    .resi { padding: 76px 16px 80px; }
+    .di { padding: 76px 16px 80px; }
+    .ri { padding: 76px 16px 80px; }
     .tgrid { grid-template-columns: 1fr; }
     .opts { grid-template-columns: 1fr; }
     .opts3 { grid-template-columns: 1fr 1fr; }
@@ -977,7 +982,7 @@
 </div>
 
 <!-- LOADING PAGE -->
-<div id="page-loading" class="page" style="align-items:center;justify-content:center;min-height:100vh">
+<div id="page-loading" class="page" style="align-items:center;justify-content:center;min-height:100vh;text-align:center">
   <div style="text-align:center">
     <div class="spin" style="margin:0 auto 1rem"></div>
     <p style="font-size:14px;color:var(--muted)">Logger inn...</p>
@@ -1009,12 +1014,12 @@
     </div>
     <!-- Instruction screen shown before each phase -->
     <div id="run-instruction" style="display:none">
-      <div style="text-align:center;padding:2rem 0">
-        <div id="instr-icon" style="font-size:40px;margin-bottom:1.25rem"></div>
-        <div id="instr-phase" style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(148,245,255,.4);margin-bottom:.5rem"></div>
-        <div id="instr-title" style="font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:1rem"></div>
-        <div id="instr-body" style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:2rem;max-width:420px;margin-left:auto;margin-right:auto"></div>
-        <button class="btn btp" style="font-size:15px;padding:12px 32px" id="instr-btn" onclick="startPhaseFromInstruction()">Jeg er klar →</button>
+      <div style="text-align:center;padding:2rem 0;max-width:480px;margin:0 auto">
+        <div id="instr-icon" style="width:52px;height:52px;border-radius:14px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:var(--accent)"></div>
+        <div id="instr-phase" style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;font-weight:600"></div>
+        <div id="instr-title" style="font-size:1.5rem;font-weight:600;color:var(--text);margin-bottom:12px;letter-spacing:-.3px"></div>
+        <div id="instr-body" style="font-size:14px;color:var(--sub);line-height:1.8;margin-bottom:28px"></div>
+        <button class="btn btp" style="font-size:14px;padding:11px 32px;border-radius:10px" id="instr-btn" onclick="startPhaseFromInstruction()">Jeg er klar →</button>
       </div>
     </div>
 
