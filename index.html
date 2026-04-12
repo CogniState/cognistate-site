@@ -399,11 +399,13 @@
   .slb { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
 
   /* ======= RUN PAGE ======= */
-  #page-run { align-items: flex-start; }
+  #page-run { align-items: center; }
   .ri {
-    width: 100%; max-width: 640px; margin: 0 auto;
+    width: 100%; max-width: 600px; margin: 0 auto;
     padding: 82px 24px 80px;
+    display: flex; flex-direction: column; align-items: center;
   }
+  .ri > * { width: 100%; }
   .tr2 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .tl2 { font-size: 12.5px; color: var(--muted); }
   .tv { font-size: 15px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
@@ -430,17 +432,19 @@
   .lqh { font-size: 12px; color: var(--muted); font-style: italic; min-height: 18px; margin-bottom: 8px; }
 
   /* Reaction time */
-  .rtw { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px 0; }
+  .rtw { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px; padding: 40px 0; min-height: 300px; }
   .rtc {
-    width: 160px; height: 160px; border-radius: 50%;
+    width: 220px; height: 220px; border-radius: 50%;
     background: var(--bg2); border: 2px solid var(--border);
-    cursor: pointer; transition: all .15s;
+    cursor: pointer; transition: all .2s;
     display: flex; align-items: center; justify-content: center;
-    font-size: 13px; color: var(--muted);
+    font-size: 14px; font-weight: 500; color: var(--muted);
+    user-select: none;
   }
-  .rtc.ready { background: var(--okb); border-color: var(--ok); }
-  .rtc.wait { background: var(--nob); border-color: var(--no); }
-  .rts { font-size: 13px; color: var(--sub); text-align: center; }
+  .rtc:hover { border-color: var(--border2); }
+  .rtc.ready { background: var(--okb); border-color: var(--ok); color: var(--ok); box-shadow: 0 0 40px rgba(61,217,179,.15); }
+  .rtc.wait { background: var(--nob); border-color: var(--no); color: var(--no); }
+  .rts { font-size: 13.5px; color: var(--sub); text-align: center; }
 
   /* Memory */
   .mw { display: flex; flex-direction: column; gap: 16px; align-items: center; }
@@ -539,7 +543,7 @@
   #page-admin { align-items: flex-start; }
 
   /* ======= INSTRUCTION SCREEN ======= */
-  #run-instruction { padding: 24px 0; }
+  #run-instruction { padding: 24px 0; display: flex; flex-direction: column; align-items: center; text-align: center; }
 
   /* ======= LOADING ======= */
   .spin {
