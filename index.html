@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>CogniState</title>
   <meta name="description" content="CogniState kartlegger og forbedrer beslutningsevne ved hjelp av moderne teknologi, datadrevet innsikt og kognitiv analyse."/>
+  <meta property="og:title" content="CogniState"/>
+  <meta property="og:description" content="Kartlegg og forbedre din beslutningsevne med kognitiv analyse og datadrevet innsikt."/>
+  <meta property="og:image" content="https://www.cognistate.io/assets/cognistate-logo.png"/>
+  <meta property="og:url" content="https://www.cognistate.io"/>
+  <meta property="og:type" content="website"/>
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:title" content="CogniState"/>
+  <meta name="twitter:description" content="Kartlegg og forbedre din beslutningsevne med kognitiv analyse og datadrevet innsikt."/>
+  <meta name="twitter:image" content="https://www.cognistate.io/assets/cognistate-logo.png"/>
   <link rel="icon" type="image/png" href="assets/cognistate-logo.png"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
@@ -271,18 +280,24 @@
     footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;gap:14px;z-index:5;font-size:12px;color:var(--muted);padding:10px 16px;background:linear-gradient(to top,rgba(15,23,42,1),rgba(15,23,42,0));}
     footer a{color:var(--accent);text-decoration:none;transition:opacity .2s;}
     footer a:hover{opacity:.75;}
-    @media(max-width:520px){.rsg{grid-template-columns:1fr 1fr;}.opts{grid-template-columns:1fr;}.opts3{grid-template-columns:1fr 1fr;}.nb span{display:none;}.navlinks{display:none;}}
+    .hmb{display:none;background:none;border:none;cursor:pointer;padding:6px 8px;color:var(--muted);font-size:20px;line-height:1;border-radius:6px;transition:color .15s,background .15s;}
+    .hmb:hover{color:var(--text);background:var(--s1);}
+    .mnav{display:none;position:fixed;top:60px;left:0;right:0;background:rgba(15,23,42,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1);z-index:99;padding:10px 16px 14px;flex-direction:column;gap:4px;}
+    .mnav.open{display:flex;}
+    .mnavlink{background:none;border:none;font-family:inherit;font-size:14px;color:var(--muted);cursor:pointer;padding:10px 14px;border-radius:8px;text-align:left;transition:all .15s;width:100%;}
+    .mnavlink:hover{color:var(--text);background:var(--s1);}
+    @media(max-width:520px){.rsg{grid-template-columns:1fr 1fr;}.opts{grid-template-columns:1fr;}.opts3{grid-template-columns:1fr 1fr;}.nb span{display:none;}.navlinks{display:none;}.hmb{display:block;}}
   </style>
 </head>
 <body>
 <div class="glow" aria-hidden="true"></div>
 <div class="ls" id="ls"><div class="spin"></div><p>Laster CogniState...</p></div>
 
-<nav id="mn" style="display:none">
-  <div class="nb" onclick="showHome()">
-    <img src="assets/cognistate-logo.png" alt="CogniState"/>
+<nav id="mn" style="display:none" role="navigation" aria-label="Hovednavigasjon">
+  <button class="nb" onclick="showHome()" aria-label="Gå til forsiden">
+    <img src="assets/cognistate-logo.png" alt="CogniState logo"/>
     <span>CogniState</span>
-  </div>
+  </button>
   <div class="nr">
     <div class="navlinks" id="navlinks" style="display:none">
       <button class="navlink" onclick="goToDash()">Dashboard</button>
@@ -292,8 +307,14 @@
       <button class="btn btsm" onclick="showAuth('login')">Logg inn</button>
       <button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>
     </div>
+    <button class="hmb" id="hmb" onclick="toggleMobileNav()" aria-label="Åpne meny" aria-expanded="false">&#9776;</button>
   </div>
 </nav>
+
+<div class="mnav" id="mnav" role="menu" aria-label="Mobilmeny">
+  <button class="mnavlink" onclick="goToDash();closeMobileNav()" role="menuitem">Dashboard</button>
+  <button class="mnavlink" onclick="goToInsights();closeMobileNav()" role="menuitem">Innsikt</button>
+</div>
 
 <!-- HOME -->
 <div id="page-home" class="page">
@@ -719,7 +740,11 @@ getRedirectResult(auth).then(async result=>{
 }).catch(()=>{});
 
 // Fallback: hide spinner after 5s no matter what
-setTimeout(()=>{document.getElementById('ls').style.display='none';},5000);
+setTimeout(()=>{document.getElementById('ls').style.display='none';},2500);
+
+function toggleMobileNav(){const m=document.getElementById('mnav'),b=document.getElementById('hmb'),open=m.classList.toggle('open');b.setAttribute('aria-expanded',open);b.setAttribute('aria-label',open?'Lukk meny':'Åpne meny');}
+function closeMobileNav(){document.getElementById('mnav').classList.remove('open');const b=document.getElementById('hmb');b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Åpne meny');}
+window.addEventListener('click',e=>{const m=document.getElementById('mnav'),b=document.getElementById('hmb');if(m.classList.contains('open')&&!m.contains(e.target)&&!b.contains(e.target))closeMobileNav();});
 
 onAuthStateChanged(auth,async user=>{
   document.getElementById('ls').style.display='none';
