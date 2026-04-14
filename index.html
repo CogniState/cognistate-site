@@ -680,6 +680,63 @@
     display: block; font-size: 12.5px; color: var(--sub);
     margin-bottom: 6px; font-weight: 500;
   }
+
+  /* Problem/solution */
+  .home-problem {
+    display: flex; align-items: center; gap: 20px;
+    margin-bottom: 60px; width: 100%; flex-wrap: wrap;
+  }
+  .problem-card, .solution-card {
+    flex: 1; min-width: 220px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px;
+  }
+  .solution-card { border-color: rgba(91,141,239,.2); }
+  .problem-label {
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--no); margin-bottom: 12px;
+  }
+  .solution-label {
+    font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--accent); margin-bottom: 12px;
+  }
+  .problem-text { font-size: 13.5px; color: var(--sub); line-height: 1.7; }
+  .problem-attr { font-size: 12px; color: var(--muted); margin-top: 10px; font-style: italic; }
+  .solution-arrow { font-size: 1.5rem; color: var(--muted); flex-shrink: 0; }
+
+  /* How it works */
+  .how-section { width: 100%; margin-bottom: 60px; }
+  .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .how-step { background: var(--bg2); padding: 24px; }
+  .how-num { width: 28px; height: 28px; border-radius: 8px; background: rgba(91,141,239,.1); color: var(--accent); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+  .how-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+  .how-desc { font-size: 13px; color: var(--sub); line-height: 1.6; }
+
+  /* Measure section */
+  .measure-section { width: 100%; margin-bottom: 60px; }
+
+  /* Team section */
+  .team-section { width: 100%; margin-bottom: 40px; }
+  .team-card {
+    display: flex; gap: 32px; align-items: center;
+    background: linear-gradient(135deg, rgba(91,141,239,.06), rgba(61,217,179,.04));
+    border: 1px solid rgba(91,141,239,.18);
+    border-radius: 18px; padding: 36px; flex-wrap: wrap;
+  }
+  .team-visual {
+    min-width: 200px; background: var(--bg2);
+    border: 1px solid var(--border); border-radius: 14px; padding: 20px;
+    flex-shrink: 0;
+  }
+  .team-metric { text-align: center; }
+
+  @media (max-width: 600px) {
+    .how-grid { grid-template-columns: 1fr; }
+    .home-problem { flex-direction: column; }
+    .solution-arrow { transform: rotate(90deg); }
+    .team-card { flex-direction: column; }
+    .team-visual { width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -709,63 +766,122 @@
 <div id="page-home" class="page">
   <div class="home-inner">
 
+    <!-- Hero -->
     <div class="home-badge">
       <div class="home-badge-dot"></div>
-      Kognitiv analyse for bedrifter og individer
+      Beslutningsintelligens for team og ledere
     </div>
 
     <h1 class="home-h1">
-      Kartlegg din<br><strong>kognitive kapasitet</strong>
+      Vet du om teamet ditt<br>er klart til å <strong>bestemme?</strong>
     </h1>
 
     <p class="home-sub">
-      CogniState måler beslutningsevne, arbeidsminne og analytisk tenkning — og gir deg longitudinell innsikt over tid.
+      CogniState måler kognitiv beslutningsevne daglig — og gir deg og teamet ditt objektiv data på når dere er skjerpet nok for kritiske valg.
     </p>
 
     <div class="home-ctas">
-      <button class="btn btp btlg" onclick="showAuth('register')">Kom i gang gratis</button>
+      <button class="btn btp btlg" onclick="showAuth('register')">Start gratis</button>
       <button class="btn btlg" onclick="showAuth('login')">Logg inn</button>
     </div>
 
-    <div class="home-stats">
-      <div class="stat-item">
-        <div class="stat-val">~10 min</div>
-        <div class="stat-label">Nivåanalyse</div>
+    <!-- Social proof -->
+    <p style="font-size:12px;color:var(--muted);margin-bottom:48px;text-align:center">
+      3 minutter per dag · Ingen installasjon · GDPR-kompatibel
+    </p>
+
+    <!-- Problem/solution -->
+    <div class="home-problem">
+      <div class="problem-card">
+        <div class="problem-label">Problemet</div>
+        <p class="problem-text">"Vi vet at slitne ledere tar dårligere beslutninger. Men vi har ingen data på det — bare magefølelse."</p>
+        <div class="problem-attr">— Typisk HR-direktør</div>
       </div>
-      <div class="stat-item">
-        <div class="stat-val">~3 min</div>
-        <div class="stat-label">Dagsformtest</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-val">6</div>
-        <div class="stat-label">Kognitive domener</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-val">AI</div>
-        <div class="stat-label">Personlig analyse</div>
+      <div class="solution-arrow">→</div>
+      <div class="solution-card">
+        <div class="solution-label">Løsningen</div>
+        <p class="problem-text">CogniState gir deg objektive mål på beslutningskapasitet — daglig, longitudinelt, og sammenlignbart mot din personlige baseline.</p>
       </div>
     </div>
 
-    <div class="feat-grid">
-      <div class="feat-card">
-        <div class="feat-icon feat-icon-blue" style="color:var(--accent)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg></div>
-        <div class="feat-title">Logikk & resonnering</div>
-        <div class="feat-desc">Kalibrerte oppgaver uten faktakunnskap. Måler ren fluid intelligens.</div>
+    <!-- How it works -->
+    <div class="how-section">
+      <div class="sl" style="text-align:center;margin-bottom:28px">Slik fungerer det</div>
+      <div class="how-grid">
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div class="how-title">3-minutters morgentest</div>
+          <div class="how-desc">Hvert teammedlem tar en kort daglig test som måler reaksjonstid, arbeidsminne og konsentrasjon.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div class="how-title">Personlig baseline</div>
+          <div class="how-desc">Systemet lærer hva ditt kognitive toppnivå er og måler deg mot det — ikke mot en ukjent populasjon.</div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <div class="how-title">Beslutnings-signal</div>
+          <div class="how-desc">Du og teamet får et tydelig signal: grønt lys for kritiske beslutninger, eller anbefaling om å utsette.</div>
+        </div>
       </div>
-      <div class="feat-card">
-        <div class="feat-icon feat-icon-teal" style="color:var(--accent2)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <div class="feat-title">Longitudinell baseline</div>
-        <div class="feat-desc">Alle fremtidige resultater måles mot ditt kognitive toppnivå.</div>
+    </div>
+
+    <!-- What we measure -->
+    <div class="measure-section">
+      <div class="sl" style="text-align:center;margin-bottom:28px">Hva vi måler</div>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-icon feat-icon-blue" style="color:var(--accent)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="feat-title">Prosesseringshastighet</div>
+          <div class="feat-desc">Hvor raskt hjernen prosesserer informasjon. Synker markant ved tretthet og stress.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon feat-icon-teal" style="color:var(--accent2)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="feat-title">Arbeidsminne</div>
+          <div class="feat-desc">Evnen til å holde og manipulere informasjon. Kritisk for kompleks beslutningstaking.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon feat-icon-pu" style="color:var(--pu)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
+          <div class="feat-title">Impulskontroll</div>
+          <div class="feat-desc">Evnen til å undertrykke automatiske responser. Avgjørende under press og tidsfrister.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon feat-icon-am" style="color:var(--am)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="feat-title">Longitudinell baseline</div>
+          <div class="feat-desc">Alle mål sammenlignes mot ditt personlige toppnivå — ikke mot en generell norm.</div>
+        </div>
       </div>
-      <div class="feat-card">
-        <div class="feat-icon feat-icon-pu" style="color:var(--pu)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <div class="feat-title">Adaptivt arbeidsminne</div>
-        <div class="feat-desc">Testen kalibreres automatisk etter din etablerte baseline.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon feat-icon-am" style="color:var(--am)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></div>
-        <div class="feat-title">AI-drevet innsikt</div>
-        <div class="feat-desc">Personlige, handlingsrettede analyser etter hver test.</div>
+    </div>
+
+    <!-- For teams -->
+    <div class="team-section">
+      <div class="team-card">
+        <div style="flex:1">
+          <div class="solution-label" style="margin-bottom:12px">For ledere</div>
+          <h3 style="font-size:1.3rem;font-weight:600;letter-spacing:-.3px;margin-bottom:12px;color:var(--text)">Anonymisert team-innsikt</h3>
+          <p style="font-size:14px;color:var(--sub);line-height:1.7;margin-bottom:20px">Du ser teamets samlede beslutningskapasitet — aldri individuelle resultater. Planlegg krevende møter og strategiarbeid til når teamet er skjerpest.</p>
+          <button class="btn btp" onclick="showAuth('register')">Prøv gratis for teamet →</button>
+        </div>
+        <div class="team-visual">
+          <div class="team-metric">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px">Teamets kapasitet i dag</div>
+            <div style="font-size:2.5rem;font-weight:600;letter-spacing:-1px;color:var(--ok)">87%</div>
+            <div style="font-size:12px;color:var(--sub);margin-top:4px">av baseline · Grønt lys</div>
+          </div>
+          <div style="height:1px;background:var(--border);margin:16px 0"></div>
+          <div style="font-size:12px;color:var(--sub);line-height:1.6">
+            Beste tidspunkt i dag:<br>
+            <span style="color:var(--ok);font-weight:500">Tirsdag 09:00–11:00</span>
+          </div>
+        </div>
       </div>
     </div>
 
