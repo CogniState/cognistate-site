@@ -439,7 +439,7 @@
   <div class="ri">
     <button class="bb2" onclick="abortTest()">← Avbryt</button>
     <div id="run-level" style="display:none">
-      <div class="tr2"><span class="tl2">Oppgave <span id="lqn">1</span> av 20</span><span class="tv" id="lqt">2:30</span></div>
+      <div class="tr2"><span class="tl2">Oppgave <span id="lqn">1</span> av <span id="lqtotal">—</span></span><span class="tv" id="lqt">2:30</span></div>
       <div class="pb"><div class="pf" id="lqp" style="width:2%"></div></div>
       <div id="lqd"></div>
       <div class="qb"><div class="qt" id="lqq"></div></div>
@@ -837,7 +837,7 @@ function rotOpt(shape, deg){
 const LQ=[
   // --- LOGIKK ---
   {cat:'logic',diff:1,q:"Alle fugler har vinger.\nSpurven er en fugl.\nHar spurven vinger?",opts:["Ja","Nei","Vet ikke","Muligens"],ans:0,hint:"Grunnleggende syllogisme: premiss → konklusjon"},
-  {cat:'logic',diff:1,q:"ABBA : BAAB\nCDDC : ?",opts:["DCCD","CDDC","DCDC","CCDD"],ans:0,hint:"Ytterste og innerste tegn byttes"},
+  {cat:'logic',diff:1,q:"Lise er eldre enn Tor.\nTor er eldre enn Pål.\nHvem er yngst?",opts:["Lise","Tor","Pål","Vet ikke"],ans:2,hint:"Kjedetransitivitet: Lise > Tor > Pål"},
   {cat:'logic',diff:2,q:"Ingen reptiler er varmblodige.\nAlle krokodiller er reptiler.\nKan krokodiller være varmblodige?",opts:["Ja","Nei","Av og til","Vet ikke"],ans:1,hint:"Universell negasjon overføres via syllogisme"},
   {cat:'logic',diff:2,q:"Hvis det regner, tar Maria paraply.\nMaria har ikke paraply.\nHva kan vi slutte?",opts:["Det regner","Det regner ikke","Maria er inne","Ingenting sikkert"],ans:1,hint:"Modus tollens: ¬Q → ¬P"},
   {cat:'logic',diff:3,q:"5 venner i rad. Ana ikke ved siden av Bo.\nCa mellom Ana og Di. Ed ytterst høyre.\nHvem ytterst venstre?",opts:["Ana","Bo","Ca","Di"],ans:1,hint:"Plasser Ed høyre, Ca mellom Ana og Di"},
@@ -845,14 +845,17 @@ const LQ=[
   // --- TALL ---
   {cat:'number',diff:1,q:"Hvilken tall kommer neste?\n2 · 4 · 6 · 8 · ?",opts:["9","10","11","12"],ans:1,hint:"Aritmetisk rekke: +2 hvert ledd"},
   {cat:'number',diff:1,q:"En butikk gir 20% rabatt på kr 250.\nHva er ny pris?",opts:["180 kr","190 kr","200 kr","210 kr"],ans:2,hint:"250 · 0,80 = 200"},
-  {cat:'number',diff:2,q:"Tallrekken: 1 · 1 · 2 · 3 · 5 · 8 · 13 · ?",opts:["18","19","20","21"],ans:3,hint:"Fibonacci: hvert tall er summen av de to forrige"},
+  {cat:'number',diff:2,q:"Tallrekken: 3 · 7 · 13 · 21 · 31 · ?",opts:["42","43","44","45"],ans:1,hint:"Differansene øker med 2 hver gang: +4, +6, +8, +10, +12"},
   {cat:'number',diff:2,q:"3 malere maler 3 hus på 3 dager.\nHvor mange dager bruker 6 malere på 6 hus?",opts:["3","6","9","12"],ans:0,hint:"Kapasitet skalerer proporsjonalt — raten er konstant"},
-  {cat:'number',diff:3,q:"Tallrekken: 1 · 4 · 9 · 16 · 25 · ?\nOg den etter det?",opts:["36 · 49","34 · 47","36 · 48","35 · 49"],ans:0,hint:"Perfekte kvadrattall: n²"},
+  {cat:'number',diff:3,q:"Tre kasser veier like mye som fem bokser.\nÉn kasse veier 10 kg.\nHva veier to bokser?",opts:["6 kg","12 kg","15 kg","8 kg"],ans:1,hint:"3 × 10 = 30 kg = 5 bokser → 1 boks = 6 kg → 2 bokser = 12 kg"},
   {cat:'number',diff:3,q:"Tog A: 120 km/t. Tog B mot A: 80 km/t.\nStart: 500 km fra hverandre.\nMinutter til de møtes?",opts:["150 min","160 min","175 min","180 min"],ans:0,hint:"Relativ fart 200 km/t · 500/200 t = 150 min"},
   // --- ABSTRAKT ---
   {cat:'abstract',diff:1,q:"Hvilket ord hører ikke hjemme?\nMars · Venus · Jupiter · Månen · Saturn",opts:["Mars","Venus","Jupiter","Månen","Saturn"],ans:3,hint:"Alle er planeter — unntatt én"},
   {cat:'abstract',diff:2,q:"Tallrekken: 2 · 6 · 12 · 20 · 30 · ?",opts:["38","40","42","44"],ans:2,hint:"Differansene øker med 2 hver gang: +4,+6,+8,+10,+12"},
-  {cat:'abstract',diff:3,q:"KODE = 11-15-4-5 (A=1, B=2...)\nHva er LOGIKK?",opts:["12-15-7-9-11-11","11-14-6-9-10-10","12-16-8-10-12-12","13-16-8-10-12-12"],ans:0,hint:"L=12, O=15, G=7, I=9, K=11, K=11"},
+  {cat:'abstract',diff:1,q:"Hvilket tall hører ikke hjemme?\n3 · 7 · 11 · 14 · 19",opts:["3","7","11","14","19"],ans:3,hint:"Alle er primtall unntatt 14 (= 2 × 7)"},
+  {cat:'abstract',diff:2,q:"Rekken har et skjult mønster:\n2 · 3 · 5 · 9 · 17 · ?",opts:["29","33","34","35"],ans:1,hint:"Hvert ledd dobles og trekkes fra 1: 17 × 2 − 1 = 33"},
+  {cat:'abstract',diff:2,q:"Ord-mønster:\nTeg → Get · Sol → Los · Bil → ?",opts:["Lib","Lbi","Ilb","Bli"],ans:0,hint:"Hvert ord er skrevet baklengs"},
+  {cat:'abstract',diff:3,q:"Leddene veksler mellom to operasjoner:\n4 · 2 · 9 · 4,5 · 11,5 · ?",opts:["5,75","5,25","18,5","4,25"],ans:0,hint:"÷ 2, + 7, ÷ 2, + 7 … → 11,5 ÷ 2 = 5,75"},
   // --- SPATIAL: RAVEN'S MATRICES ---
   {cat:'spatial',diff:1,svg:true,
    q:"Hvilken form mangler i rutenettet?",
@@ -902,6 +905,7 @@ window.startLevelTest=()=>{
   lqI=0;lqS=0;lqT=[];lqDS={logic:0,number:0,spatial:0,abstract:0};lqDT={logic:0,number:0,spatial:0,abstract:0};
   ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-level').style.display='block';
+  document.getElementById('lqtotal').textContent=LQ.length;
   goTo('page-run');showLQ();
 };
 function showLQ(){
