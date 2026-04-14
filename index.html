@@ -507,7 +507,9 @@
   <a href="/cdn-cgi/l/email-protection#ff9c90918b9e9c8ba49e8ba29c909891968c8b9e8b9ad19690" onclick="this.href='mailto:contact@cognistate.io'"><span class="__cf_email__" data-cfemail="5e3d31302a3f3d2a1e3d313930372d2a3f2a3b703731">[email&#160;protected]</span></a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>setTimeout(function(){var ls=document.getElementById('ls');if(ls)ls.style.display='none';},3000);</script>
+<script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -738,9 +740,6 @@ async function loadInsights(){
 getRedirectResult(auth).then(async result=>{
   if(result?.user) await ensureUser(result.user);
 }).catch(()=>{});
-
-// Fallback: hide spinner after 5s no matter what
-setTimeout(()=>{document.getElementById('ls').style.display='none';},2500);
 
 window.toggleMobileNav=function(){const m=document.getElementById('mnav'),b=document.getElementById('hmb'),open=m.classList.toggle('open');b.setAttribute('aria-expanded',open);b.setAttribute('aria-label',open?'Lukk meny':'Åpne meny');};
 window.closeMobileNav=function(){document.getElementById('mnav').classList.remove('open');const b=document.getElementById('hmb');b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Åpne meny');};
