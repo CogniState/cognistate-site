@@ -742,9 +742,9 @@ getRedirectResult(auth).then(async result=>{
 // Fallback: hide spinner after 5s no matter what
 setTimeout(()=>{document.getElementById('ls').style.display='none';},2500);
 
-function toggleMobileNav(){const m=document.getElementById('mnav'),b=document.getElementById('hmb'),open=m.classList.toggle('open');b.setAttribute('aria-expanded',open);b.setAttribute('aria-label',open?'Lukk meny':'Åpne meny');}
-function closeMobileNav(){document.getElementById('mnav').classList.remove('open');const b=document.getElementById('hmb');b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Åpne meny');}
-window.addEventListener('click',e=>{const m=document.getElementById('mnav'),b=document.getElementById('hmb');if(m.classList.contains('open')&&!m.contains(e.target)&&!b.contains(e.target))closeMobileNav();});
+window.toggleMobileNav=function(){const m=document.getElementById('mnav'),b=document.getElementById('hmb'),open=m.classList.toggle('open');b.setAttribute('aria-expanded',open);b.setAttribute('aria-label',open?'Lukk meny':'Åpne meny');};
+window.closeMobileNav=function(){document.getElementById('mnav').classList.remove('open');const b=document.getElementById('hmb');b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Åpne meny');};
+window.addEventListener('click',e=>{const m=document.getElementById('mnav'),b=document.getElementById('hmb');if(m&&b&&m.classList.contains('open')&&!m.contains(e.target)&&!b.contains(e.target))window.closeMobileNav();});
 
 onAuthStateChanged(auth,async user=>{
   document.getElementById('ls').style.display='none';
