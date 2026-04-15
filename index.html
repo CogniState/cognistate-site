@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>CogniState</title>
   <meta name="description" content="CogniState kartlegger og forbedrer beslutningsevne ved hjelp av moderne teknologi, datadrevet innsikt og kognitiv analyse."/>
+  <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin"/>
   <link rel="icon" type="image/png" href="assets/cognistate-logo.png"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
@@ -481,9 +483,9 @@
 </div>
 
 <footer>
-  <a href="https://instagram.com/cognistate" target="_blank" rel="noopener">@cognistate</a>
+  <a href="https://instagram.com/cognistate" target="_blank" rel="noopener noreferrer">@cognistate</a>
   <span style="color:var(--b1)">•</span>
-  <a href="/cdn-cgi/l/email-protection#ff9c90918b9e9c8ba49e8ba29c909891968c8b9e8b9ad19690" onclick="this.href='mailto:contact@cognistate.io'"><span class="__cf_email__" data-cfemail="5e3d31302a3f3d2a1e3d313930372d2a3f2a3b703731">[email&#160;protected]</span></a>
+  <a href="mailto:contact@cognistate.io">contact@cognistate.io</a>
 </footer>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" type="module">
@@ -518,19 +520,24 @@ window.loginGoogle=async()=>{
     const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if(isMobile){await signInWithRedirect(auth,gp);}
     else{const r=await signInWithPopup(auth,gp);await ensureUser(r.user);}
-  }catch(e){showErr(e.message);}
+  }catch(e){showErr(fe(e.code));}
 };
 window.submitAuth=async()=>{
   const email=document.getElementById('ae').value.trim(),pw=document.getElementById('ap').value;
+  const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRe.test(email)){showErr('Ugyldig e-postadresse.');return;}
+  if(pw.length<6){showErr('Passordet må være minst 6 tegn.');return;}
   const btn=document.getElementById('asb');
   btn.textContent=am==='login'?'Logger inn...':'Oppretter...';btn.disabled=true;
   try{
     if(am==='login'){await signInWithEmailAndPassword(auth,email,pw);}
-    else{const name=document.getElementById('an').value.trim();const c=await createUserWithEmailAndPassword(auth,email,pw);if(name)await updateProfile(c.user,{displayName:name});await ensureUser(c.user,name);}
+    else{const name=document.getElementById('an').value.trim().slice(0,60);const c=await createUserWithEmailAndPassword(auth,email,pw);if(name)await updateProfile(c.user,{displayName:name});await ensureUser(c.user,name);}
   }catch(e){showErr(fe(e.code));btn.textContent=am==='login'?'Logg inn':'Opprett konto';btn.disabled=false;}
 };
 window.logout=async()=>await signOut(auth);
 function showErr(m){const el=document.getElementById('aerr');el.textContent=m;el.style.display='block';}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function rBar(label,val,color){return`<div class="rbw"><div class="rbr"><span>${esc(label)}</span><span>${Math.round(val)}%</span></div><div class="rb"><div class="rbf" style="width:${Math.min(Math.round(val),100)}%;background:${esc(color)}"></div></div></div>`;}
 function fe(c){return({'auth/user-not-found':'Ingen konto med denne e-posten.','auth/wrong-password':'Feil passord.','auth/email-already-in-use':'E-posten er allerede i bruk.','auth/weak-password':'Passordet må være minst 6 tegn.','auth/invalid-email':'Ugyldig e-postadresse.','auth/invalid-credential':'Feil e-post eller passord.','auth/popup-closed-by-user':'Innlogging avbrutt.'}[c])||'Noe gikk galt. Prøv igjen.';}
 
 async function ensureUser(user,name){
@@ -708,7 +715,7 @@ async function loadInsights(){
       if(dd.score>=75)tags+='<span class="ic-tag tag-good">Over snitt</span>';
       tags+='<span class="ic-tag tag-info">Nivåanalyse</span>';
     }
-    list.innerHTML+=`<div class="insight-card"><div class="ic-header"><div class="ic-icon">${icon}</div><div class="ic-meta"><div class="ic-title">${dd.type==='level'?'Nivåanalyse':'Dagsform'} — ${scoreStr}</div><div class="ic-date">${dateStr}</div></div></div><div class="ic-body">${dd.aiInsight||'Ingen analyse tilgjengelig.'}</div><div class="ic-tags">${tags}</div></div>`;
+    list.innerHTML+=`<div class="insight-card"><div class="ic-header"><div class="ic-icon">${esc(icon)}</div><div class="ic-meta"><div class="ic-title">${dd.type==='level'?'Nivåanalyse':'Dagsform'} — ${esc(scoreStr)}</div><div class="ic-date">${esc(dateStr)}</div></div></div><div class="ic-body">${esc(dd.aiInsight||'Ingen analyse tilgjengelig.')}</div><div class="ic-tags">${tags}</div></div>`;
   });
 }
 
@@ -728,7 +735,9 @@ onAuthStateChanged(auth,async user=>{
   if(user){
     document.getElementById('navlinks').style.display='flex';
     const init=(user.displayName||user.email||'?')[0].toUpperCase();
-    document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${user.photoURL?`<img src="${user.photoURL}" alt="">`:init}</div><span style="font-size:13px">${user.displayName||user.email.split('@')[0]}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
+    const displayName=esc(user.displayName||user.email.split('@')[0]);
+    const avatar=user.photoURL?`<img src="${esc(user.photoURL)}" alt="">`:`${init}`;
+    document.getElementById('nr2').innerHTML=`<div class="nu"><div class="av">${avatar}</div><span style="font-size:13px">${displayName}</span></div><button class="btn btsm" onclick="logout()">Logg ut</button>`;
     await loadDash();goTo('page-dashboard');
   }else{
     document.getElementById('navlinks').style.display='none';
@@ -1108,7 +1117,7 @@ function showStrp(){
   // Show 4 color options, always include correct
   const shown=SW.slice().sort(()=>Math.random()-.5).slice(0,4);
   if(!shown.find(x=>x.label===s.inkLabel))shown[3]=SW.find(x=>x.label===s.inkLabel);
-  document.getElementById('sto').innerHTML=shown.map(sw=>`<button class="ob" onclick="ansStrp('${sw.label}')">${sw.label}</button>`).join('');
+  const sto=document.getElementById('sto');sto.innerHTML='';shown.forEach(sw=>{const b=document.createElement('button');b.className='ob';b.textContent=sw.label;b.onclick=()=>window.ansStrp(sw.label);sto.appendChild(b);});
   stItemStart=Date.now();
 }
 window.ansStrp=label=>{
