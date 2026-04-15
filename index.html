@@ -5,15 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>CogniState</title>
   <meta name="description" content="CogniState kartlegger og forbedrer beslutningsevne ved hjelp av moderne teknologi, datadrevet innsikt og kognitiv analyse."/>
-  <meta property="og:title" content="CogniState"/>
-  <meta property="og:description" content="Kartlegg og forbedre din beslutningsevne med kognitiv analyse og datadrevet innsikt."/>
-  <meta property="og:image" content="https://www.cognistate.io/assets/cognistate-logo.png"/>
-  <meta property="og:url" content="https://www.cognistate.io"/>
-  <meta property="og:type" content="website"/>
-  <meta name="twitter:card" content="summary"/>
-  <meta name="twitter:title" content="CogniState"/>
-  <meta name="twitter:description" content="Kartlegg og forbedre din beslutningsevne med kognitiv analyse og datadrevet innsikt."/>
-  <meta name="twitter:image" content="https://www.cognistate.io/assets/cognistate-logo.png"/>
   <link rel="icon" type="image/png" href="assets/cognistate-logo.png"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
@@ -280,24 +271,18 @@
     footer{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;gap:14px;z-index:5;font-size:12px;color:var(--muted);padding:10px 16px;background:linear-gradient(to top,rgba(15,23,42,1),rgba(15,23,42,0));}
     footer a{color:var(--accent);text-decoration:none;transition:opacity .2s;}
     footer a:hover{opacity:.75;}
-    .hmb{display:none;background:none;border:none;cursor:pointer;padding:6px 8px;color:var(--muted);font-size:20px;line-height:1;border-radius:6px;transition:color .15s,background .15s;}
-    .hmb:hover{color:var(--text);background:var(--s1);}
-    .mnav{display:none;position:fixed;top:60px;left:0;right:0;background:rgba(15,23,42,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1);z-index:99;padding:10px 16px 14px;flex-direction:column;gap:4px;}
-    .mnav.open{display:flex;}
-    .mnavlink{background:none;border:none;font-family:inherit;font-size:14px;color:var(--muted);cursor:pointer;padding:10px 14px;border-radius:8px;text-align:left;transition:all .15s;width:100%;}
-    .mnavlink:hover{color:var(--text);background:var(--s1);}
-    @media(max-width:520px){.rsg{grid-template-columns:1fr 1fr;}.opts{grid-template-columns:1fr;}.opts3{grid-template-columns:1fr 1fr;}.nb span{display:none;}.navlinks{display:none;}.hmb{display:block;}}
+    @media(max-width:520px){.rsg{grid-template-columns:1fr 1fr;}.opts{grid-template-columns:1fr;}.opts3{grid-template-columns:1fr 1fr;}.nb span{display:none;}.navlinks{display:none;}}
   </style>
 </head>
 <body>
 <div class="glow" aria-hidden="true"></div>
 <div class="ls" id="ls"><div class="spin"></div><p>Laster CogniState...</p></div>
 
-<nav id="mn" style="display:none" role="navigation" aria-label="Hovednavigasjon">
-  <button class="nb" onclick="showHome()" aria-label="Gå til forsiden">
-    <img src="assets/cognistate-logo.png" alt="CogniState logo"/>
+<nav id="mn" style="display:none">
+  <div class="nb" onclick="showHome()">
+    <img src="assets/cognistate-logo.png" alt="CogniState"/>
     <span>CogniState</span>
-  </button>
+  </div>
   <div class="nr">
     <div class="navlinks" id="navlinks" style="display:none">
       <button class="navlink" onclick="goToDash()">Dashboard</button>
@@ -307,14 +292,8 @@
       <button class="btn btsm" onclick="showAuth('login')">Logg inn</button>
       <button class="btn btp btsm" onclick="showAuth('register')">Kom i gang</button>
     </div>
-    <button class="hmb" id="hmb" onclick="toggleMobileNav()" aria-label="Åpne meny" aria-expanded="false">&#9776;</button>
   </div>
 </nav>
-
-<div class="mnav" id="mnav" role="menu" aria-label="Mobilmeny">
-  <button class="mnavlink" onclick="goToDash();closeMobileNav()" role="menuitem">Dashboard</button>
-  <button class="mnavlink" onclick="goToInsights();closeMobileNav()" role="menuitem">Innsikt</button>
-</div>
 
 <!-- HOME -->
 <div id="page-home" class="page">
@@ -439,7 +418,7 @@
   <div class="ri">
     <button class="bb2" onclick="abortTest()">← Avbryt</button>
     <div id="run-level" style="display:none">
-      <div class="tr2"><span class="tl2">Oppgave <span id="lqn">1</span> av <span id="lqtotal">—</span></span><span class="tv" id="lqt">2:30</span></div>
+      <div class="tr2"><span class="tl2">Oppgave <span id="lqn">1</span> av 20</span><span class="tv" id="lqt">2:30</span></div>
       <div class="pb"><div class="pf" id="lqp" style="width:2%"></div></div>
       <div id="lqd"></div>
       <div class="qb"><div class="qt" id="lqq"></div></div>
@@ -507,9 +486,7 @@
   <a href="/cdn-cgi/l/email-protection#ff9c90918b9e9c8ba49e8ba29c909891968c8b9e8b9ad19690" onclick="this.href='mailto:contact@cognistate.io'"><span class="__cf_email__" data-cfemail="5e3d31302a3f3d2a1e3d313930372d2a3f2a3b703731">[email&#160;protected]</span></a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script>setTimeout(function(){var ls=document.getElementById('ls');if(ls)ls.style.display='none';},3000);</script>
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -741,9 +718,8 @@ getRedirectResult(auth).then(async result=>{
   if(result?.user) await ensureUser(result.user);
 }).catch(()=>{});
 
-window.toggleMobileNav=function(){const m=document.getElementById('mnav'),b=document.getElementById('hmb'),open=m.classList.toggle('open');b.setAttribute('aria-expanded',open);b.setAttribute('aria-label',open?'Lukk meny':'Åpne meny');};
-window.closeMobileNav=function(){document.getElementById('mnav').classList.remove('open');const b=document.getElementById('hmb');b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Åpne meny');};
-window.addEventListener('click',e=>{const m=document.getElementById('mnav'),b=document.getElementById('hmb');if(m&&b&&m.classList.contains('open')&&!m.contains(e.target)&&!b.contains(e.target))window.closeMobileNav();});
+// Fallback: hide spinner after 5s no matter what
+setTimeout(()=>{document.getElementById('ls').style.display='none';},5000);
 
 onAuthStateChanged(auth,async user=>{
   document.getElementById('ls').style.display='none';
@@ -836,7 +812,7 @@ function rotOpt(shape, deg){
 const LQ=[
   // --- LOGIKK ---
   {cat:'logic',diff:1,q:"Alle fugler har vinger.\nSpurven er en fugl.\nHar spurven vinger?",opts:["Ja","Nei","Vet ikke","Muligens"],ans:0,hint:"Grunnleggende syllogisme: premiss → konklusjon"},
-  {cat:'logic',diff:1,q:"Lise er eldre enn Tor.\nTor er eldre enn Pål.\nHvem er yngst?",opts:["Lise","Tor","Pål","Vet ikke"],ans:2,hint:"Kjedetransitivitet: Lise > Tor > Pål"},
+  {cat:'logic',diff:1,q:"ABBA : BAAB\nCDDC : ?",opts:["DCCD","CDDC","DCDC","CCDD"],ans:0,hint:"Ytterste og innerste tegn byttes"},
   {cat:'logic',diff:2,q:"Ingen reptiler er varmblodige.\nAlle krokodiller er reptiler.\nKan krokodiller være varmblodige?",opts:["Ja","Nei","Av og til","Vet ikke"],ans:1,hint:"Universell negasjon overføres via syllogisme"},
   {cat:'logic',diff:2,q:"Hvis det regner, tar Maria paraply.\nMaria har ikke paraply.\nHva kan vi slutte?",opts:["Det regner","Det regner ikke","Maria er inne","Ingenting sikkert"],ans:1,hint:"Modus tollens: ¬Q → ¬P"},
   {cat:'logic',diff:3,q:"5 venner i rad. Ana ikke ved siden av Bo.\nCa mellom Ana og Di. Ed ytterst høyre.\nHvem ytterst venstre?",opts:["Ana","Bo","Ca","Di"],ans:1,hint:"Plasser Ed høyre, Ca mellom Ana og Di"},
@@ -844,17 +820,14 @@ const LQ=[
   // --- TALL ---
   {cat:'number',diff:1,q:"Hvilken tall kommer neste?\n2 · 4 · 6 · 8 · ?",opts:["9","10","11","12"],ans:1,hint:"Aritmetisk rekke: +2 hvert ledd"},
   {cat:'number',diff:1,q:"En butikk gir 20% rabatt på kr 250.\nHva er ny pris?",opts:["180 kr","190 kr","200 kr","210 kr"],ans:2,hint:"250 · 0,80 = 200"},
-  {cat:'number',diff:2,q:"Tallrekken: 3 · 7 · 13 · 21 · 31 · ?",opts:["42","43","44","45"],ans:1,hint:"Differansene øker med 2 hver gang: +4, +6, +8, +10, +12"},
+  {cat:'number',diff:2,q:"Tallrekken: 1 · 1 · 2 · 3 · 5 · 8 · 13 · ?",opts:["18","19","20","21"],ans:3,hint:"Fibonacci: hvert tall er summen av de to forrige"},
   {cat:'number',diff:2,q:"3 malere maler 3 hus på 3 dager.\nHvor mange dager bruker 6 malere på 6 hus?",opts:["3","6","9","12"],ans:0,hint:"Kapasitet skalerer proporsjonalt — raten er konstant"},
-  {cat:'number',diff:3,q:"Tre kasser veier like mye som fem bokser.\nÉn kasse veier 10 kg.\nHva veier to bokser?",opts:["6 kg","12 kg","15 kg","8 kg"],ans:1,hint:"3 × 10 = 30 kg = 5 bokser → 1 boks = 6 kg → 2 bokser = 12 kg"},
+  {cat:'number',diff:3,q:"Tallrekken: 1 · 4 · 9 · 16 · 25 · ?\nOg den etter det?",opts:["36 · 49","34 · 47","36 · 48","35 · 49"],ans:0,hint:"Perfekte kvadrattall: n²"},
   {cat:'number',diff:3,q:"Tog A: 120 km/t. Tog B mot A: 80 km/t.\nStart: 500 km fra hverandre.\nMinutter til de møtes?",opts:["150 min","160 min","175 min","180 min"],ans:0,hint:"Relativ fart 200 km/t · 500/200 t = 150 min"},
   // --- ABSTRAKT ---
   {cat:'abstract',diff:1,q:"Hvilket ord hører ikke hjemme?\nMars · Venus · Jupiter · Månen · Saturn",opts:["Mars","Venus","Jupiter","Månen","Saturn"],ans:3,hint:"Alle er planeter — unntatt én"},
   {cat:'abstract',diff:2,q:"Tallrekken: 2 · 6 · 12 · 20 · 30 · ?",opts:["38","40","42","44"],ans:2,hint:"Differansene øker med 2 hver gang: +4,+6,+8,+10,+12"},
-  {cat:'abstract',diff:1,q:"Hvilket tall hører ikke hjemme?\n3 · 7 · 11 · 14 · 19",opts:["3","7","11","14","19"],ans:3,hint:"Alle er primtall unntatt 14 (= 2 × 7)"},
-  {cat:'abstract',diff:2,q:"Rekken har et skjult mønster:\n2 · 3 · 5 · 9 · 17 · ?",opts:["29","33","34","35"],ans:1,hint:"Hvert ledd dobles og trekkes fra 1: 17 × 2 − 1 = 33"},
-  {cat:'abstract',diff:2,q:"Ord-mønster:\nTeg → Get · Sol → Los · Bil → ?",opts:["Lib","Lbi","Ilb","Bli"],ans:0,hint:"Hvert ord er skrevet baklengs"},
-  {cat:'abstract',diff:3,q:"Leddene veksler mellom to operasjoner:\n4 · 2 · 9 · 4,5 · 11,5 · ?",opts:["5,75","5,25","18,5","4,25"],ans:0,hint:"÷ 2, + 7, ÷ 2, + 7 … → 11,5 ÷ 2 = 5,75"},
+  {cat:'abstract',diff:3,q:"KODE = 11-15-4-5 (A=1, B=2...)\nHva er LOGIKK?",opts:["12-15-7-9-11-11","11-14-6-9-10-10","12-16-8-10-12-12","13-16-8-10-12-12"],ans:0,hint:"L=12, O=15, G=7, I=9, K=11, K=11"},
   // --- SPATIAL: RAVEN'S MATRICES ---
   {cat:'spatial',diff:1,svg:true,
    q:"Hvilken form mangler i rutenettet?",
@@ -904,7 +877,6 @@ window.startLevelTest=()=>{
   lqI=0;lqS=0;lqT=[];lqDS={logic:0,number:0,spatial:0,abstract:0};lqDT={logic:0,number:0,spatial:0,abstract:0};
   ['run-level','run-reaction','run-memory','run-stroop'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('run-level').style.display='block';
-  document.getElementById('lqtotal').textContent=LQ.length;
   goTo('page-run');showLQ();
 };
 function showLQ(){
