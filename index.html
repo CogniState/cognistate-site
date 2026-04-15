@@ -488,7 +488,28 @@
   <a href="mailto:contact@cognistate.io">contact@cognistate.io</a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script>
+// Runs outside the module — guarantees spinner always hides even if Firebase import fails
+window.__spinnerFallback=setTimeout(function(){
+  var ls=document.getElementById('ls');
+  if(ls)ls.style.display='none';
+  var mn=document.getElementById('mn');
+  if(mn&&mn.style.display==='none'){
+    mn.style.display='flex';
+    var nr2=document.getElementById('nr2');
+    if(nr2)nr2.innerHTML='<button class="btn btsm" onclick="showAuth(\'login\')">Logg inn</button><button class="btn btp btsm" onclick="showAuth(\'register\')">Kom i gang</button>';
+  }
+},4000);
+window.addEventListener('error',function(e){
+  if(e.filename&&e.filename.includes('gstatic')){
+    clearTimeout(window.__spinnerFallback);
+    var ls=document.getElementById('ls');
+    if(ls)ls.innerHTML='<p style="color:#f87171;font-size:14px;text-align:center;padding:2rem">Kunne ikke koble til. Sjekk internett og prøv igjen.</p>';
+  }
+});
+</script>
+<script data-cfasync="false" type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,signInWithRedirect,getRedirectResult,GoogleAuthProvider,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import{getFirestore,doc,setDoc,getDoc,collection,addDoc,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -725,8 +746,8 @@ getRedirectResult(auth).then(async result=>{
   if(result?.user) await ensureUser(result.user);
 }).catch(()=>{});
 
-// Fallback: hide spinner after 5s no matter what
-setTimeout(()=>{document.getElementById('ls').style.display='none';},5000);
+// Clear the external fallback timer — module loaded OK
+clearTimeout(window.__spinnerFallback);
 
 onAuthStateChanged(auth,async user=>{
   document.getElementById('ls').style.display='none';
