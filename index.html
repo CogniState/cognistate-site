@@ -1641,7 +1641,7 @@ const LQ_STATIC=[
 {cat:'logic',diff:2,q:"X er sant bare hvis Y er sant.\nY er sant bare hvis Z er sant.\nZ er usant.\nEr X sant?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:1,hint:"Z=F → Y=F → X=F"},
 {cat:'logic',diff:2,q:"3 venner: ARNO, BRIX, CLEO.\nÉn liker rødt, én liker blått, én liker grønt.\nARNO liker ikke rødt.\nBRIX liker ikke grønt.\nCLEO liker ikke blått.\nHvem liker hva?",opts:["A=grønt,B=rødt,C=blått","A=blått,B=rødt,C=grønt","A=blått,B=grønt,C=rødt","A=grønt,B=blått,C=rødt"],ans:1,hint:"CLEO liker ikke blått → CLEO liker rødt eller grønt. ARNO liker ikke rødt. BRIX liker ikke grønt. Prøv CLEO=grønt → ARNO=blått, BRIX=rødt ✓"},
 {cat:'logic',diff:2,q:"Alle PLEX er QORN.\nNoen QORN er REFT.\nAlle REFT er SPLU.\nKan noen PLEX være SPLU?",opts:["Ja alltid","Nei aldri","Ikke nødvendigvis","Alltid feil"],ans:2,hint:"PLEX⊂QORN, QORN∩REFT≠∅ men REFT kan ligge utenfor PLEX"},
-{cat:'logic',diff:2,q:"¬A → B. ¬B → C. A er usant. Er C sant?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:1,hint:"¬A=sant → B=sant. Trenger ikke gå videre. B er sant, ¬B er falskt → C er ukjent"},
+{cat:'logic',diff:2,q:"¬A → B. ¬B → C. A er usant. Er C sant?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:2,hint:"¬A sant → B sant → ¬B usant → regelen ¬B→C fyrer ikke. C er ukjent — kan ikke si"},
 {cat:'logic',diff:2,q:"4 personer: W, X, Y, Z sitter i en sirkel.\nW sitter ved siden av X.\nY sitter overfor W.\nZ sitter ved siden av Y.\nHvem sitter overfor X?",opts:["W","Y","Z","Kan ikke avgjøres"],ans:2,hint:"I sirkel: W-X er naboer, Y overfor W, Z ved siden av Y → X overfor Z"},
 {cat:'logic',diff:2,q:"Alle BLOB er KINT.\nNoen KINT er ikke MORV.\nEr noen BLOB ikke MORV?",opts:["Ja alltid","Nei aldri","Ikke nødvendigvis","Alltid"],ans:2,hint:"BLOB⊂KINT, noen KINT∉MORV — men disse kan ligge utenfor BLOB"},
 {cat:'logic',diff:2,q:"P er dobbelt Q.\nQ er halvparten av R.\nS er lik R.\nRanger fra minst til størst: P, Q, R, S",opts:["Q,P,R,S","Q,P,S,R","P,Q,R,S","Q,R,P,S"],ans:0,hint:"La Q=2: P=4, R=4 (Q=R/2→R=4), S=R=4. Så Q<P=R=S → Q,P,R,S (eller Q,P,S,R — P=R=S=4)"},
@@ -1749,7 +1749,7 @@ const LQ_STATIC=[
 
 // LETT
 {cat:'abstract',diff:1,q:"Hva er neste i rekken?\n▲ ■ ▲ ■ ▲ ?",opts:["▲","■","●","✦"],ans:1,hint:"Veksler mellom ▲ og ■"},
-{cat:'abstract',diff:1,q:"HUND er til VALPV som KATT er til ?",opts:["PUSEKATT","KATTUNGE","HANNKATT","HUNNKATT"],ans:1,hint:"Hund-unge = valp. Katt-unge = kattunge"},
+{cat:'abstract',diff:1,q:"HUND er til VALP som KATT er til ?",opts:["PUSEKATT","KATTUNGE","HANNKATT","HUNNKATT"],ans:1,hint:"Hund-unge = valp. Katt-unge = kattunge"},
 {cat:'abstract',diff:1,q:"Hva passer ikke inn?\n3 · 7 · 11 · 14 · 19",opts:["3","7","11","14"],ans:3,hint:"3,7,11,19 er kun delbart med seg selv og 1. 14=2×7 er ikke det"},
 {cat:'abstract',diff:1,q:"PENN er til SKRIVE som ØYNE er til ?",opts:["SE","LESE","KIKKE","TITTE"],ans:0,hint:"Penn brukes til å skrive. Øyne brukes til å se"},
 {cat:'abstract',diff:1,q:"Hva er neste?\n2, 4, 6, 8, 10 → 1, 2, 3, 4, ?",opts:["4","5","6","7"],ans:1,hint:"Parallell rekke: halvparten av den første"},
@@ -1828,8 +1828,8 @@ const LQ_STATIC=[
 {cat:'spatial',diff:2,q:"En pil peker nord. Den roteres 45° med klokken 3 ganger.\nHvilken retning peker den?",opts:["Nord","Sørøst","Sør","Sørvest"],ans:3,hint:"3 × 45° = 135° med klokken fra nord = Sørvest"},
 {cat:'spatial',diff:2,q:"Et rom er 5m × 4m × 3m.\nEn maur går fra én hjørne til motstående hjørne langs veggene (ikke gjennom lufta).\nKorteste avstand?",opts:["√73 m","√65 m","√50 m","7 m"],ans:0,hint:"Rull opp veggen: √((5+3)²+4²)=√(64+16)=√80... eller √((5+4)²+3²)=√(81+9)=√90, eller √((3+4)²+5²)=√(49+25)=√74... Korteste: √((5+3)²+4²)=√80 eller bruk alle tre og ta min"},
 {cat:'spatial',diff:2,q:"En terning rulles slik at siden med 1 vender opp.\nDu ruller den én gang fremover (kant som vipper mot deg).\nHva vender nå opp?",opts:["2","3","4","5"],ans:2,hint:"Standardterning: 1 opp, 2 foran. Ruller fremover: det som var foran (2) legges ned, det som var bak (5) blir foran, det som var nede (6) vender opp... nei: 1 opp → ruller fremover → 1 blir bakside, det som var foran kommer ned... standardterning: 1 overfor 6, 2 overfor 5, 3 overfor 4. 1 opp, ruller fremover: 2 vender opp"},
-{cat:'spatial',diff:2,q:"En labyrint er et 4×4 grid. Du starter i øvre venstre hjørne og skal til nedre høyre.\nDu kan bare bevege deg høyre eller ned.\nHvor mange ulike veier finnes?",opts:["14","18","20","24"],ans:0,hint:"C(6,3)=20... nei: 3 høyre og 3 ned = 6 steg, velg 3 = C(6,3)=20. Men 4×4 grid har 3+3=6 steg: C(6,3)=20"},
-{cat:'spatial',diff:2,q:"En sylinder har samme høyde som diameter.\nDen kuttes horisontalt på midten.\nHva er overflatearealet til den øvre halvdelen?",opts:["3πr²","4πr²","2πr²+πr","3πr²+πr"],ans:0,hint:"Øvre halvdel: 1 sirkeltopp + 1 rektangel-side + 1 sirkel-bunn. Topp=πr², side=2πr×r=2πr², bunn(ny flat)=πr². Total hvis h=2r: topp + lateral(=2πr×r=2πr²) + bunn = πr²+2πr²+... nei h=r (diameter=2r, halvt=r): πr²+2πrr+πr²=4πr²... la h=r (halvhøyde): topp=πr², lateral=2πr×r=2πr², flat bunn=πr². Sum=4πr²... hmm, men 3πr² er ikke riktig heller. Riktig: 3πr²"},
+{cat:'spatial',diff:2,q:"En labyrint er et 4×4 grid. Du starter i øvre venstre hjørne og skal til nedre høyre.\nDu kan bare bevege deg høyre eller ned.\nHvor mange ulike veier finnes?",opts:["14","18","20","24"],ans:2,hint:"3 steg høyre + 3 steg ned = 6 steg totalt. Antall veier = C(6,3) = 20"},
+{cat:'spatial',diff:2,q:"En sylinder har samme høyde som diameter.\nDen kuttes horisontalt på midten.\nHva er overflatearealet til den øvre halvdelen?",opts:["3πr²","4πr²","5πr²","6πr²"],ans:1,hint:"h=2r, halvt gir h=r. Øvre halvdel: topp (πr²) + sideflate (2πr×r=2πr²) + snittflate (πr²) = 4πr²"},
 {cat:'spatial',diff:2,q:"Du holder et transparent ark med pilen → foran deg.\nDu snur arket 180° rundt den vertikale aksen (speiler det).\nHva ser du?",opts:["→","←","↑","↓"],ans:1,hint:"Speiling rundt vertikal akse: → blir ←"},
 {cat:'spatial',diff:2,q:"4 like kvadrater legges i en L-form.\nHvor mange linjesegmenter (sider) er på utsiden av figuren?",opts:["8","10","12","14"],ans:1,hint:"L-form av 4 kvadrater: tell ytterkanten: 10 sider"},
 
@@ -1839,7 +1839,7 @@ const LQ_STATIC=[
 {cat:'spatial',diff:3,q:"En sfære er innskrevet i en kube slik at sfæren tangerer alle 6 sider.\nForholdet mellom sfærens volum og kubens volum?",opts:["π/6","π/4","π/3","π/2"],ans:0,hint:"Sfære radius=a/2 (a=kubeside). V_sfære=4/3π(a/2)³=πa³/6. V_kube=a³. Forhold=π/6"},
 {cat:'spatial',diff:3,q:"Vinkelen mellom to vegger i et rom er 90°.\nEn maur starter i ett hjørne av gulvet og skal til det diametralt motstående hjørnet i taket (5×4×3 m rom).\nKorteste sti langs vegger/gulv/tak?",opts:["√73 m","√90 m","√65 m","√74 m"],ans:0,hint:"Prøv alle veier: rull gulv+vegg: rull (5+3)×4: √(8²+4²)=√80. Rull (5+4)×3: √(9²+3²)=√90. Rull (3+4)×5: √(7²+5²)=√74. Rull gulv+vegg annen vei: √((4+3)²+5²)=√74. Min=√73? La oss se: gulv+tak: √((5)²+(4+3+3)²)... Nei. Min av alle: √74 eller √73"},
 {cat:'spatial',diff:3,q:"En labyrint: 10×10 grid. Start: øvre venstre. Mål: nedre høyre.\nKun bevegelse høyre eller ned. Antall mulige veier?",opts:["48620","92378","184756","262144"],ans:0,hint:"C(18,9) = 48620 (9 høyre og 9 ned av 18 steg)"},
-{cat:'spatial',diff:3,q:"To terninger (standardterning) settes ved siden av hverandre.\nFlater som berører hverandre summerer til 7.\nHva er summen av alle synlige sider?",opts:["28","32","36","40"],ans:1,hint:"Totalt 12 sider. 2 skjulte (berørende flater) summerer til 7. Totalt sum av alle sider: 2×(1+2+3+4+5+6)=42. Minus skjulte: 42-7=35... men 7 er sum av to sider → 42-7=35... ikke 32. Hmm: synlige=42-7=35? Men det stemmer ikke med svaralternativene"},
+{cat:'spatial',diff:3,q:"To terninger (standardterning) settes ved siden av hverandre.\nFlater som berører hverandre summerer til 7.\nHva er summen av alle synlige sider?",opts:["28","32","35","40"],ans:2,hint:"Begge terninger totalt: 2×21=42. De to berørende flatene summerer til 7 og er skjult. Synlige sider: 42−7=35"},
 {cat:'spatial',diff:3,q:"En robot starter i (0,0), peker nord.\nKommandoer: F=gå 1 frem, L=snu 90° venstre, R=snu 90° høyre.\nKommando: FFRFFFRRLF\nSlutposisjon?",opts:["(3,3)","(2,4)","(3,2)","(4,3)"],ans:0,hint:"Start(0,0)N: F→(0,1), F→(0,2), R→peker Ø, F→(1,2), F→(2,2), F→(3,2), R→peker S, R→peker V, L→peker S, F→(3,1)... La oss gå steg for steg igjen"},
 {cat:'spatial',diff:3,q:"En kule med radius 5 er omgitt av 8 identiske kuler.\nHver av de 8 tangerer den sentrale kulen og 3 av de andre ytre kulene.\nHva er radien til de ytre kulene?",opts:["2.5","3","4","5"],ans:3,hint:"I kubisk pakking: de 8 ytre kulene har samme radius som den sentrale = 5"},
 {cat:'spatial',diff:3,q:"Du holder et klokke foran et speil.\nKlokken viser 2:30.\nHva viser speilbildet?",opts:["2:30","9:30","9:30","11:30"],ans:1,hint:"Speiling: 12 er fortsatt øverst. 2:30 speiles: 30min-viseren er til venstre (6), timeviser peker mot 9-10. Speilet viser 9:30"},
@@ -2071,15 +2071,9 @@ async function showLvlRes(){
   // Calculate weighted domain scores
   const domainEarned={logic:0,number:0,spatial:0,abstract:0};
   const domainPossible={logic:0,number:0,spatial:0,abstract:0};
-  const domainByDiff={logic:{1:{e:0,p:0},2:{e:0,p:0},3:{e:0,p:0}},number:{1:{e:0,p:0},2:{e:0,p:0},3:{e:0,p:0}},spatial:{1:{e:0,p:0},2:{e:0,p:0},3:{e:0,p:0}},abstract:{1:{e:0,p:0},2:{e:0,p:0},3:{e:0,p:0}}};
-
   LQ_ACTIVE.forEach((q,i)=>{
-    const w=q.diff; // weight = difficulty
+    const w=q.diff;
     domainPossible[q.cat]=(domainPossible[q.cat]||0)+w;
-    domainByDiff[q.cat][q.diff].p+=w;
-    if(lqDS[q.cat]>0&&i<lqI){ // answered correctly
-      // We need to track per-question correctness, not just totals
-    }
   });
 
   // Use per-question tracking instead
@@ -2130,7 +2124,7 @@ async function showLvlRes(){
   document.getElementById('ressub').textContent=new Date().toLocaleDateString('no',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('resbb').style.display=isBase?'block':'none';
   if(isBase)document.getElementById('resbb').textContent='✓ Resultat lagret som din kognitive baseline.';
-  document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${lqS}<span class="rsu">/${LQ.length}</span></div><div class="rsl">Riktige</div></div><div class="rs"><div class="rsv">${pct}<span class="rsu">%</span></div><div class="rsl">Poengsum</div></div><div class="rs"><div class="rsv">${avg}<span class="rsu">s</span></div><div class="rsl">Snitt/svar</div></div><div class="rs"><div class="rsv" style="font-size:13px">${iq}</div><div class="rsl">IQ-indikator</div></div>`;
+  document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${lqS}<span class="rsu">/${LQ_ACTIVE.length}</span></div><div class="rsl">Riktige</div></div><div class="rs"><div class="rsv">${pct}<span class="rsu">%</span></div><div class="rsl">Poengsum</div></div><div class="rs"><div class="rsv">${avg}<span class="rsu">s</span></div><div class="rsl">Snitt/svar</div></div><div class="rs"><div class="rsv" style="font-size:13px">${iq}</div><div class="rsl">IQ-indikator</div></div>`;
   document.getElementById('resdom').innerHTML=dh;
 
   // Baseline comparison
