@@ -1955,7 +1955,33 @@ const LQ_STATIC=[
 {cat:'memory',diff:3,q:"Hva er 23 × 47?",opts:["1071","1081","1091","1101"],ans:1,hint:"(25−2)(50−3) = 1250−75−100+6 = 1081"},
 {cat:'memory',diff:3,q:"5 tall: gjennomsnittet er 20.\nFjern det største (32) og det minste (8).\nHva er gjennomsnitt av de resterende?",opts:["18","20","22","24"],ans:1,hint:"Sum=100. 100−32−8=60. 60/3=20"},
 ]
+// Assign stable IDs to all static questions
+LQ_STATIC.forEach((q,i)=>{q.id=i;});
+
 let lqI=0,lqS=0,lqT=[],lqQR=[],lqDS={logic:0,number:0,spatial:0,abstract:0,memory:0},lqDT={logic:0,number:0,spatial:0,abstract:0,memory:0},lqTmr=null,lqTL=150,lqA=false,lqSt=0;
+
+async function getSeenQs(){
+  if(!cu)return{};
+  try{const s=await db.collection('users').doc(cu.uid).get();return s.data()?.seenQuestions||{};}
+  catch(e){return{};}
+}
+async function markQsSeen(questions){
+  if(!cu)return;
+  try{
+    const seen=await getSeenQs();
+    questions.forEach(q=>{
+      if(q.id==null)return;
+      if(!seen[q.cat])seen[q.cat]=[];
+      if(!seen[q.cat].includes(q.id))seen[q.cat].push(q.id);
+    });
+    // Reset a category's seen list when entire pool has been shown
+    ['logic','number','spatial','abstract','memory'].forEach(cat=>{
+      const total=LQ_STATIC.filter(q=>q.cat===cat).length;
+      if(seen[cat]&&seen[cat].length>=total)seen[cat]=[];
+    });
+    await db.collection('users').doc(cu.uid).set({seenQuestions:seen},{merge:true});
+  }catch(e){console.log('markQsSeen:',e);}
+}
 
 window.startLevelTest=async()=>{
   lqI=0;lqS=0;lqT=[];lqQR=[];lqDS={logic:0,number:0,spatial:0,abstract:0,memory:0};lqDT={logic:0,number:0,spatial:0,abstract:0,memory:0};
@@ -1979,6 +2005,16 @@ window.startLevelTest=async()=>{
 };
 
 async function generateAIQuestions(){
+  // Fetch seen questions per category
+  const seenMap=await getSeenQs();
+
+  function unseenPool(cat){
+    const seenIds=seenMap[cat]||[];
+    const pool=LQ_STATIC.filter(q=>q.cat===cat&&!seenIds.includes(q.id));
+    // If nearly exhausted, fall back to full pool to avoid empty draws
+    return pool.length>=3?pool:LQ_STATIC.filter(q=>q.cat===cat);
+  }
+
   // Use random seed to ensure variety
   const seed = Math.random().toString(36).substring(2,8);
   const prompt=`Generer 12 UNIKE kognitive testspørsmål på norsk. Seed: ${seed}. Returner KUN gyldig JSON, ingen annen tekst.
@@ -2030,8 +2066,8 @@ Viktig: Aldri gjenta samme spørsmålstype to ganger på rad. Gjør svarene vans
         seen.add(key);
         return true;
       });
-      // Combine: AI questions + static spatial questions
-      const spatialQs=LQ_STATIC.filter(q=>q.cat==='spatial');
+      // Combine: AI questions + unseen static spatial questions
+      const spatialQs=unseenPool('spatial');
       const shuffled=unique.sort(()=>Math.random()-.5);
       LQ_ACTIVE=[...shuffled,...spatialQs].sort(()=>Math.random()-.5);
       console.log('AI questions generated:', unique.length, 'unique questions');
@@ -2057,8 +2093,7 @@ Viktig: Aldri gjenta samme spørsmålstype to ganger på rad. Gjør svarene vans
   const counts={spatial:5,logic:4,number:4,abstract:4,memory:3};
   const picked=[];
   cats5.forEach(c=>{
-    const pool=LQ_STATIC.filter(q=>q.cat===c);
-    picked.push(...pickBalanced(pool,counts[c]));
+    picked.push(...pickBalanced(unseenPool(c),counts[c]));
   });
   LQ_ACTIVE=picked.sort(()=>Math.random()-.5);
 }
@@ -2179,6 +2214,8 @@ async function showLvlRes(){
   });
 
   const resultData={pct,avg,score:lqS,total:LQ_ACTIVE.length,iq,domains};
+  // Mark static questions as seen (non-blocking)
+  markQsSeen(LQ_ACTIVE.filter(q=>q.id!=null));
   // Navigate immediately - never wait for Firestore
   goTo('page-results');
 
