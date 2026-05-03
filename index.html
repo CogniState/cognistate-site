@@ -11,35 +11,34 @@
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
 
   :root {
-    --bg: #080c14;
-    --bg2: #0d1420;
-    --bg3: #111927;
-    --text: #e8edf5;
-    --sub: #8a95a8;
-    --muted: #546070;
-    --accent: #5b8def;
-    --accent2: #3dd9b3;
-    --accent-glow: rgba(91,141,239,.15);
-    --accent2-glow: rgba(61,217,179,.12);
-    --border: rgba(255,255,255,.07);
-    --border2: rgba(255,255,255,.12);
-    --card: rgba(255,255,255,.03);
-    --card2: rgba(255,255,255,.055);
-    --ok: #3dd9b3;
-    --okb: rgba(61,217,179,.1);
-    --no: #f06565;
-    --nob: rgba(240,101,101,.1);
-    --am: #f0b429;
-    --pu: #9b72f2;
+    --bg: #f0f2f6;
+    --bg2: #ffffff;
+    --bg3: #e8eaef;
+    --text: #111827;
+    --sub: #4b5563;
+    --muted: #9ca3af;
+    --accent: #2563eb;
+    --accent2: #0d9488;
+    --accent-glow: rgba(37,99,235,.1);
+    --accent2-glow: rgba(13,148,136,.08);
+    --border: rgba(0,0,0,.09);
+    --border2: rgba(0,0,0,.14);
+    --card: rgba(0,0,0,.02);
+    --card2: rgba(0,0,0,.04);
+    --ok: #0d9488;
+    --okb: rgba(13,148,136,.1);
+    --no: #dc2626;
+    --nob: rgba(220,38,38,.08);
+    --am: #d97706;
+    --pu: #7c3aed;
     /* Legacy compat */
-    --bg2: #0d1420;
-    --s1: rgba(255,255,255,.035);
-    --s2: rgba(255,255,255,.06);
-    --b1: rgba(255,255,255,.07);
-    --ba: rgba(91,141,239,.2);
-    --as: rgba(91,141,239,.15);
-    --ab: rgba(91,141,239,.25);
-    --dot: rgba(255,255,255,.025);
+    --s1: rgba(0,0,0,.025);
+    --s2: rgba(0,0,0,.05);
+    --b1: rgba(0,0,0,.09);
+    --ba: rgba(37,99,235,.15);
+    --as: rgba(37,99,235,.1);
+    --ab: rgba(37,99,235,.2);
+    --dot: rgba(0,0,0,.03);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,40 +54,9 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Subtle grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Ambient glow */
-  .glow {
-    position: fixed;
-    left: 20%;
-    top: -20%;
-    width: 700px;
-    height: 700px;
-    background: radial-gradient(circle, rgba(91,141,239,.08) 0%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .glow2 {
-    position: fixed;
-    right: 10%;
-    bottom: 10%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(61,217,179,.06) 0%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  /* No grid, no glow */
+  body::before { display: none; }
+  .glow, .glow2 { display: none; }
 
   .page { display: none; position: relative; z-index: 1; min-height: 100vh; }
   .page.active { display: flex; flex-direction: column; }
@@ -99,7 +67,7 @@
     height: 62px;
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 28px;
-    background: rgba(8,12,20,.85);
+    background: rgba(240,242,246,.92);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
   }
@@ -133,14 +101,14 @@
     color: var(--text); font-size: 13.5px; font-family: inherit;
     cursor: pointer; transition: all .15s; font-weight: 400;
   }
-  .btn:hover { background: var(--card2); border-color: rgba(255,255,255,.18); }
+  .btn:hover { background: var(--card2); border-color: rgba(0,0,0,.18); }
   .btp {
     background: var(--accent); border-color: var(--accent);
     color: #fff; font-weight: 500;
   }
-  .btp:hover { background: #4a7de0; border-color: #4a7de0; }
+  .btp:hover { background: #1d4ed8; border-color: #1d4ed8; }
   .bta {
-    background: rgba(61,217,179,.1); border-color: rgba(61,217,179,.3);
+    background: rgba(13,148,136,.08); border-color: rgba(13,148,136,.25);
     color: var(--accent2); font-weight: 500;
   }
   .bta:hover { background: rgba(61,217,179,.18); }
@@ -746,7 +714,7 @@
 
 <nav id="mn" style="display:none">
   <div class="nb" onclick="showHome()">
-    <img src="assets/cognistate-logo.png" alt="CogniState"/>
+    <img src="assets/cognistate-logo.png" alt="CogniState" style="filter: invert(1) grayscale(1);"/>
     <span>CogniState</span>
   </div>
   <div class="nr">
@@ -857,6 +825,97 @@
           </div>
           <div class="feat-title">Longitudinell baseline</div>
           <div class="feat-desc">Alle mål sammenlignes mot ditt personlige toppnivå — ikke mot en generell norm.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tests in detail -->
+    <div style="width:100%;margin-bottom:60px">
+      <div class="sl" style="text-align:center;margin-bottom:8px">Testene i detalj</div>
+      <p style="text-align:center;font-size:13.5px;color:var(--sub);max-width:520px;margin:0 auto 32px">Hver test er validert i kognitiv forskning og tar under 3 minutter samlet. Her er hva du faktisk gjør — og hvorfor det betyr noe.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:40px">
+
+        <!-- Test 1 -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(91,141,239,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text)">Reaksjonstid</div>
+              <div style="font-size:11px;color:var(--muted)">~45 sekunder</div>
+            </div>
+          </div>
+          <p style="font-size:12.5px;color:var(--sub);line-height:1.65;margin-bottom:12px">Du reagerer på et visuelt signal så fort som mulig. Testen gjentas 20 ganger og gir et presist mål på nevral prosesseringshastighet.</p>
+          <div style="background:rgba(91,141,239,.07);border-radius:8px;padding:10px 12px">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:4px">Dokumentert effekt</div>
+            <div style="font-size:12px;color:var(--sub);line-height:1.5">Reaksjonstid forlenges med opptil <strong style="color:var(--text)">20–30%</strong> ved søvnmangel og kognitiv utmattelse — tilsvarende lett alkoholpåvirkning.</div>
+          </div>
+        </div>
+
+        <!-- Test 2 -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(61,217,179,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text)">Arbeidsminne</div>
+              <div style="font-size:11px;color:var(--muted)">~60 sekunder</div>
+            </div>
+          </div>
+          <p style="font-size:12.5px;color:var(--sub);line-height:1.65;margin-bottom:12px">Du ser en tallrekke og gjengir den fremover og baklengs. Tester hvor mye informasjon hjernen kan holde aktiv samtidig — nøkkelen til kompleks beslutningstaking.</p>
+          <div style="background:rgba(61,217,179,.06);border-radius:8px;padding:10px 12px">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--accent2);margin-bottom:4px">Dokumentert effekt</div>
+            <div style="font-size:12px;color:var(--sub);line-height:1.5">Redusert arbeidsminne er den sterkeste enkeltprediktoren for <strong style="color:var(--text)">feilaktige beslutninger</strong> under tidspress.</div>
+          </div>
+        </div>
+
+        <!-- Test 3 -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(155,114,242,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--pu)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text)">Impulskontroll</div>
+              <div style="font-size:11px;color:var(--muted)">~50 sekunder</div>
+            </div>
+          </div>
+          <p style="font-size:12.5px;color:var(--sub);line-height:1.65;margin-bottom:12px">Du ser et ord (f.eks. "RØD") skrevet med en annen farge og skal navngi fargen — ikke ordet. Basert på den klassiske Stroop-testen fra kognitiv psykologi.</p>
+          <div style="background:rgba(155,114,242,.08);border-radius:8px;padding:10px 12px">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--pu);margin-bottom:4px">Dokumentert effekt</div>
+            <div style="font-size:12px;color:var(--sub);line-height:1.5">Dårlig impulskontroll øker sannsynligheten for <strong style="color:var(--text)">impulsive og risikable valg</strong> med opp til 40% — særlig under deadline-press.</div>
+          </div>
+        </div>
+
+        <!-- Test 4 -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="width:36px;height:36px;border-radius:10px;background:rgba(240,180,41,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--am)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text)">Konsentrasjon</div>
+              <div style="font-size:11px;color:var(--muted)">~40 sekunder</div>
+            </div>
+          </div>
+          <p style="font-size:12.5px;color:var(--sub);line-height:1.65;margin-bottom:12px">Du skal oppdage et spesifikt mønster i en strøm av stimuli. Måler vedvarende oppmerksomhet — evnen til å holde fokus uten å miste tråden.</p>
+          <div style="background:rgba(240,180,41,.07);border-radius:8px;padding:10px 12px">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--am);margin-bottom:4px">Dokumentert effekt</div>
+            <div style="font-size:12px;color:var(--sub);line-height:1.5">Konsentrasjonsevne faller med opp til <strong style="color:var(--text)">50%</strong> etter 8+ timer kontinuerlig mentalt arbeid uten pauser.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Research note -->
+      <div style="background:linear-gradient(135deg,rgba(91,141,239,.05),rgba(61,217,179,.04));border:1px solid rgba(91,141,239,.15);border-radius:14px;padding:20px 24px;display:flex;align-items:flex-start;gap:14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:5px">Vitenskapelig grunnlag</div>
+          <div style="font-size:12.5px;color:var(--sub);line-height:1.65">Testene er basert på etablerte kognitive måleverktøy fra nevropsykologi: Stroop-testen (1935), Digit Span fra Wechsler-batteriet, og Simple/Choice Reaction Time. Alle er validert i hundrevis av studier som sensitive indikatorer på kognitiv funksjon.</div>
         </div>
       </div>
     </div>
