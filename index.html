@@ -2744,6 +2744,44 @@ function renderAdminStats(team,data,inviteUrl){
     </div>
   </div>
 
+  <details style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+    <summary style="font-size:13px;font-weight:500;color:var(--text);cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Slik tolker du tallene
+    </summary>
+    <div style="margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+
+      <div style="border-left:3px solid #16a34a;padding-left:12px">
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">% av baseline</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.6">Sammenligner teamets dagsform mot deres personlige toppnivå.
+          <br><span style="color:#16a34a;font-weight:500">90–100%</span> = grønt lys for kritiske beslutninger.
+          <br><span style="color:#d97706;font-weight:500">70–89%</span> = vær varsom, vurder å utsette.
+          <br><span style="color:#dc2626;font-weight:500">Under 70%</span> = unngå store valg i dag.
+        </div>
+      </div>
+
+      <div style="border-left:3px solid #2563eb;padding-left:12px">
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">7-dagers trend</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.6">Viser teamets gjennomsnittlige kognitive kapasitet per dag. Bruk dette til å se mønstre — er teamet konsistent trøtt på mandager? Skjerpest midt i uken? Legg viktige møter til de beste dagene.</div>
+      </div>
+
+      <div style="border-left:3px solid #7c3aed;padding-left:12px">
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Kognitive domener</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.6">Basert på nivåanalyser. Et svakt domene betyr ikke at teamet er dårlig — det peker på hvilken type beslutninger som krever ekstra grundighet.
+          <br><span style="font-weight:500;color:var(--text)">Arbeidsminne</span> = kompleks informasjon.
+          <br><span style="font-weight:500;color:var(--text)">Logikk</span> = analytiske valg.
+          <br><span style="font-weight:500;color:var(--text)">Romlig</span> = planlegging og struktur.
+        </div>
+      </div>
+
+      <div style="border-left:3px solid #d97706;padding-left:12px">
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Testet i dag</div>
+        <div style="font-size:12px;color:var(--sub);line-height:1.6">Resultater vises kun når minst 3 medlemmer har testet — for å beskytte anonymiteten. Jo flere som tester, desto mer pålitelig er teamscoren. Oppmuntre til daglig testing som en 3-minutters morgenrutine.</div>
+      </div>
+
+    </div>
+  </details>
+
   <script>
   (function(){
     if(!${hasChart}) return;
