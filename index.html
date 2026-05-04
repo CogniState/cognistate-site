@@ -2034,6 +2034,36 @@ const LQ_STATIC=[
 {cat:'logic',diff:3,q:"Premisser:\n• Ingen prosjekter uten budsjett blir gjennomført\n• Prosjekt X har ikke budsjett\nKonklusjon: Prosjekt X blir ikke gjennomført.\nFollger konklusjonen nødvendigvis?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Paradoks"],ans:0,hint:"Ingen uten budsjett→gjennomføres. X har ikke budsjett → X gjennomføres ikke. Modus tollens"},
 {cat:'logic',diff:3,q:"Premisser:\n• Alle beslutninger tatt i hast angres\n• Noen av Annas beslutninger ble tatt i hast\nKonklusjon: Alle Annas beslutninger angres.\nFollger konklusjonen nødvendigvis?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Alltid sant"],ans:1,hint:"Bare NOEN av Annas beslutninger ble tatt i hast. Bare disse angres — ikke alle hennes beslutninger"},
 {cat:'logic',diff:3,q:"Premisser:\n• Alle ledere som kommuniserer tydelig, skaper tillit\n• Ingen som skaper tillit, mister medarbeidere\nKonklusjon: Ingen tydelige kommunikatører mister medarbeidere.\nFollger konklusjonen nødvendigvis?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Av og til"],ans:0,hint:"Tydelig→tillit. Tillit→beholder medarbeidere. Tydelig→beholder medarbeidere → mister ikke. Gyldig syllogisme"},
+
+// ============================
+// CCAT-INSPIRERTE — Criteria Cognitive Aptitude Test-format
+// Kilde: prepopedia.com / testhq.com — standard kognitive aptitude-oppgaver
+// ============================
+
+// TALLREKKER — klassiske mønstre
+{cat:'number',diff:1,q:"Hva er neste tall i rekken?\n256 · 128 · 64 · 32 · ?",opts:["8","16","24","48"],ans:1,hint:"Halveres hver gang: 32 ÷ 2 = 16"},
+{cat:'number',diff:1,q:"Hva er neste tall i rekken?\n6 · 18 · 54 · 162 · ?",opts:["246","324","486","540"],ans:2,hint:"Multipliseres med 3: 162 × 3 = 486"},
+{cat:'number',diff:1,q:"Hva er neste tall i rekken?\n1 · 4 · 9 · 16 · 25 · ?",opts:["30","36","49","64"],ans:1,hint:"Kvadrattall: 1², 2², 3², 4², 5², 6² = 36"},
+{cat:'number',diff:2,q:"Hva er neste tall i rekken?\n2 · 6 · 12 · 20 · 30 · ?",opts:["36","40","42","44"],ans:2,hint:"Differansene øker med 2: +4, +6, +8, +10, +12 → 30 + 12 = 42"},
+
+// BOKSTAVPAR — mønster i par
+{cat:'abstract',diff:2,q:"Hva er neste par i rekken?\nab · bd · cf · dh · ?",opts:["eg","ej","fj","fi"],ans:1,hint:"Første bokstav: a,b,c,d,e (+1 per par). Andre bokstav: b,d,f,h,j (+2 per par) → ej"},
+
+// LOGISKE SLUTNINGER — gyldig vs. ugyldig deduksjon
+{cat:'logic',diff:2,q:"Alle medlemmer i kunstklubben deltok på utstillingen.\nJonas deltok ikke på utstillingen.\nFollger det nødvendigvis at Jonas ikke er i kunstklubben?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Av og til"],ans:0,hint:"Modus tollens: Klubb → Utstilling. Ikke Utstilling → Ikke Klubb. Gyldig slutning."},
+{cat:'logic',diff:2,q:"Per kjenner Eva. Eva kjenner Jakob.\nFollger det at Per kjenner Jakob?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Av og til"],ans:2,hint:"'Kjenner' er ikke transitiv — A kjenner B og B kjenner C betyr ikke at A kjenner C"},
+{cat:'logic',diff:3,q:"Jenny er kortere enn Alice.\nJenny er høyere enn Mia.\nMia er høyere enn Alice.\nKan alle tre påstandene være sanne samtidig?",opts:["Ja","Nei","Kan ikke avgjøres","Bare noen ganger"],ans:1,hint:"Jenny < Alice og Jenny > Mia → Mia < Jenny < Alice. Men Mia > Alice sier Mia > Alice. Motsetning → umulig."},
+
+// REGNING — mental aritmetikk
+{cat:'number',diff:1,q:"Et produkt koster 400 kr. Prisen stiger med 25 %.\nHva er ny pris?",opts:["425 kr","450 kr","475 kr","500 kr"],ans:3,hint:"400 × 1,25 = 500 kr"},
+{cat:'number',diff:2,q:"Fire tall har gjennomsnitt 8.\nDe tre første er 12, −4 og 10.\nHva er det fjerde?",opts:["4","10","14","18"],ans:2,hint:"Sum = 8 × 4 = 32. 12 + (−4) + 10 = 18. Fjerde tall = 32 − 18 = 14"},
+{cat:'number',diff:2,q:"Gjennomsnitt av tallene 5, 6, 9, 21, 30 = ?",opts:["13,4","14,0","14,2","15,2"],ans:2,hint:"Sum = 5+6+9+21+30 = 71. 71 ÷ 5 = 14,2"},
+{cat:'number',diff:2,q:"En kafé tilbyr 5 typer kaffebønner, 4 riste-nivåer og 2 størrelser.\nHvor mange unike kombinasjoner finnes?",opts:["32","40","50","60"],ans:1,hint:"5 × 4 × 2 = 40 (multiplikasjonsprinsippet)"},
+{cat:'number',diff:3,q:"En aksje kjøpes for 100 kr.\nFørste år faller den 20 %, andre år faller den 30 %.\nHva er verdien etter to år?",opts:["50 kr","56 kr","60 kr","64 kr"],ans:1,hint:"100 × 0,80 = 80. 80 × 0,70 = 56 kr"},
+
+// ANALOGIER — relasjonsresonnering
+{cat:'logic',diff:1,q:"FROSK er til RUMPETROLL som FUGL er til:",opts:["Reir","Egg","Fjær","Rede"],ans:1,hint:"Frosk er den voksne formen — rumpetroll er larvestadiet. Tilsvarende er fugl voksen og egg er startform."},
+{cat:'logic',diff:2,q:"STYRKE er til SVEKKE som OMFAVNE er til:",opts:["Støtte","Avvise","Innsirkle","Holde"],ans:1,hint:"Styrke ↔ Svekke er motsetninger. Omfavne ↔ Avvise er tilsvarende motsetning."},
 ]
 // Assign stable IDs to all static questions
 LQ_STATIC.forEach((q,i)=>{q.id=i;});
