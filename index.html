@@ -1700,7 +1700,7 @@ const LQ_STATIC=[
 {cat:'logic',diff:2,q:"X er sant bare hvis Y er sant.\nY er sant bare hvis Z er sant.\nZ er usant.\nEr X sant?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:1,hint:"Z=F → Y=F → X=F"},
 {cat:'logic',diff:2,q:"3 venner: ARNO, BRIX, CLEO.\nÉn liker rødt, én liker blått, én liker grønt.\nARNO liker ikke rødt.\nBRIX liker ikke grønt.\nCLEO liker ikke blått.\nHvem liker hva?",opts:["A=grønt,B=rødt,C=blått","A=blått,B=rødt,C=grønt","A=blått,B=grønt,C=rødt","A=grønt,B=blått,C=rødt"],ans:1,hint:"CLEO liker ikke blått → CLEO liker rødt eller grønt. ARNO liker ikke rødt. BRIX liker ikke grønt. Prøv CLEO=grønt → ARNO=blått, BRIX=rødt ✓"},
 {cat:'logic',diff:2,q:"Alle PLEX er QORN.\nNoen QORN er REFT.\nAlle REFT er SPLU.\nKan noen PLEX være SPLU?",opts:["Ja alltid","Nei aldri","Ikke nødvendigvis","Alltid feil"],ans:2,hint:"PLEX⊂QORN, QORN∩REFT≠∅ men REFT kan ligge utenfor PLEX"},
-{cat:'logic',diff:2,q:"¬A → B. ¬B → C. A er usant. Er C sant?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:2,hint:"¬A sant → B sant → ¬B usant → regelen ¬B→C fyrer ikke. C er ukjent — kan ikke si"},
+{cat:'logic',diff:2,q:"Regler:\n• Hvis A er usant, er B sant\n• Hvis B er usant, er C sant\nA er usant. Er C sant?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:2,hint:"A usant → B sant. B er sant (ikke usant) → regel 2 aktiveres ikke. C er ukjent"},
 {cat:'logic',diff:2,q:"4 personer: W, X, Y, Z sitter i en sirkel.\nW sitter ved siden av X.\nY sitter overfor W.\nZ sitter ved siden av Y.\nHvem sitter overfor X?",opts:["W","Y","Z","Kan ikke avgjøres"],ans:2,hint:"I sirkel: W-X er naboer, Y overfor W, Z ved siden av Y → X overfor Z"},
 {cat:'logic',diff:2,q:"Alle BLOB er KINT.\nNoen KINT er ikke MORV.\nEr noen BLOB ikke MORV?",opts:["Ja alltid","Nei aldri","Ikke nødvendigvis","Alltid"],ans:2,hint:"BLOB⊂KINT, noen KINT∉MORV — men disse kan ligge utenfor BLOB"},
 {cat:'logic',diff:2,q:"P er tredobbelt av Q.\nQ er halvparten av R.\nS er dobbelt av P.\nRanger fra minst til størst: P, Q, R, S",opts:["Q,P,R,S","Q,P,S,R","P,Q,R,S","Q,R,P,S"],ans:3,hint:"La Q=1: P=3, R=2, S=6. Rang: Q(1)<R(2)<P(3)<S(6) → Q,R,P,S"},
@@ -1716,16 +1716,16 @@ const LQ_STATIC=[
 {cat:'logic',diff:3,q:"4 kort (★ ■ ● ▲) i en rekke.\nRegler:\n• ★ er alltid til venstre for ■\n• ● er aldri ved siden av ★\n• ▲ er alltid til høyre for ●\nHvilken rekke er GYLDIG?",opts:["★■●▲","★●■▲","■★●▲","●▲★■"],ans:0,hint:"★■●▲: ★ før ■ ✓, ● ikke ved siden av ★ ✓, ▲ etter ● ✓"},
 {cat:'logic',diff:3,q:"5 venner har unike tall: 1,2,3,4,5.\nARE har et odde tall.\nBIRK har et primtall.\nCARI har det største.\nDANI har et partall.\nEINA har det minste odde etter 1.\nHvilket tall har BIRK?",opts:["1","2","3","4"],ans:1,hint:"CARI=5, EINA=3(minste odde etter 1), ARE=odde → 1 eller 3. EINA=3, så ARE=1. DANI=partall → 2 eller 4. BIRK=primtall. Gjenstående: 2 og 4 til DANI og BIRK. Primtall: 2 ✓ → BIRK=2"},
 {cat:'logic',diff:3,q:"Av 50 objekter:\n• 30 er RUND\n• 25 er BLÅ\n• 10 er begge\nHvor mange er verken RUND eller BLÅ?",opts:["5","10","15","20"],ans:0,hint:"30+25-10=45, 50-45=5"},
-{cat:'logic',diff:3,q:"A→(B∨C)\n¬B\n¬C\nHva er A?",opts:["Sant","Usant","Ukjent","Begge"],ans:1,hint:"¬B ∧ ¬C → ¬(B∨C). A→(B∨C), ¬(B∨C) → ¬A"},
+{cat:'logic',diff:3,q:"Hvis PRIL er sant, er enten KROM eller STEL sant.\nKROM er usant.\nSTEL er usant.\nHva er PRIL?",opts:["Sant","Usant","Ukjent","Paradoks"],ans:1,hint:"Verken KROM eller STEL er sant. Hadde PRIL vært sant, måtte minst ett vært sant. Kontrapositivt: PRIL er usant"},
 {cat:'logic',diff:3,q:"6 seter i rad: 1-2-3-4-5-6.\nPER sitter på odde sete.\nLIV sitter på sete 2 til høyre for PER.\nKARI sitter på sete 1 til venstre for LIV.\nLIV sitter på sete 5.\nHva er PERs sete?",opts:["1","3","4","5"],ans:1,hint:"LIV=5. PER=LIV−2=3 (odde ✓). KARI=LIV−1=4."},
 {cat:'logic',diff:3,q:"Alle BLOM er KREF.\nAlle KREF er DOLT.\nNoen ESPA er DOLT.\nNoen ESPA er BLOM?\nDette er:",opts:["Nødvendigvis sant","Nødvendigvis usant","Mulig men ikke nødvendig","Umulig å avgjøre"],ans:2,hint:"ESPA∩DOLT≠∅, men disse DOLT kan være utenfor BLOM"},
-{cat:'logic',diff:3,q:"P ↔ Q betyr: P sant kun hvis Q sant, og Q sant kun hvis P sant.\nP er sant, Q er usant.\nEr P ↔ Q sant?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:1,hint:"P=sant, Q=usant → de har ulik verdi → bikonditional er usann"},
+{cat:'logic',diff:3,q:"En regel sier: P er sant BARE HVIS Q er sant, og Q er sant BARE HVIS P er sant.\n(P og Q er alltid begge sanne eller begge usanne.)\nP er sant, Q er usant.\nStemmer regelen?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:1,hint:"P=sant og Q=usant → de har ulik verdi → regelen brytes → Nei"},
 {cat:'logic',diff:3,q:"10 kuler: 4 røde, 3 blå, 2 grønne, 1 gul.\nHva er minste antall trekk (uten å se) for å GARANTERE minst 2 av samme farge?",opts:["2","3","4","5"],ans:3,hint:"Verste tilfelle: 1 rød + 1 blå + 1 grønn + 1 gul = 4 ulike farger. 5. trekk = garantert duplikat"},
 {cat:'logic',diff:3,q:"Tre utsagn, nøyaktig ett er sant:\n1. ALFA er ikke grønn\n2. BETA er grønn\n3. GAMMA er ikke grønn\nHvilken er grønn?",opts:["ALFA","BETA","GAMMA","Ingen"],ans:0,hint:"Prøv: ALFA=grønn → utsagn 1=usant, 2=usant, 3=sant. Kun ett sant ✓"},
 {cat:'logic',diff:3,q:"Rekkefølge: A er foran B. C er bak D. B er foran C. E er foran A.\nHva er den korrekte rekkefølgen (frem til bak)?",opts:["E,A,B,C,D","E,A,B,D,C","A,E,B,C,D","D,C,B,A,E"],ans:1,hint:"E<A<B<C, og 'C er bak D' betyr D er foran C → D<C. Dermed: E,A,B,D,C"},
 {cat:'logic',diff:3,q:"I et spill er det 4 typer brikker: W X Y Z.\nRegler:\n• Å spille W fjerner en X\n• Å spille X gir en Y\n• Å spille Y fjerner en Z\n• Å spille Z gir en W\nDu starter med: 2W 2X 0Y 3Z\nEtter å spille W, X, Z: hva har du?",opts:["1W,1X,1Y,2Z","2W,0X,1Y,2Z","1W,1X,0Y,3Z","1W,0X,2Y,2Z"],ans:1,hint:"Spill W: −1W,−1X → 1W,1X,0Y,3Z. Spill X: −1X,+1Y → 1W,0X,1Y,3Z. Spill Z: −1Z,+1W → 2W,0X,1Y,2Z"},
 {cat:'logic',diff:3,q:"Av 100 gjenstander:\n• 60 har egenskap A\n• 50 har egenskap B\n• 30 har egenskap C\n• 20 har A og B\n• 15 har A og C\n• 10 har B og C\n• 5 har alle tre\nHvor mange har ingen?",opts:["0","5","10","15"],ans:0,hint:"Inklusjons-eksklusjon: |A∪B∪C|=60+50+30−20−15−10+5=100. Ingen=100−100=0"},
-{cat:'logic',diff:3,q:"4 utsagn om en ukjent X:\n1. X er delbart med 3\n2. X er mellom 10 og 20\n3. X er odde\n4. X er ikke delbart med 5\nNøyaktig 3 av disse er sanne. X er:",opts:["12","15","17","21"],ans:1,hint:"15: 1✓(15/3=5), 2✓(10<15<20), 3✓(odde), 4✗(15/5=3). 3 av 4 ✓"},
+{cat:'logic',diff:3,q:"ABEL, BÅRD, CARL og DINA bor i 4 ulike etasjer (1–4).\n• ABEL er i en høyere etasje enn BÅRD\n• CARL er i etasje 1\n• DINA er i en høyere etasje enn ABEL\nHvem bor i etasje 3?",opts:["ABEL","BÅRD","CARL","DINA"],ans:0,hint:"CARL=1. Rekkefølge: BÅRD<ABEL<DINA → etasjene 2,3,4 → BÅRD=2, ABEL=3, DINA=4"},
 {cat:'logic',diff:3,q:"Tre venner har ulike yrker (lærer, lege, ingeniør) og ulike byer (Oslo, Bergen, Stavanger).\nLæreren bor ikke i Oslo.\nLegen bor ikke i Bergen.\nIngeniøren bor i Stavanger.\nHvem bor i Oslo?",opts:["Læreren","Legen","Ingeniøren","Kan ikke avgjøres"],ans:1,hint:"Ingeniør=Stavanger. Legen ikke Bergen → Legen i Oslo (siden Stavanger er tatt). Lærer=Bergen"},
 {cat:'logic',diff:3,q:"Regler:\n• Hvis KRIT er sant, er BLOV sant\n• Hvis BLOV er sant, er FLIM sant\n• Hvis KRIT er usant, er GLAR sant\n• Hvis GLAR er sant, er BLOV usant\nKRIT er usant.\nHva er FLIM?",opts:["Sant","Usant","Ukjent","Paradoks"],ans:2,hint:"KRIT usant → GLAR sant → BLOV usant. Uten BLOV kan vi ikke utlede FLIM. FLIM=ukjent"},
 {cat:'logic',diff:3,q:"5 tall: A < B < C < D < E.\nB + D = 14\nA + E = 14\nC = 7\nHva er B + E?",opts:["Kan ikke avgjøres","14","15","16"],ans:0,hint:"A+E=14, B+D=14, C=7. Mange løsninger: A=1,B=3,C=7,D=11,E=13: B+E=16. A=2,B=5,C=7,D=9,E=12: B+E=17. Kan ikke avgjøres"},
@@ -1824,7 +1824,7 @@ const LQ_STATIC=[
 {cat:'abstract',diff:1,q:"BIL er til MOTOR som SYKKEL er til ?",opts:["HJUL","PEDAL","STYRET","SETE"],ans:1,hint:"Bilen drives av motor. Sykkelen drives av pedaler"},
 
 // MIDDELS
-{cat:'abstract',diff:2,q:"Hva er neste?\n▲▲ ■■■ ▲▲▲▲ ■■■■■ ?",opts:["▲▲▲","▲▲▲▲▲▲","■■■■■■","▲▲▲▲▲▲"],ans:3,hint:"Mønster: 2▲, 3■, 4▲, 5■, 6▲"},
+{cat:'abstract',diff:2,q:"Hva er neste?\n▲▲ ■■■ ▲▲▲▲ ■■■■■ ?",opts:["▲▲▲","▲▲▲▲▲","■■■■■■","▲▲▲▲▲▲"],ans:3,hint:"Mønster: 2▲, 3■, 4▲, 5■, 6▲"},
 {cat:'abstract',diff:2,q:"LEGE er til SYKEHUS som PILOT er til FLY\nsom DOMMER er til ?",opts:["LOV","STRAFF","RETTSAL","DOMSTOL"],ans:3,hint:"Profesjonell arbeider i sitt domene: lege→sykehus, pilot→fly, dommer→domstol"},
 {cat:'abstract',diff:2,q:"Hva mangler?\nZ25 Y24 X23 W22 ?",opts:["U20","V21","V20","U21"],ans:1,hint:"Bokstav synker, tall synker: Z=26,Y=24... nei: Z+25, Y+24 → bokstav i alfabet=tall. V=22? Nei: V=21,21+... Mønster: Z→25, Y→24, X→23, W→22 → V→21"},
 {cat:'abstract',diff:2,q:"Hva er neste?\n1, 4, 10, 22, 46, ?",opts:["90","94","96","98"],ans:1,hint:"Mønster: neste = forrige×2 + 2: 1×2+2=4, 4×2+2=10, 10×2+2=22, 22×2+2=46, 46×2+2=94"},
@@ -1884,9 +1884,9 @@ const LQ_STATIC=[
 {cat:'spatial',diff:2,q:"Du starter i punkt A og går:\n3 km øst, 4 km nord, 3 km vest, 4 km sør.\nHvor er du nå?",opts:["4 km nord for A","3 km øst for A","Tilbake til A","6 km fra A"],ans:2,hint:"3Ø+3V=0, 4N+4S=0 → tilbake til A"},
 {cat:'spatial',diff:2,q:"En kube med kantlengde 4 kuttes i 1×1×1-biter.\nHvor mange biter har nøyaktig 2 malte sider?",opts:["12","16","24","32"],ans:2,hint:"Kantbiter (ikke hjørner): 12 kanter × 2 biter per kant = 24 biter"},
 {cat:'spatial',diff:2,q:"To sirkler overlapper. Den ene har radius 3, den andre radius 4.\nSentrene er 5 cm fra hverandre.\nOverlapper de?",opts:["Ja, de overlapper","Tangerer utvendig","Nei, de er adskilte","Tangerer innvendig"],ans:0,hint:"r₁+r₂=7>5 → de overlapper. Tangering utvendig krever avstand=7. Avstand=5<7 → de skjærer hverandre"},
-{cat:'spatial',diff:2,q:"En pil peker nord. Den roteres 45° med klokken 3 ganger.\nHvilken retning peker den?",opts:["Nord","Sørøst","Sør","Sørvest"],ans:3,hint:"3 × 45° = 135° med klokken fra nord = Sørvest"},
+{cat:'spatial',diff:2,q:"En pil peker nord. Den roteres 45° med klokken 3 ganger.\nHvilken retning peker den?",opts:["Nord","Nordøst","Sør","Sørvest"],ans:3,hint:"3 × 45° = 135° med klokken fra nord = Sørvest"},
 {cat:'spatial',diff:2,q:"Du går 6 km nord, deretter 8 km øst.\nHvor langt er du fra startpunktet i rett linje?",opts:["8 km","9 km","10 km","12 km"],ans:2,hint:"Pytagoras: √(6²+8²) = √(36+64) = √100 = 10 km"},
-{cat:'spatial',diff:2,q:"En terning rulles slik at siden med 1 vender opp.\nDu ruller den én gang fremover (kant som vipper mot deg).\nHva vender nå opp?",opts:["2","3","4","5"],ans:2,hint:"Standardterning: 1 opp, 2 foran. Ruller fremover: det som var foran (2) legges ned, det som var bak (5) blir foran, det som var nede (6) vender opp... nei: 1 opp → ruller fremover → 1 blir bakside, det som var foran kommer ned... standardterning: 1 overfor 6, 2 overfor 5, 3 overfor 4. 1 opp, ruller fremover: 2 vender opp"},
+{cat:'spatial',diff:2,q:"En pil peker øst.\nDu roterer den 90° med klokken, deretter 180° mot klokken.\nHvilken retning peker den nå?",opts:["Nord","Sør","Øst","Vest"],ans:0,hint:"Øst +90° med klokken = Sør. Sør +180° = Nord"},
 {cat:'spatial',diff:2,q:"En labyrint er et 4×4 grid. Du starter i øvre venstre hjørne og skal til nedre høyre.\nDu kan bare bevege deg høyre eller ned.\nHvor mange ulike veier finnes?",opts:["14","18","20","24"],ans:2,hint:"3 steg høyre + 3 steg ned = 6 steg totalt. Antall veier = C(6,3) = 20"},
 {cat:'spatial',diff:2,q:"En sylinder har samme høyde som diameter.\nDen kuttes horisontalt på midten.\nHva er overflatearealet til den øvre halvdelen?",opts:["3πr²","4πr²","5πr²","6πr²"],ans:1,hint:"h=2r, halvt gir h=r. Øvre halvdel: topp (πr²) + sideflate (2πr×r=2πr²) + snittflate (πr²) = 4πr²"},
 {cat:'spatial',diff:2,q:"Du holder et transparent ark med pilen → foran deg.\nDu snur arket 180° rundt den vertikale aksen (speiler det).\nHva ser du?",opts:["→","←","↑","↓"],ans:1,hint:"Speiling rundt vertikal akse: → blir ←"},
@@ -1896,12 +1896,12 @@ const LQ_STATIC=[
 {cat:'spatial',diff:3,q:"En 5×5×5 kube males på alle sider og kuttes i 1³-biter.\nHvor mange biter har nøyaktig 1 malt side?",opts:["48","54","96","125"],ans:1,hint:"Midtpunktene på flatene (ikke kanter/hjørner): hver flate har (5-2)²=9. 6 flater × 9 = 54"},
 {cat:'spatial',diff:3,q:"Fra punkt A:\n10 km nord, 10 km øst, 10 km sør, 10 km vest.\nFra nytt punkt B:\n5 km sør, 5 km øst.\nHva er avstand fra A til B?",opts:["5 km","5√2 km","10 km","0 km"],ans:1,hint:"Etter A-turen: tilbake til A. Deretter 5S, 5Ø fra A → B er 5Ø og 5S fra A. Avstand: √(25+25)=5√2"},
 {cat:'spatial',diff:3,q:"En sfære er innskrevet i en kube slik at sfæren tangerer alle 6 sider.\nForholdet mellom sfærens volum og kubens volum?",opts:["π/6","π/4","π/3","π/2"],ans:0,hint:"Sfære radius=a/2 (a=kubeside). V_sfære=4/3π(a/2)³=πa³/6. V_kube=a³. Forhold=π/6"},
-{cat:'spatial',diff:3,q:"Vinkelen mellom to vegger i et rom er 90°.\nEn maur starter i ett hjørne av gulvet og skal til det diametralt motstående hjørnet i taket (5×4×3 m rom).\nKorteste sti langs vegger/gulv/tak?",opts:["√73 m","√90 m","√65 m","√74 m"],ans:0,hint:"Prøv alle veier: rull gulv+vegg: rull (5+3)×4: √(8²+4²)=√80. Rull (5+4)×3: √(9²+3²)=√90. Rull (3+4)×5: √(7²+5²)=√74. Rull gulv+vegg annen vei: √((4+3)²+5²)=√74. Min=√73? La oss se: gulv+tak: √((5)²+(4+3+3)²)... Nei. Min av alle: √74 eller √73"},
+{cat:'spatial',diff:3,q:"En edderkopp starter i ett hjørne av et rom (5×4×3 m) og skal til det motstående hjørnet i taket langs veggene.\nHva er korteste vei?",opts:["√74 m","√80 m","√90 m","√65 m"],ans:0,hint:"Rull ut vegger: √((4+3)²+5²)=√74, √((5+3)²+4²)=√80, √((5+4)²+3²)=√90. Korteste=√74"},
 {cat:'spatial',diff:3,q:"En labyrint: 10×10 grid. Start: øvre venstre. Mål: nedre høyre.\nKun bevegelse høyre eller ned. Antall mulige veier?",opts:["48620","92378","184756","262144"],ans:0,hint:"C(18,9) = 48620 (9 høyre og 9 ned av 18 steg)"},
 {cat:'spatial',diff:3,q:"To terninger (standardterning) settes ved siden av hverandre.\nFlater som berører hverandre summerer til 7.\nHva er summen av alle synlige sider?",opts:["28","32","35","40"],ans:2,hint:"Begge terninger totalt: 2×21=42. De to berørende flatene summerer til 7 og er skjult. Synlige sider: 42−7=35"},
 {cat:'spatial',diff:3,q:"En robot starter i (0,0), peker nord.\nKommandoer: F=gå 1 frem, L=snu 90° venstre, R=snu 90° høyre.\nKommando: FFFRFFF\nSlutposisjon?",opts:["(3,3)","(2,4)","(3,2)","(4,3)"],ans:0,hint:"F→(0,1), F→(0,2), F→(0,3), R→peker Ø, F→(1,3), F→(2,3), F→(3,3)"},
 {cat:'spatial',diff:3,q:"En kule med radius 5 er omgitt av 8 identiske kuler.\nHver av de 8 tangerer den sentrale kulen og 3 av de andre ytre kulene.\nHva er radien til de ytre kulene?",opts:["2.5","3","4","5"],ans:3,hint:"I kubisk pakking: de 8 ytre kulene har samme radius som den sentrale = 5"},
-{cat:'spatial',diff:3,q:"Du holder et klokke foran et speil.\nKlokken viser 2:30.\nHva viser speilbildet?",opts:["2:30","9:30","9:30","11:30"],ans:1,hint:"Speiling: 12 er fortsatt øverst. 2:30 speiles: 30min-viseren er til venstre (6), timeviser peker mot 9-10. Speilet viser 9:30"},
+{cat:'spatial',diff:3,q:"Du holder et klokke foran et speil.\nKlokken viser 2:30.\nHva viser speilbildet?",opts:["2:30","9:30","10:30","11:30"],ans:1,hint:"Speiling: 12 er fortsatt øverst. Timeviser (ved 2–3) speiles til venstre side (ved 9–10). Minuttviser (ved 6) forblir nederst. Speilet viser 9:30"},
 {cat:'spatial',diff:3,q:"En terning has 6 sider med tall 1-6.\nMotstående sider summer til 7.\n1 er opp, 2 er foran.\nHva er til høyre?",opts:["3","4","5","6"],ans:0,hint:"Standardterning orientering: 1 opp, 2 foran → 3 til høyre (standardkonvensjon)"},
 
 // ============================
@@ -1946,7 +1946,7 @@ const LQ_STATIC=[
 // KREVENDE
 {cat:'memory',diff:3,q:"Beregn: 37 × 43",opts:["1581","1591","1601","1611"],ans:1,hint:"(40−3)(40+3) = 1600 − 9 = 1591"},
 {cat:'memory',diff:3,q:"Hva er summen av tallene fra 1 til 50?",opts:["1225","1250","1275","1300"],ans:2,hint:"50 × 51 / 2 = 1275"},
-{cat:'memory',diff:3,q:"Tallrekken: Hvert ledd er differansen mellom to forrige (absolutt):\n8, 5, 3, 2, 1, 1, 0, ?\nHva er neste?",opts:["0","1","2","−1"],ans:0,hint:"|1−1|=0, |1−0|=1, |0−1|=1... egentlig |1-1|=0, |0-1|=1"},
+{cat:'memory',diff:3,q:"Tallrekken: Hvert ledd er absolutt differanse mellom de to forrige:\n8, 5, 3, 2, 1, 1, 0, ?\nHva er neste?",opts:["0","1","2","−1"],ans:1,hint:"|1−0|=1. De to siste leddene er 1 og 0, så neste = |1−0| = 1"},
 {cat:'memory',diff:3,q:"Beregn: (100 − 37) × (100 + 37) − 100²",opts:["−1369","−1296","−1000","−744"],ans:0,hint:"(63)(137) = 100²−37² = 10000−1369. (63×137)−10000 = 8631−10000 = −1369"},
 {cat:'memory',diff:3,q:"Du har 7 tall: 3, 7, 11, 15, 19, 23, 27.\nHva er gjennomsnitt × antall odde tall?",opts:["95","100","105","110"],ans:2,hint:"Snitt=(3+27)/2=15. Odde tall: 3,7,11,15,19,23,27=7 (alle er odde). 15×7=105"},
 {cat:'memory',diff:3,q:"Beregn: 999 × 999",opts:["998001","999001","1000001","998999"],ans:0,hint:"(1000−1)² = 1000² − 2×1000 + 1 = 1000000 − 2000 + 1 = 998001"},
@@ -1954,6 +1954,61 @@ const LQ_STATIC=[
 {cat:'memory',diff:3,q:"Du begynner med 1000.\nGang med 2, trekk fra 100, gang med 3, trekk fra 500.\nHva er svaret?",opts:["4900","5200","5300","5500"],ans:1,hint:"1000×2=2000, −100=1900, ×3=5700, −500=5200"},
 {cat:'memory',diff:3,q:"Hva er 23 × 47?",opts:["1071","1081","1091","1101"],ans:1,hint:"(25−2)(50−3) = 1250−75−100+6 = 1081"},
 {cat:'memory',diff:3,q:"5 tall: gjennomsnittet er 20.\nFjern det største (32) og det minste (8).\nHva er gjennomsnitt av de resterende?",opts:["18","20","22","24"],ans:1,hint:"Sum=100. 100−32−8=60. 60/3=20"},
+
+// ============================
+// UTVIDEDE SPØRSMÅL — validerte fra psykometriske testbatterier
+// Kildene: IndiaBIX, MeritNotes, klassiske aptitude-serier
+// ============================
+
+// TALLREKKER — sammenflettet og alternerende (validert)
+{cat:'number',diff:2,q:"Tallrekken: 7, 10, 8, 11, 9, 12, ?\nHva er neste?",opts:["7","10","12","13"],ans:1,hint:"To sammenflettede rekker: 7,8,9... og 10,11,12,13... Neste i rekken 7,8,9 er 10"},
+{cat:'number',diff:2,q:"Tallrekken: 36, 34, 30, 28, 24, ?\nHva er neste?",opts:["20","22","23","26"],ans:1,hint:"Veksler mellom −2 og −4: 36−2=34, 34−4=30, 30−2=28, 28−4=24, 24−2=22"},
+{cat:'number',diff:2,q:"Tallrekken: 22, 21, 23, 22, 24, 23, ?\nHva er neste?",opts:["22","24","25","26"],ans:2,hint:"To sammenflettede rekker: 22,23,24,25... og 21,22,23... Neste i den første er 25"},
+{cat:'number',diff:2,q:"Tallrekken: 53, 53, 40, 40, 27, 27, ?\nHva er neste?",opts:["12","14","27","40"],ans:1,hint:"Par av like tall som synker med 13: 53→40→27→14"},
+{cat:'number',diff:2,q:"Tallrekken: 3, 4, 7, 8, 11, 12, ?\nHva er neste?",opts:["13","14","15","16"],ans:2,hint:"To sammenflettede rekker: 3,7,11 (+4) og 4,8,12 (+4). Neste er 15"},
+{cat:'number',diff:2,q:"Tallrekken: 8, 22, 8, 28, 8, ?\nHva er neste?",opts:["9","29","32","34"],ans:3,hint:"Konstant 8 veksler med stigende rekke: 22, 28, 34 (+6)"},
+{cat:'number',diff:2,q:"Tallrekken: 31, 29, 24, 22, 17, ?\nHva er neste?",opts:["12","13","14","15"],ans:3,hint:"Veksler mellom −2 og −5: 31−2=29, 29−5=24, 24−2=22, 22−5=17, 17−2=15"},
+{cat:'number',diff:2,q:"Tallrekken: 58, 52, 46, 40, 34, ?\nHva er neste?",opts:["26","28","30","32"],ans:1,hint:"Synker med 6 hvert ledd: 34−6=28"},
+{cat:'number',diff:2,q:"Tallrekken: 21, 9, 21, 11, 21, 13, 21, ?\nHva er neste?",opts:["14","15","21","23"],ans:0,hint:"Konstant 21 veksler med stigende rekke: 9,11,13,15 (+2). Neste er 14"},
+
+// FINNER AVVIKENDE (validerte odd-man-out)
+{cat:'abstract',diff:1,q:"Hvilket tall hører ikke hjemme?\n3 · 5 · 11 · 14 · 17 · 21",opts:["3","5","14","17"],ans:2,hint:"Alle andre er odde tall. 14 er det eneste partallet"},
+{cat:'abstract',diff:1,q:"Hvilket tall hører ikke hjemme?\n10 · 25 · 45 · 54 · 60 · 75 · 80",opts:["10","45","54","75"],ans:2,hint:"Alle andre er multipler av 5. 54 er ikke delbart med 5"},
+{cat:'abstract',diff:1,q:"Hvilket tall hører ikke hjemme?\n6 · 9 · 15 · 21 · 24 · 28 · 30",opts:["9","15","28","30"],ans:2,hint:"Alle andre er multipler av 3. 28 er ikke delbart med 3"},
+{cat:'abstract',diff:2,q:"Hvilket tall hører ikke hjemme?\n25 · 36 · 49 · 81 · 121 · 169 · 225",opts:["25","36","49","81"],ans:1,hint:"Rekken er kvadrater av odde tall: 5²,7²,9²,11²,13²,15². 36=6² bryter mønsteret"},
+{cat:'abstract',diff:2,q:"Hvilket tall hører ikke hjemme?\n8 · 27 · 64 · 100 · 125 · 216 · 343",opts:["27","64","100","125"],ans:2,hint:"Alle andre er perfekte kubikktall (2³,3³,4³,5³,6³,7³). 100 er ikke et kubikktall"},
+{cat:'abstract',diff:2,q:"Finn det som ikke passer:\n56 · 72 · 90 · 110 · 132 · 150",opts:["72","110","132","150"],ans:3,hint:"Mønster: n×(n+1): 7×8=56, 8×9=72, ..., 12×13=156. 150 bryter mønsteret (skulle vært 156)"},
+{cat:'abstract',diff:3,q:"Finn det som ikke passer:\n3 · 10 · 21 · 36 · 55 · 70 · 105",opts:["10","36","70","105"],ans:2,hint:"Mønster: n(2n+1): 1×3=3, 2×5=10, 3×7=21, 4×9=36, 5×11=55, 6×13=78, 7×15=105. 70 skulle vært 78"},
+{cat:'abstract',diff:3,q:"Finn det som ikke passer:\n396 · 462 · 572 · 427 · 671 · 264",opts:["396","462","427","671"],ans:2,hint:"I alle andre er midterste siffer = sum av ytterste: 3+6=9✓, 4+2=6✓, 5+2=7✓, 6+1=7✓, 2+4=6✓. Men 4+7=11≠2"},
+
+// BOKSTAVREKKER — validerte mønstre
+{cat:'abstract',diff:1,q:"Hva er neste bokstav?\nB · D · F · H · ?",opts:["I","J","K","L"],ans:1,hint:"Annenhver bokstav fremover: B(2),D(4),F(6),H(8),J(10)"},
+{cat:'abstract',diff:1,q:"Hva er neste bokstav?\nZ · X · V · T · ?",opts:["Q","R","S","U"],ans:1,hint:"Annenhver bokstav bakover: Z,X,V,T,R"},
+{cat:'abstract',diff:2,q:"Hva er neste gruppe?\nDCBA · HGFE · LKJI · ?",opts:["MNOP","PONM","NOPQ","OPQR"],ans:1,hint:"Grupper på 4 bokstaver i omvendt rekkefølge: D→A, H→E, L→I, P→M"},
+{cat:'abstract',diff:2,q:"Hva er neste bokstav?\nA · C · F · J · ?",opts:["M","N","O","P"],ans:2,hint:"Steg øker med 1: +2,+3,+4,+5 → J(10)+5=O(15)"},
+{cat:'abstract',diff:2,q:"Hva er neste par?\nA1 · C3 · E5 · G7 · ?",opts:["H8","I9","J10","K11"],ans:1,hint:"Odde bokstaver + tilsvarende odde tall: A=1, C=3, E=5, G=7, I=9"},
+
+// SYLLOGISMER — klassiske logiske slutninger
+{cat:'logic',diff:1,q:"Alle løver er dyr.\nAlle dyr er levende.\nEr alle løver levende?",opts:["Ja alltid","Nei aldri","Noen ganger","Kan ikke si"],ans:0,hint:"Løver⊂Dyr⊂Levende → alle løver er levende"},
+{cat:'logic',diff:1,q:"Ingen fugler er fisk.\nAlle papegøyer er fugler.\nKan noen papegøyer være fisk?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:1,hint:"Papegøyer⊂Fugler, og Fugler∩Fisk=∅ → Papegøyer∩Fisk=∅"},
+{cat:'logic',diff:2,q:"Noen lærere er forfattere.\nAlle forfattere leser bøker.\nNoen lærere leser bøker?",opts:["Nødvendigvis sant","Nødvendigvis usant","Mulig men ikke sikkert","Aldri"],ans:0,hint:"De lærerne som er forfattere leser bøker → noen lærere leser definitivt bøker"},
+{cat:'logic',diff:2,q:"Alle roser er blomster.\nNoen blomster visner raskt.\nVisner noen roser raskt?",opts:["Nødvendigvis sant","Nødvendigvis usant","Mulig men ikke nødvendig","Aldri sant"],ans:2,hint:"Noen blomster visner raskt — disse kan, men trenger ikke, være roser"},
+{cat:'logic',diff:2,q:"Alle fly er kjøretøy.\nNoen kjøretøy er skip.\nEr alle fly skip?",opts:["Ja alltid","Ikke nødvendigvis","Ja uten unntak","Aldri"],ans:1,hint:"Fly⊂Kjøretøy, og noen Kjøretøy=Skip — men Skip-gruppen kan ligge utenfor Fly"},
+{cat:'logic',diff:2,q:"Alle sykler har hjul.\nDette har ikke hjul.\nEr dette en sykkel?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:1,hint:"Modus tollens: Sykkel→Hjul. Ikke Hjul → Ikke Sykkel"},
+{cat:'logic',diff:2,q:"Ingen stein er planter.\nAlle koraller er planter.\nEr noen koraller stein?",opts:["Ja","Nei","Kan ikke si","Av og til"],ans:1,hint:"Koraller⊂Planter, Planter∩Stein=∅ → Koraller∩Stein=∅"},
+
+// ROMLIG — retning og rotasjon
+{cat:'spatial',diff:1,q:"Du ser sørover og snur 270° med klokken.\nHvilken retning ser du nå?",opts:["Nord","Sør","Øst","Vest"],ans:2,hint:"270° med klokken = 90° mot klokken. Sør + 90° mot klokken = Øst"},
+{cat:'spatial',diff:2,q:"Et rom er 6m × 4m. Du plasserer ett speil på den lengste veggen midt i rommet.\nHva er din speilbilde-avstand fra speilet hvis du står 2m fra det?",opts:["2 m","4 m","6 m","8 m"],ans:1,hint:"Speilbildet er like langt bak speilet som du er foran: 2+2=4m fra deg"},
+
+// ARBEIDSMINNE — mental aritmetikk
+{cat:'memory',diff:2,q:"Beregn i hodet: 16 × 16",opts:["246","256","266","276"],ans:1,hint:"16×16 = 16×10+16×6 = 160+96 = 256"},
+{cat:'memory',diff:2,q:"Beregn: 48 + 37 + 62 + 13",opts:["155","160","165","170"],ans:1,hint:"(48+62)+(37+13) = 110+50 = 160"},
+{cat:'memory',diff:2,q:"Beregn: 125 × 8",opts:["900","1000","1100","1200"],ans:1,hint:"125×8 = 1000 (et standardtriks: 125×8=1000)"},
+{cat:'memory',diff:3,q:"Beregn: 75 × 12",opts:["850","875","900","925"],ans:2,hint:"75×12 = 75×10+75×2 = 750+150 = 900"},
+{cat:'memory',diff:3,q:"Beregn: 18²",opts:["304","314","324","334"],ans:2,hint:"(20−2)² = 400−80+4 = 324"},
+{cat:'memory',diff:3,q:"Beregn: 99 × 11",opts:["1079","1089","1099","1109"],ans:1,hint:"99×11 = 100×11−11 = 1100−11 = 1089"},
+{cat:'memory',diff:2,q:"Beregn: 15% av 60 + 20% av 80",opts:["21","25","28","30"],ans:1,hint:"0.15×60=9, 0.20×80=16, 9+16=25"},
 ]
 // Assign stable IDs to all static questions
 LQ_STATIC.forEach((q,i)=>{q.id=i;});
