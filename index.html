@@ -2009,6 +2009,31 @@ const LQ_STATIC=[
 {cat:'memory',diff:3,q:"Beregn: 18²",opts:["304","314","324","334"],ans:2,hint:"(20−2)² = 400−80+4 = 324"},
 {cat:'memory',diff:3,q:"Beregn: 99 × 11",opts:["1079","1089","1099","1109"],ans:1,hint:"99×11 = 100×11−11 = 1100−11 = 1089"},
 {cat:'memory',diff:2,q:"Beregn: 15% av 60 + 20% av 80",opts:["21","25","28","30"],ans:1,hint:"0.15×60=9, 0.20×80=16, 9+16=25"},
+
+// ============================
+// ICAR — International Cognitive Ability Resource
+// Condon & Revelle (2014) — Public domain, validert på 97 000 deltakere
+// Kilde: icar-project.com (Intelligence Supplement 2014)
+// ============================
+
+// VR-ITEMS — Verbal/analytisk resonnering
+{cat:'logic',diff:2,q:"Hva er én femtedel av én fjerdedel av én niendedel av 900?",opts:["3","4","5","6"],ans:2,hint:"1/9 × 900 = 100. 1/4 × 100 = 25. 1/5 × 25 = 5 [ICAR VR.4]"},
+{cat:'logic',diff:2,q:"Zach er høyere enn Matt.\nRichard er lavere enn Zach.\nHvilken påstand er mest nøyaktig?",opts:["Richard er høyere enn Matt","Richard er lavere enn Matt","Richard er like høy som Matt","Umulig å si"],ans:3,hint:"Vi vet Zach>Matt og Zach>Richard, men vi kan ikke sammenligne Richard og Matt [ICAR VR.16]"},
+{cat:'logic',diff:2,q:"Jonas er 12 år og søsteren hans er tre ganger så gammel som ham.\nNår Jonas er 23 år, hvor gammel er søsteren?",opts:["35","39","44","47"],ans:3,hint:"Søsteren er 36 nå. Aldersforskjell = 24. Jonas 23 → søster 23+24=47 [ICAR VR.17]"},
+{cat:'logic',diff:2,q:"Hvis dagen etter i morgen er to dager før torsdag,\nhvilken dag er det i dag?",opts:["Mandag","Tirsdag","Fredag","Søndag"],ans:3,hint:"To dager før torsdag = tirsdag. 'Dagen etter i morgen' = i dag +2. I dag +2 = tirsdag → i dag = søndag [ICAR VR.19]"},
+
+// LN-ITEMS — Bokstav- og tallrekker (alphanumeric series)
+{cat:'abstract',diff:2,q:"Hva er neste bokstav i rekken?\nK · N · P · S · U · ?",opts:["V","W","X","Y"],ans:2,hint:"Veksler +3/+2: K+3=N, N+2=P, P+3=S, S+2=U, U+3=X [ICAR LN.7 — validert 97 000 deltakere]"},
+{cat:'abstract',diff:2,q:"Hva er neste bokstav i rekken?\nV · Q · M · J · H · ?",opts:["E","F","G","H"],ans:2,hint:"Differansene minker med 1: −5,−4,−3,−2,−1 → H−1=G [ICAR LN.33]"},
+{cat:'abstract',diff:2,q:"Hva er neste bokstav i rekken?\nI · J · L · O · S · ?",opts:["U","V","X","Y"],ans:2,hint:"Stegene øker: +1,+2,+3,+4,+5 → S+5=X [ICAR LN.34]"},
+
+// WATSON-GLASER-INSPIRERTE — deduktiv resonnering (samme format, eget innhold)
+// Format: aksepter premissene som sanne, vurder om konklusjonen nødvendigvis følger
+{cat:'logic',diff:2,q:"Premisser:\n• Alle selgere er utadvendte\n• Erik er selger\nKonklusjon: Erik er utadvendt.\nFollger konklusjonen nødvendigvis?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Av og til"],ans:0,hint:"Alle selgere→utadvendt. Erik er selger → Erik er utadvendt. Gyldig deduktiv slutning"},
+{cat:'logic',diff:2,q:"Premisser:\n• Noen studenter liker matematikk\n• Alle som liker matematikk, liker logikk\nKonklusjon: Alle studenter liker logikk.\nFollger konklusjonen nødvendigvis?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Alltid sant"],ans:1,hint:"Bare NOEN studenter liker matematikk → bare disse liker logikk. Ikke alle studenter"},
+{cat:'logic',diff:3,q:"Premisser:\n• Ingen prosjekter uten budsjett blir gjennomført\n• Prosjekt X har ikke budsjett\nKonklusjon: Prosjekt X blir ikke gjennomført.\nFollger konklusjonen nødvendigvis?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Paradoks"],ans:0,hint:"Ingen uten budsjett→gjennomføres. X har ikke budsjett → X gjennomføres ikke. Modus tollens"},
+{cat:'logic',diff:3,q:"Premisser:\n• Alle beslutninger tatt i hast angres\n• Noen av Annas beslutninger ble tatt i hast\nKonklusjon: Alle Annas beslutninger angres.\nFollger konklusjonen nødvendigvis?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Alltid sant"],ans:1,hint:"Bare NOEN av Annas beslutninger ble tatt i hast. Bare disse angres — ikke alle hennes beslutninger"},
+{cat:'logic',diff:3,q:"Premisser:\n• Alle ledere som kommuniserer tydelig, skaper tillit\n• Ingen som skaper tillit, mister medarbeidere\nKonklusjon: Ingen tydelige kommunikatører mister medarbeidere.\nFollger konklusjonen nødvendigvis?",opts:["Ja, nødvendigvis","Nei, ikke nødvendigvis","Kan ikke avgjøres","Av og til"],ans:0,hint:"Tydelig→tillit. Tillit→beholder medarbeidere. Tydelig→beholder medarbeidere → mister ikke. Gyldig syllogisme"},
 ]
 // Assign stable IDs to all static questions
 LQ_STATIC.forEach((q,i)=>{q.id=i;});
