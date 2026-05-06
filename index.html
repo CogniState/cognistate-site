@@ -2566,10 +2566,11 @@ function startStroop(){
     const ink=others[Math.floor(Math.random()*others.length)];
     items.push({word:w.word,ink:ink.color,inkLabel:ink.label,congruent:false}); // incongruent
   });
-  // Shuffle and pick 18, ensuring balance
-  const cong=items.filter(i=>i.congruent).sort(()=>Math.random()-.5).slice(0,9);
-  const incong=items.filter(i=>!i.congruent).sort(()=>Math.random()-.5).slice(0,9);
+  // Use all available items (SW has 6 words → max 6 cong + 6 incong = 12 items)
+  const cong=items.filter(i=>i.congruent).sort(()=>Math.random()-.5);
+  const incong=items.filter(i=>!i.congruent).sort(()=>Math.random()-.5);
   stD=[...cong,...incong].sort(()=>Math.random()-.5);
+  stTot=stD.length; // set dynamically to avoid out-of-bounds crash
   showStrp();
 }
 function showStrp(){
