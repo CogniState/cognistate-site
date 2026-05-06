@@ -1415,6 +1415,17 @@ async function loadDash(){
   const name=(ud?.name||cu.displayName||'deg').split(' ')[0];
   document.getElementById('dn2').textContent='Hei, '+name+'!';
 
+  // Set memory span start level for daily test based on baseline
+  // Priority: 1) measured span from daily baseline, 2) derived from level test score
+  if(ud?.baseline?.now?.memSpan){
+    window._baselineMemSpan=ud.baseline.now.memSpan;
+  } else if(ud?.baseline?.level?.pct){
+    const pct=ud.baseline.level.pct;
+    window._baselineMemSpan=pct>=80?7:pct>=65?6:pct>=45?5:4;
+  } else {
+    window._baselineMemSpan=5;
+  }
+
   let res;
   try{
     const q=db.collection('results').where('uid','==',cu.uid).orderBy('createdAt','desc').limit(20);
