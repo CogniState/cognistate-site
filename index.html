@@ -965,6 +965,7 @@
     <div class="fg"><label class="fl">Passord</label><input class="fi" type="password" id="ap" placeholder="Minimum 6 tegn"/></div>
     <button class="btn btp" style="width:100%;justify-content:center" id="asb" onclick="submitAuth()">Logg inn</button>
     <div class="asw" id="asw">Ingen konto? <a onclick="toggleAuth()">Registrer deg gratis</a></div>
+    <div style="text-align:center;margin-top:10px;font-size:12.5px"><a id="forgot-link" onclick="forgotPassword()" style="color:var(--sub);cursor:pointer">Glemt passord?</a></div>
   </div>
 </div>
 
@@ -1326,6 +1327,15 @@ window.submitAuth=async()=>{
 
 function showErr(m){const el=document.getElementById('aerr');el.textContent=m;el.style.display='block';}
 function fe(c){return({'auth/user-not-found':'Ingen konto med denne e-posten.','auth/wrong-password':'Feil passord.','auth/email-already-in-use':'E-posten er allerede i bruk.','auth/weak-password':'Passordet må være minst 6 tegn.','auth/invalid-email':'Ugyldig e-postadresse.','auth/invalid-credential':'Feil e-post eller passord.','auth/popup-closed-by-user':'Innlogging avbrutt.'}[c])||'Noe gikk galt. Prøv igjen.';}
+window.forgotPassword=async()=>{
+  const email=document.getElementById('ae').value.trim();
+  if(!email){showErr('Skriv inn e-postadressen din først.');return;}
+  try{
+    await auth.sendPasswordResetEmail(email);
+    showErr('Tilbakestillingslenke sendt til '+email+'. Sjekk innboksen.');
+    document.getElementById('aerr').style.color='var(--accent2)';
+  }catch(e){showErr(fe(e.code));}
+};
 
 async function ensureUser(user,name){
   const ref=db.collection('users').doc(user.uid);
@@ -1839,7 +1849,7 @@ const LQ_STATIC=[
 {cat:'abstract',diff:2,q:"LEGE er til SYKEHUS som PILOT er til FLY\nsom DOMMER er til ?",opts:["LOV","STRAFF","RETTSAL","DOMSTOL"],ans:3,hint:"Profesjonell arbeider i sitt domene: lege→sykehus, pilot→fly, dommer→domstol"},
 {cat:'abstract',diff:2,q:"Hva mangler?\nZ25 Y24 X23 W22 ?",opts:["U20","V21","V20","U21"],ans:1,hint:"Bokstav synker, tall synker: Z=26,Y=24... nei: Z+25, Y+24 → bokstav i alfabet=tall. V=22? Nei: V=21,21+... Mønster: Z→25, Y→24, X→23, W→22 → V→21"},
 {cat:'abstract',diff:2,q:"Hva er neste?\n1, 4, 10, 22, 46, ?",opts:["90","94","96","98"],ans:1,hint:"Mønster: neste = forrige×2 + 2: 1×2+2=4, 4×2+2=10, 10×2+2=22, 22×2+2=46, 46×2+2=94"},
-{cat:'abstract',diff:2,q:"Hva passer ikke?\n○△○ · △○△ · ○△○ · ○○△",opts:["○△○","△○△","○△○","○○△"],ans:3,hint:"De tre første har to ulike former vekslende. Siste har to like + én annen — bryter mønsteret"},
+{cat:'abstract',diff:2,q:"Hva passer ikke?\n○△○ · △○△ · ○△○ · ○○△\n(Velg posisjonen til det som bryter mønsteret)",opts:["Posisjon 1","Posisjon 2","Posisjon 3","Posisjon 4"],ans:3,hint:"Mønsteret veksler ○△○ og △○△. Posisjon 4 (○○△) bryter mønsteret — to like former på ytterkantene."},
 {cat:'abstract',diff:2,q:"STOL er til MØBEL som HUND er til ?\nsom ROSA er til ?",opts:["DYR og FARGE","DYR og BLOMST","KJÆLEDYR og FARGE","KJÆLEDYR og BLOMST"],ans:0,hint:"Stol er en type møbel. Hund er en type dyr. Rosa er en type farge"},
 {cat:'abstract',diff:2,q:"Hva er neste?\nAB · CD · EF · GH · ?",opts:["IJ","HI","JK","KL"],ans:0,hint:"Consecutive letter pairs: AB, CD, EF, GH, IJ"},
 {cat:'abstract',diff:2,q:"Hva er neste?\n2, 6, 12, 20, 30, ?",opts:["40","42","44","46"],ans:1,hint:"Differansene: +4,+6,+8,+10,+12 → 30+12=42"},
@@ -2251,7 +2261,7 @@ Viktig: Aldri gjenta samme spørsmålstype to ganger på rad. Gjør svarene vans
   // Balanced draw: 5 spatial, 4 logic, 4 number, 4 abstract, 3 memory
   // Each category gets a mix of difficulties (at least 1 of each level where possible)
   function pickBalanced(pool,n){
-    const sh=pool.sort(()=>Math.random()-.5);
+    const sh=[...pool].sort(()=>Math.random()-.5);
     const d1=sh.filter(q=>q.diff===1),d2=sh.filter(q=>q.diff===2),d3=sh.filter(q=>q.diff===3);
     const picks=[];
     if(d1.length)picks.push(d1[0]);
