@@ -2088,6 +2088,44 @@ const LQ_STATIC=[
 {cat:'number',diff:2,q:"En mann kjøper en gris for 60 kr, selger den for 70 kr,\nkjøper den tilbake for 80 kr og selger den for 90 kr.\nHva er hans netto fortjeneste?",opts:["0 kr","10 kr","20 kr","30 kr"],ans:2,hint:"Transaksjon 1: −60+70 = +10. Transaksjon 2: −80+90 = +10. Totalt +20 kr. [CRT, Toplak et al. 2014]"},
 {cat:'number',diff:3,q:"Jon kan drikke ett fat vann på 6 dager.\nMari kan drikke ett fat på 12 dager.\nHvor lenge tar det dem å drikke ett fat sammen?",opts:["3 dager","4 dager","6 dager","9 dager"],ans:1,hint:"Jon: 1/6 per dag. Mari: 1/12 per dag. Sammen: 1/6+1/12 = 3/12 = 1/4 per dag → 4 dager. [CRT, Toplak et al. 2014]"},
 {cat:'number',diff:3,q:"Simon investerte 8 000 kr. Halvveis i året hadde aksjene falt 50 %.\nDeretter steg de 75 % fra det nye lavpunktet.\nHvordan gikk det med investeringen?",opts:["Gikk i null","Tjente penger","Tapte penger","Doblet investeringen"],ans:2,hint:"8000 × 0,50 = 4000. 4000 × 1,75 = 7000. Tapte 1000 kr (ender på 87,5 %). [CRT, Toplak et al. 2014]"},
+
+// ============================
+// ROMLIG TENKNING — utvidet
+// ============================
+{cat:'spatial',diff:1,q:"Du står og ser nordover.\nDu snur 90° mot klokken.\nDeretter snur du 180°.\nHvilken retning ser du nå?",opts:["Nord","Øst","Sør","Vest"],ans:1,hint:"Nord +90° mot klokken = Vest. Vest +180° = Øst."},
+{cat:'spatial',diff:1,q:"En klokke viser 12:00.\nTimeviser roterer 90° med klokken.\nHva viser klokken nå?",opts:["1:30","2:00","3:00","4:00"],ans:2,hint:"Timeviser på 12. 90° med klokken = ¼ omgang = 3 timer fremover. Viser 3:00."},
+{cat:'spatial',diff:1,q:"Et kvadrat har sidekant 6 cm.\nDu dobler alle sider.\nHvor mange ganger større er arealet?",opts:["2 ganger","3 ganger","4 ganger","6 ganger"],ans:2,hint:"Areal = side². Nytt areal = (2×6)² = 144. Gammelt = 36. 144/36 = 4 ganger."},
+{cat:'spatial',diff:2,q:"Du kjører østover, svinger venstre, kjører litt, svinger venstre igjen.\nHvilken retning kjører du nå?",opts:["Nord","Øst","Sør","Vest"],ans:3,hint:"Øst + venstre (nord) + venstre (vest) = Vest."},
+{cat:'spatial',diff:2,q:"En terning rulles: topp=1, front=2.\nDen rulles én gang fremover (bort fra deg).\nHva er ny toppside?",opts:["2","3","4","5"],ans:0,hint:"Når terningen rulles fremover, roterer topp→bak, front→topp. Topp blir 2."},
+{cat:'spatial',diff:2,q:"Et rektangel er 8 cm × 5 cm.\nDu kutter det diagonalt fra hjørne til hjørne.\nHva er arealet av hver trekant?",opts:["13 cm²","20 cm²","26 cm²","40 cm²"],ans:1,hint:"Areal rektangel = 8×5 = 40 cm². Halvparten = 20 cm²."},
+{cat:'spatial',diff:2,q:"Du ser et brev liggende med teksten riktig vei.\nDu snur det 180° rundt den loddrette aksen (speilvending).\nHva skjer med teksten?",opts:["Teksten er opp-ned","Teksten er speilvendt","Teksten ser normal ut","Teksten forsvinner"],ans:1,hint:"180° rundt vertikal akse = speilvendt (venstre/høyre bytter). Ikke opp-ned."},
+{cat:'spatial',diff:2,q:"Tre byer: A er 40 km nord for B. C er 30 km øst for B.\nHva er rett-linje avstand fra A til C?",opts:["50 km","60 km","70 km","55 km"],ans:0,hint:"Pythagoras: √(40²+30²) = √(1600+900) = √2500 = 50 km."},
+{cat:'spatial',diff:3,q:"En kube har sidelengde 3 cm.\nHvor mange enhetskuler (1×1×1) får plass inni?",opts:["9","18","27","24"],ans:2,hint:"Volum = 3³ = 27. Hver enhetskube = 1. Plass til 27 stykk."},
+{cat:'spatial',diff:3,q:"Du folder et A4-ark på midten (slik at kortsidene møtes), deretter på midten igjen.\nHvor mange lag er det nå?",opts:["2","3","4","8"],ans:2,hint:"Fold 1 → 2 lag. Fold 2 → 4 lag."},
+{cat:'spatial',diff:3,q:"En pyramide har kvadratisk grunnflate 6×6 cm og høyde 4 cm.\nHva er volumet?",opts:["48 cm³","72 cm³","96 cm³","144 cm³"],ans:0,hint:"V = (1/3) × grunnflate × høyde = (1/3) × 36 × 4 = 48 cm³."},
+{cat:'spatial',diff:3,q:"Du går 5 km nord, 5 km øst, 5 km sør.\nHvor langt er du fra startpunktet?",opts:["5 km","10 km","15 km","0 km"],ans:0,hint:"Nord og sør kansellerer. Du er 5 km øst for start → 5 km unna."},
+{cat:'spatial',diff:2,q:"Et speil henger loddrett på veggen. Du er 3 m fra speilet.\nDu beveger deg 1 m nærmere.\nHvor langt unna er speilbildet ditt nå?",opts:["2 m","3 m","4 m","5 m"],ans:2,hint:"Du er 2 m fra speilet. Speilbildet er 2 m bak speilet = 4 m fra deg."},
+{cat:'spatial',diff:1,q:"Hvilken form har et tverrsnitt av en sylinder kuttet parallelt med bunnen?",opts:["Ellipse","Rektangel","Sirkel","Trekant"],ans:2,hint:"Parallelt snitt av en sylinder = sirkel (samme form som bunnen)."},
+{cat:'spatial',diff:2,q:"Et analogt ur viser 6:30.\nHvilken vinkel er det mellom de to viserne (i grader)?",opts:["0°","15°","180°","90°"],ans:1,hint:"Kl 6:30: Minuttviser på 6 (180°). Timeviser mellom 6 og 7: 6×30° + 15° = 195°. Differanse = 15°."},
+
+// ============================
+// ARBEIDSMINNE — utvidet
+// ============================
+{cat:'memory',diff:1,q:"Husk disse tre ordene: ELEFANT · KAFÉ · SYKKEL\nHva var det andre ordet?",opts:["Elefant","Kafé","Sykkel","Bro"],ans:1,hint:"ELEFANT (1) · KAFÉ (2) · SYKKEL (3). Andre = Kafé."},
+{cat:'memory',diff:1,q:"Beregn: 7 × 8 + 5",opts:["59","61","63","65"],ans:1,hint:"7 × 8 = 56. 56 + 5 = 61."},
+{cat:'memory',diff:1,q:"Beregn: 13 × 7",opts:["81","84","91","98"],ans:2,hint:"13 × 7 = 10×7 + 3×7 = 70 + 21 = 91."},
+{cat:'memory',diff:2,q:"Beregn: 24 × 25",opts:["560","580","600","620"],ans:2,hint:"24 × 25 = 24 × 100 / 4 = 2400 / 4 = 600."},
+{cat:'memory',diff:2,q:"Beregn: 37 × 11",opts:["397","400","407","410"],ans:2,hint:"37 × 11 = 37 × 10 + 37 = 370 + 37 = 407."},
+{cat:'memory',diff:2,q:"Beregn: 144 ÷ 12 + 8 × 3",opts:["36","38","40","42"],ans:0,hint:"144÷12 = 12. 8×3 = 24. 12+24 = 36."},
+{cat:'memory',diff:2,q:"Beregn: 15% av 240",opts:["32","34","36","38"],ans:2,hint:"10% av 240 = 24. 5% = 12. Totalt = 36."},
+{cat:'memory',diff:2,q:"Beregn: 3² + 4² = ?",opts:["14","25","49","7"],ans:1,hint:"3² = 9. 4² = 16. 9 + 16 = 25."},
+{cat:'memory',diff:3,q:"Beregn: 17 × 18",opts:["296","306","316","326"],ans:1,hint:"17 × 18 = 17 × 20 − 17 × 2 = 340 − 34 = 306."},
+{cat:'memory',diff:3,q:"Beregn: 123 × 4 − 56 ÷ 7",opts:["476","480","484","488"],ans:2,hint:"123 × 4 = 492. 56 ÷ 7 = 8. 492 − 8 = 484."},
+{cat:'memory',diff:3,q:"Hva er 2¹⁰?",opts:["512","1 000","1 024","2 048"],ans:2,hint:"2¹⁰ = 1 024. (2⁵=32, 2¹⁰=32²=1024)"},
+{cat:'memory',diff:3,q:"Beregn: 45² − 40²",opts:["385","400","425","450"],ans:2,hint:"(45−40)(45+40) = 5 × 85 = 425. Differanse av kvadrater: (a−b)(a+b)."},
+{cat:'memory',diff:2,q:"Beregn: 8% av 350",opts:["24","28","32","36"],ans:1,hint:"1% av 350 = 3,5. 8% = 3,5 × 8 = 28."},
+{cat:'memory',diff:1,q:"Beregn: 19 × 5",opts:["85","90","95","100"],ans:2,hint:"19 × 5 = 20 × 5 − 5 = 100 − 5 = 95."},
+{cat:'memory',diff:2,q:"Beregn: (12 + 18) × (20 − 15)",opts:["140","150","160","170"],ans:1,hint:"(30) × (5) = 150."},
 ]
 // Assign stable IDs to all static questions
 LQ_STATIC.forEach((q,i)=>{q.id=i;});
@@ -2465,7 +2503,7 @@ window.memNext=function(){
       return;
     }
     mRound++;
-    mSeq=Array.from({length:mLv},()=>Math.floor(Math.random()*9)+1);
+    mSeq=[];for(let i=0;i<mLv;i++){let d;do{d=Math.floor(Math.random()*9)+1;}while(d===mSeq[i-1]);mSeq.push(d);}
     mPh='show';
     document.getElementById('mb').style.display='none';document.getElementById('mins').style.display='none';
     document.getElementById('mi').textContent='Husk tallene i vist rekkefølge...';
