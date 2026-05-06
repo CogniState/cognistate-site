@@ -2675,14 +2675,15 @@ async function showNowRes(){
   document.getElementById('resbb').style.display=isBase?'block':'none';
   if(isBase)document.getElementById('resbb').textContent='✓ Første dagsform-resultat lagret som din baseline.';
   document.getElementById('resst').innerHTML=`<div class="rs"><div class="rsv">${avgRT}<span class="rsu">ms</span></div><div class="rsl">Reaksjon</div></div><div class="rs"><div class="rsv">${memSpan}</div><div class="rsl">Minnespenn</div></div><div class="rs"><div class="rsv">${stroopInterference}<span class="rsu">ms</span></div><div class="rsl">Interferens</div></div><div class="rs"><div class="rsv">${overall}</div><div class="rsl">Total</div></div>`;
-  document.getElementById('resdom').innerHTML=`<div class="dc"><div class="dn">Reaksjonstid</div><div class="dsc">${rtL}</div><div class="dl">${avgRT}ms · variasjon ±${rtVar}ms</div><div class="dbar"><div class="dbarf" style="width:${rtScAdj}%;background:#94f5ff"></div></div></div><div class="dc"><div class="dn">Fremover-minne</div><div class="dsc">${fwdPct}%</div><div class="dl">Spenn ${memSpan} · ${mFwdSc}/${mFwdTot} riktige</div><div class="dbar"><div class="dbarf" style="width:${fwdPct}%;background:#4ade80"></div></div></div><div class="dc"><div class="dn">Baklengs-minne</div><div class="dsc">${bwdPct}%</div><div class="dl">${mBwdSc}/${mBwdTot} riktige · mer krevende</div><div class="dbar"><div class="dbarf" style="width:${bwdPct}%;background:#a78bfa"></div></div></div><div class="dc"><div class="dn">Stroop-interferens</div><div class="dsc">${stL}</div><div class="dl">${stroopInterference}ms interferens · ${stroopPct}% riktige</div><div class="dbar"><div class="dbarf" style="width:${stSc}%;background:#facc15"></div></div></div>`;
+  const nb2L=nb2Score>=80?'Eksepsjonell':nb2Score>=60?'God':nb2Score>=40?'Gjennomsnitt':'Utviklingspotensial';
+  document.getElementById('resdom').innerHTML=`<div class="dc"><div class="dn">Reaksjonstid</div><div class="dsc">${rtL}</div><div class="dl">${avgRT}ms · variasjon ±${rtVar}ms</div><div class="dbar"><div class="dbarf" style="width:${rtScAdj}%;background:#94f5ff"></div></div></div><div class="dc"><div class="dn">Fremover-minne</div><div class="dsc">${fwdPct}%</div><div class="dl">Spenn ${memSpan} · ${mFwdSc}/${mFwdTot} riktige</div><div class="dbar"><div class="dbarf" style="width:${fwdPct}%;background:#4ade80"></div></div></div><div class="dc"><div class="dn">2-back arbeidsminne</div><div class="dsc">${nb2L}</div><div class="dl">Treff ${Math.round(nb2HitRate*100)}% · Feilalarm ${Math.round(nb2FaRate*100)}%</div><div class="dbar"><div class="dbarf" style="width:${nb2Score}%;background:#a78bfa"></div></div></div><div class="dc"><div class="dn">Stroop-interferens</div><div class="dsc">${stL}</div><div class="dl">${stroopInterference}ms interferens · ${stroopPct}% riktige</div><div class="dbar"><div class="dbarf" style="width:${stSc}%;background:#facc15"></div></div></div>`;
 
   // Baseline comparison
   if(bl?.now){
     document.getElementById('res-bc').style.display='block';
     const bcData=[
       {label:'Reaksjonstid',curr:rtSc,base:bl.now.rtScore||rtSc},
-      {label:'Arbeidsminne',curr:mSc2,base:bl.now.memScore||mSc2},
+      {label:'Arbeidsminne',curr:memComposite,base:bl.now.memScore||memComposite},
       {label:'Impulskontroll',curr:stSc,base:bl.now.stroopScore||stSc},
       {label:'Total',curr:overall,base:bl.now.overall||overall}
     ];
@@ -2693,7 +2694,7 @@ async function showNowRes(){
     }).join('');
   }
 
-  document.getElementById('resbr').innerHTML=rBar('Reaksjonstid — '+rtL,rtScAdj,'#94f5ff')+rBar('Fremover-minne — '+fwdPct+'%',fwdPct,'#4ade80')+rBar('Baklengs-minne — '+bwdPct+'%',bwdPct,'#a78bfa')+rBar('Stroop-impulskontroll — '+stL,stSc,'#facc15');
+  document.getElementById('resbr').innerHTML=rBar('Reaksjonstid — '+rtL,rtScAdj,'#94f5ff')+rBar('Fremover-minne — '+fwdPct+'%',fwdPct,'#4ade80')+rBar('2-back — '+nb2L,nb2Score,'#a78bfa')+rBar('Stroop-impulskontroll — '+stL,stSc,'#facc15');
   document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px">Analyserer...</span></div>';
 
   const insight=generateInsight('now',resultData,bl);
