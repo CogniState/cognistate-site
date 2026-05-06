@@ -2556,7 +2556,14 @@ function finishNback(){
 
 /* --- Stroop med reaksjonstidsmåling --- */
 function startStroop(){
-  document.getElementById('run-memory').style.display='none';document.getElementById('run-stroop').style.display='block';
+  document.getElementById('run-memory').style.display='none';
+  showInstruction(
+    '🎨','Del 3 av 3','Konsentrasjon — Stroop',
+    'Du ser et fargeord på skjermen. Velg <strong style="color:var(--text)">fargen ordet er skrevet i</strong> — ikke hva ordet betyr.<br><br>Eksempel: ordet <strong style="color:#f87171">Blå</strong> er skrevet i rød farge → velg <strong style="color:var(--text)">Rød</strong>.<br><br>Svar så raskt du kan. Du får 12 runder.',
+    ()=>{ document.getElementById('run-stroop').style.display='block'; runStroop(); }
+  );
+}
+function runStroop(){
   stC=0;stI=0;stCongrRT=[];stIncongrRT=[];
   // Build 18 items: 9 congruent + 9 incongruent across all 6 colors
   const items=[];
